@@ -198,143 +198,200 @@ export default function DashboardPage() {
       </header>
 
       {/* Hero Section */}
-      <main className="max-w-5xl w-full mx-auto px-6 pt-12 pb-24 flex-1 flex flex-col items-center justify-center space-y-10 z-10">
-        {/* Pitch Headline (Ends cleanly at 'music' in 1 line) */}
-        <div className="text-center space-y-4 max-w-4xl mx-auto w-full">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[44px] font-lemon font-normal text-ink tracking-tight whitespace-nowrap">
-            Real-time audio collaboration for music
+      <main className="max-w-5xl w-full mx-auto px-6 pt-16 pb-24 flex-1 flex flex-col items-center justify-center space-y-16 z-10">
+        {/* Pitch Headline & Download Primary Action */}
+        <div className="text-center space-y-5 max-w-3xl mx-auto w-full">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
+            <span className="text-ink font-medium">S2DIO v1.0 for Windows</span>
+            <span className="text-stone">•</span>
+            <span>48kHz Float32 Master Stream</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-lemon font-normal text-ink tracking-tight leading-tight">
+            Real-time audio collaboration for music producers
           </h1>
 
           <p className="text-base md:text-lg text-mute leading-relaxed max-w-2xl mx-auto">
-            Stream your DAW master bus in pristine 48kHz Float32 stereo. Talk back with automatic ducking and drop stems directly into the timeline.
+            Stream your DAW master bus in uncompressed stereo directly to clients and collaborators with 60fps screen sharing, smart auto-ducking talkback, and drag-and-drop stem exchange.
           </p>
-        </div>
 
-        {/* Spread Studio Session Control Card */}
-        <div className="w-full max-w-3xl bg-surface border border-hairline rounded-lg overflow-hidden shadow-2xl">
-          {/* Top Mode Selector */}
-          <div className="p-4 border-b border-hairline flex items-center justify-between bg-surface-elevated/40">
-            <GlideSelect
-              options={[
-                { id: "create", label: "Start Session" },
-                { id: "join", label: "Join via Link / Code" },
-              ]}
-              activeId={activeTab}
-              onChange={(id) => {
-                setActiveTab(id as "create" | "join");
-                setInputValue("");
-              }}
-              size="sm"
-            />
+          {/* Primary Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
+            <a
+              href="/downloads/S2DIO-Windows-VST3.zip"
+              download="S2DIO-Windows-VST3.zip"
+              className="btn-primary h-11 px-6 text-sm font-semibold inline-flex items-center gap-2.5 shadow-lg shadow-white/5"
+            >
+              <span>Download S2DIO for Windows</span>
+              <span className="text-xs opacity-75">(.zip • 7.5 MB)</span>
+            </a>
+
+            <button
+              onClick={() => setActiveTab(activeTab === "join" ? "create" : "join")}
+              className="btn-secondary h-11 px-5 text-sm"
+            >
+              Join Room via Code
+            </button>
           </div>
 
-          {/* Session Input Form */}
-          <form onSubmit={handleSubmit} className="p-5 space-y-4">
-            <div className="flex items-center gap-3 bg-surface-elevated border border-hairline rounded-md p-1.5 focus-within:border-hairline-strong transition-colors">
+          <div className="text-[11px] text-mute flex items-center justify-center gap-3 pt-1">
+            <span>Includes S2DIO Control Room (.exe)</span>
+            <span>•</span>
+            <span>VST3 64-bit Plugin</span>
+            <span>•</span>
+            <span>1-Click Installer</span>
+          </div>
+        </div>
+
+        {/* Join Session Card (Appears cleanly when user wants to connect to a room) */}
+        {activeTab === "join" && (
+          <div className="w-full max-w-md bg-surface border border-hairline rounded-lg p-5 shadow-2xl space-y-3 animate-in fade-in duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-ink">Enter Collaborator Studio</span>
+              <button
+                onClick={() => setActiveTab("create")}
+                className="text-xs text-mute hover:text-ink"
+              >
+                ✕ Close
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className="flex gap-2">
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder={
-                  activeTab === "create"
-                    ? "Session title (e.g. Master Mix Review, Vocal Tracking)..."
-                    : "Paste room code or guest URL..."
-                }
-                className="flex-1 bg-transparent px-3.5 py-2 text-sm text-ink placeholder:text-mute focus:outline-none"
+                placeholder="Paste room code or guest URL..."
+                className="flex-1 bg-surface-elevated border border-hairline rounded-md px-3 py-2 text-xs text-ink placeholder:text-mute focus:outline-none focus:border-accent-blue/50"
                 autoFocus
               />
-
-              <button
-                type="submit"
-                className="btn-primary"
-              >
-                {activeTab === "create" ? "Open Studio →" : "Connect →"}
+              <button type="submit" className="btn-primary text-xs h-9 px-4">
+                Connect →
               </button>
-            </div>
-          </form>
+            </form>
+          </div>
+        )}
 
-          {/* Quick Presets for Producers */}
-          {activeTab === "create" && (
-            <div className="px-5 pb-5 pt-1">
-              <div className="text-[11px] uppercase tracking-wider text-mute mb-2.5">
-                Session Presets
+        {/* 3-Step Setup Guide */}
+        <section className="w-full max-w-4xl space-y-6 pt-6">
+          <div className="text-center space-y-1.5">
+            <h2 className="text-lg font-semibold text-ink tracking-tight">How S2DIO Works</h2>
+            <p className="text-xs text-mute">One unified pipeline from your DAW master bus straight to your collaborator's speakers.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <div className="w-6 h-6 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
+                1
               </div>
+              <h3 className="text-sm font-medium text-ink">Install & Insert</h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Run the 1-click installer and insert <code className="text-ink">S2DIO Master Bridge</code> onto your Master mixer track in FL Studio, Ableton, Cubase, or Reaper.
+              </p>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleLaunchQuick("Mixdown Review")}
-                  className="p-3.5 text-left bg-surface-elevated/60 hover:bg-surface-elevated border border-hairline hover:border-hairline-strong rounded-md transition-all group"
-                >
-                  <div className="text-xs font-medium text-ink group-hover:text-white">Mixdown Review</div>
-                  <div className="text-[11px] text-mute mt-0.5">48k stereo master</div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleLaunchQuick("Tracking Session")}
-                  className="p-3.5 text-left bg-surface-elevated/60 hover:bg-surface-elevated border border-hairline hover:border-hairline-strong rounded-md transition-all group"
-                >
-                  <div className="text-xs font-medium text-ink group-hover:text-white">Tracking & Vocal</div>
-                  <div className="text-[11px] text-mute mt-0.5">Auto-ducking talkback</div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleLaunchQuick("Stem Drop")}
-                  className="p-3.5 text-left bg-surface-elevated/60 hover:bg-surface-elevated border border-hairline hover:border-hairline-strong rounded-md transition-all group"
-                >
-                  <div className="text-xs font-medium text-ink group-hover:text-white">Stem Exchange</div>
-                  <div className="text-[11px] text-mute mt-0.5">Drag into arrangement</div>
-                </button>
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <div className="w-6 h-6 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
+                2
               </div>
-            </div>
-          )}
-
-          {/* Hardware & DAW Status Bar (Single place for connection info, no duplicate green dot) */}
-          <div className="px-5 py-3 border-t border-hairline bg-surface-elevated/30 flex items-center justify-between text-xs text-mute">
-            <div className="flex items-center gap-2">
-              <span>Stream: <strong className="text-ink font-normal">48.0 kHz 32-bit Float Stereo</strong></span>
+              <h3 className="text-sm font-medium text-ink">Launch Control Room (.exe)</h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Open the native S2DIO desktop app. It instantly hooks into your DAW master stream with zero mixed-content blocks, mixer trims, and talkback calibration.
+              </p>
             </div>
 
-            <div className="text-[11px] text-stone hidden sm:inline">
-              Ableton • FL Studio • Logic • Pro Tools
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <div className="w-6 h-6 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
+                3
+              </div>
+              <h3 className="text-sm font-medium text-ink">Send Zero-Install Link</h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Click Copy Invite Link and send it to your artists or clients. They join directly in their web browser with no plugin, no login, and no DAW installed.
+              </p>
             </div>
-          </div>
-        </div>
-
-        {/* 3 Key Pillars for Music Collaboration (Pushed lower with generous spacing) */}
-        <section id="features" className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-5 pt-20 md:pt-28">
-          <div className="bg-surface border border-hairline rounded-lg p-6 space-y-2.5">
-            <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
-              🎛
-            </div>
-            <h3 className="text-sm font-semibold text-ink">Direct VST3 Plugin Ingestion</h3>
-            <p className="text-xs text-mute leading-relaxed">
-              No virtual audio cable drivers or BlackHole configs. Place the VST3 bridge on your master output and audio streams losslessly.
-            </p>
-          </div>
-
-          <div className="bg-surface border border-hairline rounded-lg p-6 space-y-2.5">
-            <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
-              🎙
-            </div>
-            <h3 className="text-sm font-semibold text-ink">Smart Talkback Ducking</h3>
-            <p className="text-xs text-mute leading-relaxed">
-              Talk naturally while the music plays. DAW playback smoothly ducks by -12dB when you speak, then snaps right back.
-            </p>
-          </div>
-
-          <div className="bg-surface border border-hairline rounded-lg p-6 space-y-2.5">
-            <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
-              📁
-            </div>
-            <h3 className="text-sm font-semibold text-ink">Drag-to-DAW Stem Exchange</h3>
-            <p className="text-xs text-mute leading-relaxed">
-              Drop full mixes or vocal takes into the room. Collaborators can drag stems straight from the browser into their DAW timeline.
-            </p>
           </div>
         </section>
+
+        {/* Feature Grid */}
+        <section id="features" className="w-full max-w-4xl space-y-6 pt-10">
+          <div className="text-center space-y-1.5">
+            <h2 className="text-lg font-semibold text-ink tracking-tight">Built Specifically for Producers</h2>
+            <p className="text-xs text-mute">Everything you need for live production, vocal direction, and mixdown sessions.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
+                🎛
+              </div>
+              <h3 className="text-sm font-semibold text-ink">Lossless Float32 PCM</h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Direct master bus ingestion with 48kHz 32-bit floating point precision. Zero lossy compression during mixdown evaluation.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
+                🖥
+              </div>
+              <h3 className="text-sm font-semibold text-ink">60fps DAW Screen Share</h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Stream your arrangement timeline, piano roll, or plugin GUI in high-definition 60fps video with full-screen playback.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
+                🎙
+              </div>
+              <h3 className="text-sm font-semibold text-ink">Smart Talkback Ducking</h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Speak naturally while the track plays. DAW playback automatically ducks by -12dB when talkback triggers, then snaps right back.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
+                📁
+              </div>
+              <h3 className="text-sm font-semibold text-ink">Drag-to-DAW Stem Exchange</h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Drop full mixes or vocal takes into the room. Collaborators can drag stems straight from the browser into their DAW timeline.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
+                ⚡
+              </div>
+              <h3 className="text-sm font-semibold text-ink">Ultra-Low Ingest Latency</h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Sub-5ms local buffer design gives instant feedback as you hit play, scrub markers, or tweak EQ in your DAW.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
+                🌐
+              </div>
+              <h3 className="text-sm font-semibold text-ink">Zero-Install Guest Portal</h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Remote artists and clients join via Chrome, Safari, or Edge without downloading any software or creating an account.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* DAW Compatibility Badge Strip */}
+        <div className="w-full max-w-4xl py-6 px-4 bg-surface border border-hairline rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-mute">
+          <div>
+            <span className="text-ink font-medium">DAW Support: </span>
+            <span>FL Studio 20+ • Ableton Live 11+ • Cubase 12+ • Studio One 6+ • Reaper 7+</span>
+          </div>
+          <div className="text-[11px] text-stone">
+            Platform: Windows 10/11 64-bit VST3
+          </div>
+        </div>
       </main>
 
       {/* Clean Studio Footer (Borderless, Blends into Background) */}
