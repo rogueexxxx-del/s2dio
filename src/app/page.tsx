@@ -148,6 +148,16 @@ export default function DashboardPage() {
             <span className="font-mono text-[11px] tracking-tight text-mute">:4949</span>
           </div>
 
+          <a
+            href="/downloads/S2DIO-Windows-VST3.zip"
+            download="S2DIO-Windows-VST3.zip"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-elevated hover:bg-surface-card border border-hairline text-ink hover:text-white transition-colors text-[11px] font-medium"
+            title="Download S2DIO Master Bridge VST3 and 1-click installer for FL Studio, Ableton, Cubase"
+          >
+            <span>Download VST3</span>
+            <span className="text-[10px] text-mute">↓</span>
+          </a>
+
           {user ? (
             <div className="flex items-center gap-2">
               <span className="text-ink font-medium text-xs">{user.name || user.email}</span>

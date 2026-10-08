@@ -25,8 +25,43 @@ export default function StudioRoomPage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [screenControlStatus, setScreenControlStatus] = useState<ScreenControlStatus>("none");
+  const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
 
   const [hostName, setHostName] = useState("Producer");
+
+  const handleToggleScreenShare = async () => {
+    if (isScreenSharing && screenStream) {
+      screenStream.getTracks().forEach((track) => track.stop());
+      setScreenStream(null);
+      setIsScreenSharing(false);
+      return;
+    }
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.mediaDevices?.getDisplayMedia) {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            frameRate: 60,
+          },
+          audio: false,
+        });
+
+        const videoTrack = stream.getVideoTracks()[0];
+        if (videoTrack) {
+          videoTrack.onended = () => {
+            setScreenStream(null);
+            setIsScreenSharing(false);
+          };
+        }
+
+        setScreenStream(stream);
+        setIsScreenSharing(true);
+      }
+    } catch (err) {
+      console.log("Screen share cancelled or not allowed:", err);
+    }
+  };
 
   // Participants
   const [participants, setParticipants] = useState<Participant[]>([
@@ -385,6 +420,9 @@ export default function StudioRoomPage() {
           participants={participants}
           onUpdateParticipantName={handleUpdateParticipantName}
           onInviteClick={handleCopyInvite}
+          videoStream={screenStream}
+          isScreenSharing={isScreenSharing}
+          onToggleScreenShare={handleToggleScreenShare}
         />
 
         {/* Slide-over Notes & Files Drawer */}
@@ -411,6 +449,20 @@ export default function StudioRoomPage() {
         />
 
         <div className="h-4 w-[1px] bg-hairline mx-0.5" />
+
+        {/* Share DAW Screen Video Transmission */}
+        <button
+          onClick={handleToggleScreenShare}
+          className={`h-9 px-3 text-xs rounded-md border transition-colors inline-flex items-center gap-1.5 cursor-pointer ${
+            isScreenSharing
+              ? "bg-accent-red text-white border-accent-red font-medium"
+              : "btn-tertiary"
+          }`}
+          title="Stream DAW Window or Screen Live (60fps)"
+        >
+          <span>🖥</span>
+          <span>{isScreenSharing ? "Stop Video" : "Share DAW"}</span>
+        </button>
 
         {/* Play/Stop Audio Test */}
         <button

@@ -14,6 +14,9 @@ interface AudioStageProps {
   participants: Participant[];
   onUpdateParticipantName?: (id: string, newName: string) => void;
   onInviteClick?: () => void;
+  videoStream?: MediaStream | null;
+  isScreenSharing?: boolean;
+  onToggleScreenShare?: () => void;
 }
 
 export function AudioStage({
@@ -27,10 +30,20 @@ export function AudioStage({
   participants,
   onUpdateParticipantName,
   onInviteClick,
+  videoStream,
+  isScreenSharing,
+  onToggleScreenShare,
 }: AudioStageProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [tempName, setTempName] = React.useState("");
+
+  useEffect(() => {
+    if (videoRef.current && videoStream) {
+      videoRef.current.srcObject = videoStream;
+    }
+  }, [videoStream]);
 
   // Audio waveform animation on canvas
   useEffect(() => {
@@ -95,58 +108,125 @@ export function AudioStage({
 
   return (
     <div className="relative flex-1 flex flex-col items-center justify-center overflow-hidden p-6 select-none bg-canvas">
-      {/* Waveform Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
-      />
+      {/* Waveform Canvas (Background filament when no video, or ambient background) */}
+      {!videoStream && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+        />
+      )}
 
-      {/* Center Focus Text */}
-      <div className="relative z-10 text-center space-y-3 max-w-md">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              isStreaming ? "bg-accent-green animate-pulse" : "bg-stone"
-            }`}
+      {/* Video Viewport or Center Focus Text */}
+      {videoStream ? (
+        <div className="relative w-full max-w-5xl h-[72vh] flex items-center justify-center rounded-lg overflow-hidden border border-hairline bg-surface shadow-2xl z-10">
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full h-full object-contain bg-canvas"
           />
-          <span className="font-medium text-ink">
-            {isStreaming ? "Master Audio Active" : "DAW Audio Standby"}
-          </span>
-          <span className="text-stone">•</span>
-          <span>48kHz VST3</span>
-        </div>
 
-        <div className="text-2xl md:text-3xl text-ink font-medium tracking-tight">
-          {isStreaming ? "Listening to DAW Master Bus" : "Audio stream is ready"}
-        </div>
-
-        <p className="text-sm text-mute leading-relaxed font-sans max-w-sm mx-auto">
-          {isStreaming
-            ? "Uncompressed Float32 stereo PCM streaming via local loopback on 127.0.0.1:4949."
-            : "Trigger playback in your DAW or press Play Demo in the dock to test."}
-        </p>
-
-        {isHost && !isStreaming && typeof window !== "undefined" && window.location.protocol === "https:" && (
-          <div className="p-3 rounded-md bg-surface border border-accent-blue/30 text-[11px] text-mute max-w-sm mx-auto space-y-1 text-left">
-            <div className="flex items-center gap-1.5 text-accent-blue font-medium">
-              <span>Local Bridge Note</span>
-            </div>
-            <p className="leading-relaxed">
-              Browsers block HTTPS web pages from connecting to unencrypted local machine sockets (<code className="text-ink">127.0.0.1:4949</code>).
-            </p>
-            <p>
-              Open this session on your DAW machine at{" "}
-              <a
-                href={`http://localhost:3000${window.location.pathname}`}
-                className="text-ink underline hover:text-accent-blue font-mono font-medium"
-              >
-                http://localhost:3000{window.location.pathname}
-              </a>{" "}
-              to link directly with your VST3 plugin.
-            </p>
+          {/* Floating live indicator on video */}
+          <div className="absolute top-4 left-4 flex items-center gap-2 bg-surface/85 backdrop-blur-md px-3 py-1.5 rounded-md border border-hairline text-xs shadow-md">
+            <span className="w-2 h-2 rounded-full bg-accent-red animate-pulse" />
+            <span className="text-ink font-medium">DAW Screen Live</span>
+            <span className="text-mute text-[11px]">• 60fps</span>
           </div>
-        )}
-      </div>
+
+          <div className="absolute top-4 right-4 flex items-center gap-2">
+            <button
+              onClick={() => {
+                if (videoRef.current) {
+                  if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                  } else {
+                    videoRef.current.requestFullscreen();
+                  }
+                }
+              }}
+              className="px-2.5 py-1.5 rounded-md bg-surface/85 hover:bg-surface border border-hairline text-ink text-xs backdrop-blur-md transition-colors cursor-pointer"
+              title="Toggle Fullscreen"
+            >
+              ⛶ Fullscreen
+            </button>
+            {isHost && onToggleScreenShare && (
+              <button
+                onClick={onToggleScreenShare}
+                className="px-2.5 py-1.5 rounded-md bg-accent-red hover:bg-accent-red/90 text-white text-xs font-medium transition-colors cursor-pointer"
+              >
+                Stop Sharing
+              </button>
+            )}
+          </div>
+
+          {/* Floating Live Audio Filament over Video */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 px-4 py-1.5 rounded-full bg-surface/90 backdrop-blur-md border border-hairline text-xs shadow-md">
+            <span className={`w-1.5 h-1.5 rounded-full ${isStreaming ? "bg-accent-green animate-pulse" : "bg-stone"}`} />
+            <span className="text-ink font-mono text-[11px]">L {rmsDbL.toFixed(1)} dB</span>
+            <span className="text-stone">|</span>
+            <span className="text-ink font-mono text-[11px]">R {rmsDbR.toFixed(1)} dB</span>
+          </div>
+        </div>
+      ) : (
+        <div className="relative z-10 text-center space-y-3 max-w-md">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isStreaming ? "bg-accent-green animate-pulse" : "bg-stone"
+              }`}
+            />
+            <span className="font-medium text-ink">
+              {isStreaming ? "Master Audio Active" : "DAW Audio Standby"}
+            </span>
+            <span className="text-stone">•</span>
+            <span>48kHz VST3</span>
+          </div>
+
+          <div className="text-2xl md:text-3xl text-ink font-medium tracking-tight">
+            {isStreaming ? "Listening to DAW Master Bus" : "Audio stream is ready"}
+          </div>
+
+          <p className="text-sm text-mute leading-relaxed font-sans max-w-sm mx-auto">
+            {isStreaming
+              ? "Uncompressed Float32 stereo PCM streaming via local loopback on 127.0.0.1:4949."
+              : "Trigger playback in your DAW or press Play Demo in the dock to test."}
+          </p>
+
+          {isHost && onToggleScreenShare && (
+            <div className="pt-2">
+              <button
+                onClick={onToggleScreenShare}
+                className="btn-secondary h-9 px-4 text-xs inline-flex items-center gap-2"
+              >
+                <span>🖥</span>
+                <span>Share DAW Screen</span>
+              </button>
+            </div>
+          )}
+
+          {isHost && !isStreaming && typeof window !== "undefined" && window.location.protocol === "https:" && (
+            <div className="p-3 rounded-md bg-surface border border-accent-blue/30 text-[11px] text-mute max-w-sm mx-auto space-y-1 text-left">
+              <div className="flex items-center gap-1.5 text-accent-blue font-medium">
+                <span>Local Bridge Note</span>
+              </div>
+              <p className="leading-relaxed">
+                Browsers block HTTPS web pages from connecting to unencrypted local machine sockets (<code className="text-ink">127.0.0.1:4949</code>).
+              </p>
+              <p>
+                Open this session on your DAW machine at{" "}
+                <a
+                  href={`http://localhost:3000${window.location.pathname}`}
+                  className="text-ink underline hover:text-accent-blue font-mono font-medium"
+                >
+                  http://localhost:3000{window.location.pathname}
+                </a>{" "}
+                to link directly with your VST3 plugin.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Floating Participant Badges in Top Right of Canvas */}
       <div className="absolute top-6 right-6 flex items-center gap-2 z-10">
