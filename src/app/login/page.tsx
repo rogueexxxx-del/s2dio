@@ -45,13 +45,16 @@ export default function LoginPage() {
 
     try {
       if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
+        const resolvedName = data.user?.user_metadata?.display_name || email.split("@")[0] || "Producer";
         if (typeof window !== "undefined") {
           localStorage.setItem("s2dio_auth_email", email);
+          localStorage.setItem("s2dio_username", resolvedName);
+          window.dispatchEvent(new CustomEvent("s2dio-auth-change", { detail: { email, name: resolvedName } }));
         }
         router.push("/");
       } else if (mode === "signup") {

@@ -7,7 +7,7 @@ import { S2DioLogo } from "./S2DioLogo";
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: () => void;
+  onSuccess?: (user: { email: string; name: string }) => void;
   defaultMode?: "signin" | "signup";
 }
 
@@ -33,37 +33,42 @@ export function AuthModal({
     setSuccessMsg(null);
     setLoading(true);
 
+    const fallbackName = displayName.trim() || email.split("@")[0] || "Producer";
+
     if (!isSupabaseClientConfigured) {
       // Local development fallback simulation
       setLoading(false);
       if (typeof window !== "undefined") {
-        const name = displayName.trim() || email.split("@")[0] || "Producer";
-        localStorage.setItem("s2dio_username", name);
+        localStorage.setItem("s2dio_username", fallbackName);
         localStorage.setItem("s2dio_auth_email", email);
+        window.dispatchEvent(new CustomEvent("s2dio-auth-change", { detail: { email, name: fallbackName } }));
       }
-      setSuccessMsg("Signed in locally.");
+      setSuccessMsg("Signed in.");
       setTimeout(() => {
-        onSuccess?.();
+        onSuccess?.({ email, name: fallbackName });
         onClose();
-      }, 600);
+      }, 300);
       return;
     }
 
     try {
       if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
-        setSuccessMsg("Signed in successfully.");
+        const resolvedName = data.user?.user_metadata?.display_name || fallbackName;
         if (typeof window !== "undefined") {
           localStorage.setItem("s2dio_auth_email", email);
+          localStorage.setItem("s2dio_username", resolvedName);
+          window.dispatchEvent(new CustomEvent("s2dio-auth-change", { detail: { email, name: resolvedName } }));
         }
+        setSuccessMsg("Signed in successfully.");
         setTimeout(() => {
-          onSuccess?.();
+          onSuccess?.({ email, name: resolvedName });
           onClose();
-        }, 500);
+        }, 300);
       } else if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -76,16 +81,19 @@ export function AuthModal({
         });
         if (error) throw error;
 
-        if (displayName.trim() && typeof window !== "undefined") {
-          localStorage.setItem("s2dio_username", displayName.trim());
+        const resolvedName = displayName.trim() || email.split("@")[0];
+        if (typeof window !== "undefined") {
+          localStorage.setItem("s2dio_username", resolvedName);
+          localStorage.setItem("s2dio_auth_email", email);
+          window.dispatchEvent(new CustomEvent("s2dio-auth-change", { detail: { email, name: resolvedName } }));
         }
 
         if (data.session) {
           setSuccessMsg("Account created and signed in.");
           setTimeout(() => {
-            onSuccess?.();
+            onSuccess?.({ email, name: resolvedName });
             onClose();
-          }, 500);
+          }, 300);
         } else {
           setSuccessMsg("Verification link sent to your email.");
         }

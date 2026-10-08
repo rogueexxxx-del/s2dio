@@ -16,37 +16,68 @@ export default function DashboardPage() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   useEffect(() => {
+    // Initial load from storage for immediate fast render
+    if (typeof window !== "undefined") {
+      const savedEmail = localStorage.getItem("s2dio_auth_email");
+      const savedName = localStorage.getItem("s2dio_username");
+      if (savedEmail || savedName) {
+        setUser({
+          email: savedEmail || undefined,
+          name: savedName || savedEmail?.split("@")[0] || "Producer",
+        });
+      }
+    }
+
+    const onAuthEvent = (e: Event) => {
+      const custom = e as CustomEvent<{ email?: string; name?: string }>;
+      if (custom.detail) {
+        setUser({
+          email: custom.detail.email,
+          name: custom.detail.name,
+        });
+      }
+    };
+    window.addEventListener("s2dio-auth-change", onAuthEvent);
+
+    let authUnsub: (() => void) | null = null;
     if (isSupabaseClientConfigured) {
       supabase.auth.getUser().then(({ data }) => {
         if (data.user) {
-          setUser({
+          const profile = {
             email: data.user.email,
-            name: data.user.user_metadata?.display_name || data.user.email?.split("@")[0],
-          });
+            name: data.user.user_metadata?.display_name || data.user.email?.split("@")[0] || "Producer",
+          };
+          setUser(profile);
+          if (typeof window !== "undefined") {
+            if (profile.email) localStorage.setItem("s2dio_auth_email", profile.email);
+            if (profile.name) localStorage.setItem("s2dio_username", profile.name);
+          }
         }
       });
 
       const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
         if (session?.user) {
-          setUser({
+          const profile = {
             email: session.user.email,
-            name: session.user.user_metadata?.display_name || session.user.email?.split("@")[0],
-          });
+            name: session.user.user_metadata?.display_name || session.user.email?.split("@")[0] || "Producer",
+          };
+          setUser(profile);
+          if (typeof window !== "undefined") {
+            if (profile.email) localStorage.setItem("s2dio_auth_email", profile.email);
+            if (profile.name) localStorage.setItem("s2dio_username", profile.name);
+          }
         } else {
           setUser(null);
         }
       });
 
-      return () => {
-        authListener.subscription.unsubscribe();
-      };
-    } else if (typeof window !== "undefined") {
-      const savedEmail = localStorage.getItem("s2dio_auth_email");
-      const savedName = localStorage.getItem("s2dio_username");
-      if (savedEmail) {
-        setUser({ email: savedEmail, name: savedName || savedEmail.split("@")[0] });
-      }
+      authUnsub = () => authListener.subscription.unsubscribe();
     }
+
+    return () => {
+      window.removeEventListener("s2dio-auth-change", onAuthEvent);
+      if (authUnsub) authUnsub();
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -315,7 +346,8 @@ export default function DashboardPage() {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onSuccess={() => {
+        onSuccess={(u) => {
+          setUser(u);
           setIsAuthModalOpen(false);
         }}
       />
