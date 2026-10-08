@@ -1,0 +1,6 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // Project-specific settings for H:\OPENCODE.
+  // Anything not set here falls back to the global config at
+  // C:\Users\rr126\.config\opencode\opencode.jsonc
+}
