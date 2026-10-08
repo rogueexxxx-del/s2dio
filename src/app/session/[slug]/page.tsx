@@ -10,6 +10,7 @@ import { MixerPopover } from "@/components/MixerPopover";
 import { FileTransferDrawer } from "@/components/FileTransferDrawer";
 import { AudioSettingsModal } from "@/components/AudioSettingsModal";
 import { S2DioLogo } from "@/components/S2DioLogo";
+import { AuthModal } from "@/components/AuthModal";
 import { supabase, isSupabaseClientConfigured } from "@/lib/supabase-client";
 
 export default function StudioRoomPage() {
@@ -27,6 +28,8 @@ export default function StudioRoomPage() {
   const [screenControlStatus, setScreenControlStatus] = useState<ScreenControlStatus>("none");
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const [hostName, setHostName] = useState("Producer");
 
@@ -88,6 +91,24 @@ export default function StudioRoomPage() {
   ]);
 
   useEffect(() => {
+    // Initial sync from local storage for instant render
+    if (typeof window !== "undefined") {
+      const savedEmail = localStorage.getItem("s2dio_auth_email");
+      const savedName = localStorage.getItem("s2dio_username");
+      if (savedEmail || savedName) {
+        const profile = {
+          email: savedEmail || undefined,
+          name: savedName || savedEmail?.split("@")[0] || "Producer",
+        };
+        setUser(profile);
+        setHostName(profile.name);
+        setParticipants((prev) =>
+          prev.map((p) => (p.role === "host" ? { ...p, name: profile.name } : p))
+        );
+      }
+    }
+
+    let authUnsub: (() => void) | null = null;
     if (isSupabaseClientConfigured) {
       supabase.auth.getUser().then(({ data }) => {
         if (data.user) {
@@ -95,23 +116,35 @@ export default function StudioRoomPage() {
             data.user.user_metadata?.display_name ||
             data.user.email?.split("@")[0] ||
             "Producer";
+          const profile = { email: data.user.email, name: authName };
+          setUser(profile);
           setHostName(authName);
           setParticipants((prev) =>
             prev.map((p) => (p.role === "host" ? { ...p, name: authName } : p))
           );
-          return;
         }
       });
+
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user) {
+          const authName =
+            session.user.user_metadata?.display_name ||
+            session.user.email?.split("@")[0] ||
+            "Producer";
+          const profile = { email: session.user.email, name: authName };
+          setUser(profile);
+          setHostName(authName);
+        } else {
+          setUser(null);
+        }
+      });
+
+      authUnsub = () => authListener.subscription.unsubscribe();
     }
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("s2dio_username");
-      if (saved) {
-        setHostName(saved);
-        setParticipants((prev) =>
-          prev.map((p) => (p.role === "host" ? { ...p, name: saved } : p))
-        );
-      }
-    }
+
+    return () => {
+      if (authUnsub) authUnsub();
+    };
   }, []);
 
   const handleUpdateParticipantName = (id: string, newName: string) => {
@@ -376,31 +409,66 @@ export default function StudioRoomPage() {
 
   return (
     <div className="h-screen w-screen flex flex-col bg-canvas text-body overflow-hidden select-none font-sans relative">
-      {/* Top Header Bar (Transparent, Borderless) */}
-      <header className="h-16 px-6 md:px-10 flex items-center justify-between z-20 bg-transparent">
-        <div className="flex items-center gap-4">
+      {/* Top Header Bar */}
+      <header className="h-14 px-6 md:px-8 flex items-center justify-between z-20 bg-transparent border-b border-hairline/60">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => router.push("/")}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
           >
-            <S2DioLogo variant="full" height={20} className="text-ink hover:text-white transition-colors" />
+            <S2DioLogo variant="full" height={18} className="text-ink hover:text-white transition-colors" />
           </button>
 
-          <div className="h-3 w-[1px] bg-hairline" />
+          <div className="h-3.5 w-[1px] bg-hairline" />
 
-          <span className="text-xs text-mute font-normal max-w-[200px] truncate">
+          <span className="text-xs text-mute font-normal font-mono max-w-[200px] truncate">
             {slug}
           </span>
+
+          <div
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-elevated border border-hairline font-mono text-[10px] text-mute ml-2"
+            title="Local VST3 Ingest on 127.0.0.1:4949"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
+            <span>:4949 Ingest</span>
+          </div>
         </div>
 
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-[11px] text-mute hidden sm:inline">
-            48kHz VST3 Pipeline
-          </span>
+          {/* User Account / Login details */}
+          {user ? (
+            <div className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface border border-hairline text-xs">
+              <span className="w-2 h-2 rounded-full bg-accent-blue" />
+              <span className="text-ink font-medium max-w-[140px] truncate">{user.name || user.email}</span>
+              <button
+                onClick={async () => {
+                  if (isSupabaseClientConfigured) {
+                    await supabase.auth.signOut();
+                  }
+                  if (typeof window !== "undefined") {
+                    localStorage.removeItem("s2dio_auth_email");
+                  }
+                  setUser(null);
+                }}
+                className="text-[10px] text-mute hover:text-ink transition-colors ml-1 cursor-pointer"
+                title="Sign out of account"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="text-xs text-mute hover:text-ink font-medium px-2.5 py-1 rounded-md bg-surface border border-hairline transition-colors cursor-pointer"
+            >
+              Sign In
+            </button>
+          )}
 
+          {/* Copy Invite Link */}
           <button
             onClick={handleCopyInvite}
-            className="btn-secondary text-xs h-8 px-3"
+            className="btn-primary text-xs h-8 px-3.5 whitespace-nowrap cursor-pointer"
           >
             {copiedLink ? "✓ Copied" : "Copy Invite Link"}
           </button>
@@ -527,6 +595,17 @@ export default function StudioRoomPage() {
           onReconnectVst={() => engine.connectVstBridge()}
         />
       )}
+
+      {/* Sign In & Sign Up Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={(u) => {
+          setUser(u);
+          setHostName(u.name);
+          setIsAuthModalOpen(false);
+        }}
+      />
     </div>
   );
 }

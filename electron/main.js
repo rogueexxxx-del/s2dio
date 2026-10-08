@@ -3,19 +3,26 @@ const path = require('path');
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1320,
-    height: 860,
-    minWidth: 1024,
-    minHeight: 720,
-    title: 'S2DIO Studio Control Room',
+    width: 1080,
+    height: 720,
+    minWidth: 940,
+    minHeight: 640,
+    title: 'S2DIO Control Room',
     backgroundColor: '#07080a',
     autoHideMenuBar: true,
-    frame: true, // Standard native dark frame ensures Windows controls never collide with UI
+    show: false, // show gracefully when ready
+    frame: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      webSecurity: false, // Enables local VST3 loopback on ws://127.0.0.1:4949 without HTTPS mixed-content blocks
+      webSecurity: false, // Enables local VST3 loopback on ws://127.0.0.1:4949
     },
+  });
+
+  win.removeMenu();
+
+  win.once('ready-to-show', () => {
+    win.show();
   });
 
   const startUrl = process.env.ELECTRON_START_URL || 'http://localhost:3000/session/studio';
