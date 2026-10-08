@@ -1,16 +1,53 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { GlideSelect } from "@/components/micro/GlideSelect";
 import { S2DioLogo } from "@/components/S2DioLogo";
+import { AuthModal } from "@/components/AuthModal";
+import { supabase, isSupabaseClientConfigured } from "@/lib/supabase-client";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"create" | "join">("create");
   const [inputValue, setInputValue] = useState("");
-
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (isSupabaseClientConfigured) {
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user) {
+          setUser({
+            email: data.user.email,
+            name: data.user.user_metadata?.display_name || data.user.email?.split("@")[0],
+          });
+        }
+      });
+
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user) {
+          setUser({
+            email: session.user.email,
+            name: session.user.user_metadata?.display_name || session.user.email?.split("@")[0],
+          });
+        } else {
+          setUser(null);
+        }
+      });
+
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    } else if (typeof window !== "undefined") {
+      const savedEmail = localStorage.getItem("s2dio_auth_email");
+      const savedName = localStorage.getItem("s2dio_username");
+      if (savedEmail) {
+        setUser({ email: savedEmail, name: savedName || savedEmail.split("@")[0] });
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +107,7 @@ export default function DashboardPage() {
           <S2DioLogo variant="full" height={22} className="text-ink hover:text-white transition-colors" />
         </div>
 
-        {/* Right Edge: Connection symbol with port + Question mark symbol (No borders) */}
+        {/* Right Edge: Connection symbol with port + User status + Question mark symbol (No borders) */}
         <div className="flex items-center gap-5 text-xs text-mute">
           <div
             className="flex items-center gap-1.5 hover:text-ink transition-colors cursor-default"
@@ -79,6 +116,34 @@ export default function DashboardPage() {
             <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
             <span className="font-mono text-[11px] tracking-tight text-mute">:4949</span>
           </div>
+
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-ink font-medium text-xs">{user.name || user.email}</span>
+              <button
+                onClick={async () => {
+                  if (isSupabaseClientConfigured) {
+                    await supabase.auth.signOut();
+                  }
+                  if (typeof window !== "undefined") {
+                    localStorage.removeItem("s2dio_auth_email");
+                  }
+                  setUser(null);
+                }}
+                className="text-[11px] text-mute hover:text-ink transition-colors cursor-pointer"
+                title="Sign Out"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="text-xs text-mute hover:text-ink transition-colors font-medium cursor-pointer"
+            >
+              Sign In
+            </button>
+          )}
 
           <a
             href="#features"
@@ -245,6 +310,15 @@ export default function DashboardPage() {
           <span>Float32 PCM • WebRTC Talkback</span>
         </div>
       </footer>
+
+      {/* Sign In & Sign Up Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={() => {
+          setIsAuthModalOpen(false);
+        }}
+      />
     </div>
   );
 }

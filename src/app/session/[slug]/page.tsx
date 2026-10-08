@@ -10,6 +10,7 @@ import { MixerPopover } from "@/components/MixerPopover";
 import { FileTransferDrawer } from "@/components/FileTransferDrawer";
 import { AudioSettingsModal } from "@/components/AudioSettingsModal";
 import { S2DioLogo } from "@/components/S2DioLogo";
+import { supabase, isSupabaseClientConfigured } from "@/lib/supabase-client";
 
 export default function StudioRoomPage() {
   const params = useParams();
@@ -52,6 +53,21 @@ export default function StudioRoomPage() {
   ]);
 
   useEffect(() => {
+    if (isSupabaseClientConfigured) {
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user) {
+          const authName =
+            data.user.user_metadata?.display_name ||
+            data.user.email?.split("@")[0] ||
+            "Producer";
+          setHostName(authName);
+          setParticipants((prev) =>
+            prev.map((p) => (p.role === "host" ? { ...p, name: authName } : p))
+          );
+          return;
+        }
+      });
+    }
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("s2dio_username");
       if (saved) {
