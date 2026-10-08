@@ -125,6 +125,27 @@ export function AudioStage({
             ? "Uncompressed Float32 stereo PCM streaming via local loopback on 127.0.0.1:4949."
             : "Trigger playback in your DAW or press Play Demo in the dock to test."}
         </p>
+
+        {isHost && !isStreaming && typeof window !== "undefined" && window.location.protocol === "https:" && (
+          <div className="p-3 rounded-md bg-surface border border-accent-blue/30 text-[11px] text-mute max-w-sm mx-auto space-y-1 text-left">
+            <div className="flex items-center gap-1.5 text-accent-blue font-medium">
+              <span>Local Bridge Note</span>
+            </div>
+            <p className="leading-relaxed">
+              Browsers block HTTPS web pages from connecting to unencrypted local machine sockets (<code className="text-ink">127.0.0.1:4949</code>).
+            </p>
+            <p>
+              Open this session on your DAW machine at{" "}
+              <a
+                href={`http://localhost:3000${window.location.pathname}`}
+                className="text-ink underline hover:text-accent-blue font-mono font-medium"
+              >
+                http://localhost:3000{window.location.pathname}
+              </a>{" "}
+              to link directly with your VST3 plugin.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Floating Participant Badges in Top Right of Canvas */}
