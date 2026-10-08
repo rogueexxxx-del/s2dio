@@ -3,22 +3,18 @@ const path = require('path');
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1280,
-    height: 840,
-    minWidth: 960,
-    minHeight: 640,
-    title: 'S2DIO Control Room',
+    width: 1320,
+    height: 860,
+    minWidth: 1024,
+    minHeight: 720,
+    title: 'S2DIO Studio Control Room',
     backgroundColor: '#07080a',
+    autoHideMenuBar: true,
+    frame: true, // Standard native dark frame ensures Windows controls never collide with UI
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       webSecurity: false, // Enables local VST3 loopback on ws://127.0.0.1:4949 without HTTPS mixed-content blocks
-    },
-    titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#07080a',
-      symbolColor: '#f4f4f6',
-      height: 36,
     },
   });
 

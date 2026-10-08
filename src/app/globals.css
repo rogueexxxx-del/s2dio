@@ -126,6 +126,7 @@ body::before {
   line-height: 1.6;
   letter-spacing: 0.2px;
   transition: opacity 150ms ease;
+  white-space: nowrap;
 }
 .btn-secondary:hover {
   opacity: 0.85;
@@ -147,6 +148,7 @@ body::before {
   line-height: 1.6;
   letter-spacing: 0.2px;
   transition: border-color 150ms ease, background-color 150ms ease;
+  white-space: nowrap;
 }
 .btn-tertiary:hover {
   border-color: var(--hairline-strong);

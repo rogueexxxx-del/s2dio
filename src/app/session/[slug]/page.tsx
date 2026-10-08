@@ -441,19 +441,19 @@ export default function StudioRoomPage() {
       </main>
 
       {/* Floating Zen Bottom Dock */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 bg-surface border border-hairline rounded-lg p-2 shadow-2xl">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-surface/95 backdrop-blur-xl border border-hairline-strong rounded-xl p-2 shadow-2xl whitespace-nowrap">
         {/* Push to talk */}
         <PushToTalkButton
           isActive={isTalkbackActive}
           onStateChange={handleTalkbackChange}
         />
 
-        <div className="h-4 w-[1px] bg-hairline mx-0.5" />
+        <div className="h-5 w-[1px] bg-hairline mx-1" />
 
         {/* Share DAW Screen Video Transmission */}
         <button
           onClick={handleToggleScreenShare}
-          className={`h-9 px-3 text-xs rounded-md border transition-colors inline-flex items-center gap-1.5 cursor-pointer ${
+          className={`h-9 px-3.5 text-xs rounded-md border transition-colors inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
             isScreenSharing
               ? "bg-accent-red text-white border-accent-red font-medium"
               : "btn-tertiary"
@@ -467,10 +467,10 @@ export default function StudioRoomPage() {
         {/* Play/Stop Audio Test */}
         <button
           onClick={handleToggleTestAudio}
-          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors border ${
+          className={`h-9 px-3.5 text-xs font-medium rounded-md transition-colors border whitespace-nowrap cursor-pointer ${
             isPlayingTestAudio
               ? "bg-accent-red text-white border-accent-red"
-              : "btn-tertiary h-9 px-3 text-xs"
+              : "btn-tertiary"
           }`}
         >
           {isPlayingTestAudio ? "Stop Audio" : "Play Demo"}
@@ -479,7 +479,7 @@ export default function StudioRoomPage() {
         {/* Console Trims Modal Trigger */}
         <button
           onClick={() => setIsMixerOpen(true)}
-          className="btn-tertiary h-9 px-3 text-xs"
+          className="btn-tertiary h-9 px-3.5 text-xs whitespace-nowrap cursor-pointer"
         >
           Mixer Trims
         </button>
@@ -487,9 +487,9 @@ export default function StudioRoomPage() {
         {/* Notes & Files Toggle */}
         <button
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-          className={`h-9 px-3 text-xs rounded-md border transition-colors ${
+          className={`h-9 px-3.5 text-xs rounded-md border transition-colors whitespace-nowrap cursor-pointer ${
             isDrawerOpen
-              ? "bg-surface-card border-hairline-strong text-ink"
+              ? "bg-surface-card border-hairline-strong text-ink font-semibold"
               : "btn-tertiary"
           }`}
         >
@@ -499,7 +499,7 @@ export default function StudioRoomPage() {
         {/* Audio Engine Settings */}
         <button
           onClick={() => setIsSettingsOpen(true)}
-          className="btn-tertiary h-9 px-3 text-xs"
+          className="btn-tertiary h-9 px-3.5 text-xs whitespace-nowrap cursor-pointer"
         >
           Engine
         </button>

@@ -116,7 +116,7 @@ export function AudioStage({
         />
       )}
 
-      {/* Video Viewport or Center Focus Text */}
+      {/* Video Viewport or Center Hardware Studio Console */}
       {videoStream ? (
         <div className="relative w-full max-w-5xl h-[72vh] flex items-center justify-center rounded-lg overflow-hidden border border-hairline bg-surface shadow-2xl z-10">
           <video
@@ -169,62 +169,115 @@ export function AudioStage({
           </div>
         </div>
       ) : (
-        <div className="relative z-10 text-center space-y-3 max-w-md">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
-            <span
-              className={`w-1.5 h-1.5 rounded-full ${
-                isStreaming ? "bg-accent-green animate-pulse" : "bg-stone"
-              }`}
-            />
-            <span className="font-medium text-ink">
-              {isStreaming ? "Master Audio Active" : "DAW Audio Standby"}
-            </span>
-            <span className="text-stone">•</span>
-            <span>48kHz VST3</span>
-          </div>
-
-          <div className="text-2xl md:text-3xl text-ink font-medium tracking-tight">
-            {isStreaming ? "Listening to DAW Master Bus" : "Audio stream is ready"}
-          </div>
-
-          <p className="text-sm text-mute leading-relaxed font-sans max-w-sm mx-auto">
-            {isStreaming
-              ? "Uncompressed Float32 stereo PCM streaming via local loopback on 127.0.0.1:4949."
-              : "Trigger playback in your DAW or press Play Demo in the dock to test."}
-          </p>
-
-          {isHost && onToggleScreenShare && (
-            <div className="pt-2">
-              <button
-                onClick={onToggleScreenShare}
-                className="btn-secondary h-9 px-4 text-xs inline-flex items-center gap-2"
-              >
-                <span>🖥</span>
-                <span>Share DAW Screen</span>
-              </button>
-            </div>
-          )}
-
-          {isHost && !isStreaming && typeof window !== "undefined" && window.location.protocol === "https:" && (
-            <div className="p-3 rounded-md bg-surface border border-accent-blue/30 text-[11px] text-mute max-w-sm mx-auto space-y-1 text-left">
-              <div className="flex items-center gap-1.5 text-accent-blue font-medium">
-                <span>Local Bridge Note</span>
+        <div className="relative z-10 w-full max-w-2xl mx-auto space-y-6">
+          {/* Hardware Ingest Header Card */}
+          <div className="bg-surface/95 border border-hairline rounded-xl p-6 shadow-2xl space-y-5 backdrop-blur-md">
+            {/* Top Bar: Connection & Stream Type */}
+            <div className="flex items-center justify-between border-b border-hairline pb-4">
+              <div className="flex items-center gap-2.5">
+                <span className={`w-2.5 h-2.5 rounded-full ${isStreaming ? "bg-accent-green animate-pulse" : "bg-stone"}`} />
+                <span className="text-sm font-semibold text-ink">
+                  {isStreaming ? "DAW Master Bus Active" : "DAW Bridge Standby"}
+                </span>
+                <span className="text-[11px] px-2 py-0.5 rounded bg-surface-elevated border border-hairline font-mono text-mute">
+                  127.0.0.1:4949
+                </span>
               </div>
-              <p className="leading-relaxed">
-                Browsers block HTTPS web pages from connecting to unencrypted local machine sockets (<code className="text-ink">127.0.0.1:4949</code>).
-              </p>
-              <p>
-                Open this session on your DAW machine at{" "}
-                <a
-                  href={`http://localhost:3000${window.location.pathname}`}
-                  className="text-ink underline hover:text-accent-blue font-mono font-medium"
-                >
-                  http://localhost:3000{window.location.pathname}
-                </a>{" "}
-                to link directly with your VST3 plugin.
-              </p>
+
+              <div className="text-[11px] font-mono text-mute">
+                48.0 kHz • 32-bit Float Stereo
+              </div>
             </div>
-          )}
+
+            {/* Stereo Hardware VU Meters */}
+            <div className="space-y-3 bg-surface-elevated/70 border border-hairline rounded-lg p-4">
+              <div className="flex items-center justify-between text-[10px] font-mono text-mute uppercase tracking-wider">
+                <span>Master Bus Output</span>
+                <div className="flex gap-4">
+                  <span>-48</span>
+                  <span>-36</span>
+                  <span>-24</span>
+                  <span>-18</span>
+                  <span>-12</span>
+                  <span>-6</span>
+                  <span>-3</span>
+                  <span className="text-accent-red font-bold">0 dB</span>
+                </div>
+              </div>
+
+              {/* Left Channel */}
+              <div className="space-y-1">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono font-bold text-ink w-4">L</span>
+                  <div className="flex-1 h-3.5 bg-canvas rounded-xs overflow-hidden p-0.5 flex items-center border border-hairline">
+                    <div
+                      className="h-full rounded-xs transition-all duration-75"
+                      style={{
+                        width: `${Math.max(2, Math.min(100, ((rmsDbL + 60) / 60) * 100))}%`,
+                        backgroundColor: rmsDbL > -3 ? '#ff453a' : rmsDbL > -12 ? '#ffd60a' : '#30d158',
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono text-ink w-14 text-right">
+                    {rmsDbL > -59 ? `${rmsDbL.toFixed(1)} dB` : "-inf"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Channel */}
+              <div className="space-y-1">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono font-bold text-ink w-4">R</span>
+                  <div className="flex-1 h-3.5 bg-canvas rounded-xs overflow-hidden p-0.5 flex items-center border border-hairline">
+                    <div
+                      className="h-full rounded-xs transition-all duration-75"
+                      style={{
+                        width: `${Math.max(2, Math.min(100, ((rmsDbR + 60) / 60) * 100))}%`,
+                        backgroundColor: rmsDbR > -3 ? '#ff453a' : rmsDbR > -12 ? '#ffd60a' : '#30d158',
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono text-ink w-14 text-right">
+                    {rmsDbR > -59 ? `${rmsDbR.toFixed(1)} dB` : "-inf"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Screen Share & Instructions Box */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
+              <div className="text-xs text-mute space-y-1 text-center sm:text-left">
+                <div className="text-ink font-medium">
+                  {isStreaming ? "Audio streaming in real time" : "Ready for audio ingest"}
+                </div>
+                <div className="text-[11px]">
+                  Play your arrangement in FL Studio, Ableton, or Reaper to stream.
+                </div>
+              </div>
+
+              {isHost && onToggleScreenShare && (
+                <button
+                  onClick={onToggleScreenShare}
+                  className="btn-primary h-9 px-4 text-xs font-medium inline-flex items-center gap-2 whitespace-nowrap shadow-md cursor-pointer"
+                >
+                  <span>🖥</span>
+                  <span>Share DAW Screen (60fps)</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Broadcast & Room Info Strip */}
+          <div className="flex items-center justify-between px-2 text-[11px] text-mute">
+            <div>
+              <span>Talkback Auto-Ducking: </span>
+              <strong className="text-ink font-medium">-12 dB active</strong>
+            </div>
+            <div>
+              <span>Latency target: </span>
+              <strong className="text-ink font-medium">~5.3ms (256 smp)</strong>
+            </div>
+          </div>
         </div>
       )}
 
