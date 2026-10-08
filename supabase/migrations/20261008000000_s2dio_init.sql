@@ -194,3 +194,45 @@ create policy "Users can view own subscription"
   on subscriptions for select
   to authenticated
   using (auth.uid() = user_id);
+
+-- ==============================================================================
+-- 8. Auto-create profile on user signup
+-- ==============================================================================
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email, display_name)
+  values (
+    new.id,
+    new.email,
+    coalesce(new.raw_user_meta_data->>'display_name', split_part(new.email, '@', 1))
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Drop if exists and recreate trigger
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+-- ==============================================================================
+-- 9. Storage Bucket: session-files for audio stems & WAVs
+-- ==============================================================================
+insert into storage.buckets (id, name, public)
+values ('session-files', 'session-files', false)
+on conflict (id) do nothing;
+
+-- Storage RLS: allow authenticated users and service role access
+create policy "Authenticated users can upload stems"
+  on storage.objects for insert
+  to authenticated
+  with check (bucket_id = 'session-files');
+
+create policy "Session participants can read stems"
+  on storage.objects for select
+  to authenticated, anon
+  using (bucket_id = 'session-files');
+
