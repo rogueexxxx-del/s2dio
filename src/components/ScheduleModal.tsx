@@ -52,7 +52,7 @@ export function ScheduleModal({
   };
 
   const handleCopyInviteText = () => {
-    const formatted = `🎵 S2DIO Studio Session: ${eventDetails.title}\n📅 Date: ${date} at ${time} (${duration} min)\n🔗 Join Room: ${roomUrl}\n(Lossless 48kHz stereo master stream • Zero install required)`;
+    const formatted = `S2DIO Studio Session: ${eventDetails.title}\nDate: ${date} at ${time} (${duration} min)\nJoin Room: ${roomUrl}\n(Lossless 48kHz stereo master stream • Zero install required)`;
     navigator.clipboard.writeText(formatted);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

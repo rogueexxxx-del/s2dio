@@ -285,10 +285,9 @@ export default function DashboardPage() {
 
             <button
               onClick={() => setIsScheduleOpen(true)}
-              className="btn-secondary h-11 px-5 text-sm inline-flex items-center gap-1.5 cursor-pointer"
+              className="btn-secondary h-11 px-5 text-sm inline-flex items-center cursor-pointer"
               title="Schedule session with calendar invite & .ics export"
             >
-              <span>📅</span>
               <span>Schedule Session</span>
             </button>
           </div>

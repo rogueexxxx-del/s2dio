@@ -2744,11 +2744,13 @@
     function copyInvite() {
       navigator.clipboard.writeText("https://s2dio.app/guest/studio");
       const txt = document.getElementById("copyInviteText");
-      txt.textContent = "✓ Copied";
-      setTimeout(() => { txt.textContent = "Copy Invite Link"; }, 2000);
+      if (txt) {
+        txt.textContent = "✓ Copied";
+        setTimeout(() => { txt.textContent = "Copy Invite Link"; }, 2000);
+      }
     }
-    document.getElementById("btnCopyInvite").addEventListener("click", copyInvite);
-    document.getElementById("btnInvitePill").addEventListener("click", copyInvite);
+    const btnCopyInvite = document.getElementById("btnCopyInvite");
+    if (btnCopyInvite) btnCopyInvite.addEventListener("click", copyInvite);
 
     // ==========================================
     // 1. Session Scheduling & .ICS Calendar Export
@@ -2758,12 +2760,18 @@
     const btnCloseSchedule = document.getElementById("btnCloseSchedule");
     const schedDateInput = document.getElementById("schedDate");
 
-    const tmrw = new Date();
-    tmrw.setDate(tmrw.getDate() + 1);
-    schedDateInput.value = tmrw.toISOString().split("T")[0];
+    if (schedDateInput) {
+      const tmrw = new Date();
+      tmrw.setDate(tmrw.getDate() + 1);
+      schedDateInput.value = tmrw.toISOString().split("T")[0];
+    }
 
-    btnSchedulePill.addEventListener("click", () => scheduleModal.classList.add("open"));
-    btnCloseSchedule.addEventListener("click", () => scheduleModal.classList.remove("open"));
+    if (btnSchedulePill && scheduleModal) {
+      btnSchedulePill.addEventListener("click", () => scheduleModal.classList.add("open"));
+    }
+    if (btnCloseSchedule && scheduleModal) {
+      btnCloseSchedule.addEventListener("click", () => scheduleModal.classList.remove("open"));
+    }
 
     let selectedDuration = 60;
     scheduleModal.querySelectorAll(".opt-btn").forEach(btn => {
@@ -2830,7 +2838,7 @@
 
     document.getElementById("btnCopySchedInvite").addEventListener("click", (e) => {
       const ev = getSchedEvent();
-      const msg = `🎵 S2DIO Studio Session: ${ev.title}\n📅 Date: ${ev.date} at ${ev.time} (${ev.duration} min)\n🔗 Join Room: ${ev.roomUrl}\n(Lossless 48kHz stereo master stream • Zero install required)`;
+      const msg = `S2DIO Studio Session: ${ev.title}\nDate: ${ev.date} at ${ev.time} (${ev.duration} min)\nJoin Room: ${ev.roomUrl}\n(Lossless 48kHz stereo master stream • Zero install required)`;
       navigator.clipboard.writeText(msg);
       e.target.textContent = "✓ Copied to Clipboard";
       setTimeout(() => { e.target.textContent = "Copy Invite Message"; }, 2000);
