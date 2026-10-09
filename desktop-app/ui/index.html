@@ -1273,7 +1273,9 @@
 
         <!-- Floating actions on video -->
         <div class="video-floating-actions">
-          <button class="video-btn" id="btnFullscreen">⛶ Fullscreen</button>
+          <button class="video-btn" id="btnFullscreen">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>Fullscreen
+          </button>
           <button class="video-btn danger" id="btnStopVideo">Stop DAW</button>
         </div>
 
@@ -1437,7 +1439,7 @@
     <!-- Stems Tab -->
     <div class="drawer-content" id="stemsView" style="display:none;">
       <div class="stem-dropzone" id="stemDropzone">
-        <div style="font-size:20px; margin-bottom:4px;">📥</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 6px auto; display:block; opacity:0.6;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <div>Drag and drop WAV, AIFF, or MIDI stems here</div>
       </div>
       <div id="stemsListContainer" style="display:flex; flex-direction:column; gap:8px;">

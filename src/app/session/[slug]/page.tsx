@@ -15,6 +15,7 @@ import { supabase, isSupabaseClientConfigured } from "@/lib/supabase-client";
 import { useMultiTrackRecorder, RecordedTake } from "@/lib/useMultiTrackRecorder";
 import { TakesModal } from "@/components/TakesModal";
 import { ScheduleModal } from "@/components/ScheduleModal";
+import { RecordingOptionsModal, RecFormat, RecRouting } from "@/components/RecordingOptionsModal";
 
 export default function StudioRoomPage() {
   const params = useParams();
@@ -47,6 +48,9 @@ export default function StudioRoomPage() {
   } = useMultiTrackRecorder();
   const [isTakesModalOpen, setIsTakesModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [recFormat, setRecFormat] = useState<RecFormat>("wav");
+  const [recRouting, setRecRouting] = useState<RecRouting>("all");
+  const [isRecOptionsOpen, setIsRecOptionsOpen] = useState(false);
 
   const [hostName, setHostName] = useState("Producer");
 
@@ -447,9 +451,9 @@ export default function StudioRoomPage() {
         await engine.resume();
         const daw = engine.getDawStream();
         const mic = engine.getMicStream();
-        startRecording(daw, mic);
+        startRecording(daw, mic, { format: recFormat, routing: recRouting });
       } else {
-        startRecording(null, null);
+        startRecording(null, null, { format: recFormat, routing: recRouting });
       }
     } else {
       const take = await stopRecording();
@@ -608,7 +612,7 @@ export default function StudioRoomPage() {
           }`}
           title="Stream DAW Window or Screen Live (60fps)"
         >
-          <span>🖥</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           <span>{isScreenSharing ? "Stop DAW" : "Share DAW"}</span>
         </button>
 
@@ -617,28 +621,38 @@ export default function StudioRoomPage() {
           onClick={handleToggleCamera}
           className={`h-9 px-3.5 text-xs rounded-md border transition-colors inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
             isCameraActive
-              ? "bg-accent-blue text-white border-accent-blue font-medium"
+              ? "bg-accent-red text-white border-accent-red font-medium"
               : "btn-tertiary"
           }`}
           title="Broadcast Studio Webcam"
         >
-          <span>📷</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           <span>{isCameraActive ? "Stop Cam" : "Camera"}</span>
         </button>
 
-        {/* Multi-track Stem Recording Button */}
-        <button
-          onClick={handleToggleRecording}
-          className={`h-9 px-3.5 text-xs rounded-md border transition-colors inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-            isRecording
-              ? "bg-accent-red text-white border-accent-red font-semibold animate-pulse"
-              : "btn-tertiary"
-          }`}
-          title="Record session takes with isolated Master and Vocal stems"
-        >
-          <span className={`w-2 h-2 rounded-full ${isRecording ? "bg-white" : "bg-accent-red"}`} />
-          <span>{isRecording ? `REC ${Math.floor(recordingSeconds / 60)}:${(recordingSeconds % 60).toString().padStart(2, "0")}` : "Record"}</span>
-        </button>
+        {/* Multi-track Stem Recording Button & Options */}
+        <div className="flex items-center gap-0.5">
+          <button
+            onClick={handleToggleRecording}
+            className={`h-9 px-3.5 text-xs rounded-l-md border transition-colors inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+              isRecording
+                ? "bg-accent-red text-white border-accent-red font-semibold animate-pulse"
+                : "btn-tertiary"
+            }`}
+            title="Record session takes with isolated Master and Vocal stems"
+          >
+            <span className={`w-2 h-2 rounded-full ${isRecording ? "bg-white" : "bg-accent-red"}`} />
+            <span>{isRecording ? `REC ${Math.floor(recordingSeconds / 60)}:${(recordingSeconds % 60).toString().padStart(2, "0")}` : "Record"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsRecOptionsOpen(true)}
+            className="btn-tertiary h-9 px-2 text-xs rounded-r-md border-l-0 cursor-pointer text-mute hover:text-white"
+            title="Recording Format & Quality"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
 
         {takes.length > 0 && (
           <button
@@ -729,6 +743,18 @@ export default function StudioRoomPage() {
         takes={takes}
         onDownloadStem={downloadTakeStem}
         onAddToStems={handleAddTakeToStems}
+      />
+
+      {/* Recording Format & Routing Modal */}
+      <RecordingOptionsModal
+        isOpen={isRecOptionsOpen}
+        onClose={() => setIsRecOptionsOpen(false)}
+        format={recFormat}
+        routing={recRouting}
+        onSave={(fmt, routing) => {
+          setRecFormat(fmt);
+          setRecRouting(routing);
+        }}
       />
 
       {/* Sign In & Sign Up Modal */}

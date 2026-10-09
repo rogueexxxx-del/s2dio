@@ -129,7 +129,7 @@ export default function GuestPortalPage() {
         {!isPlaying ? (
           <div className="max-w-md w-full p-8 bg-surface border border-hairline rounded-lg text-center space-y-6 shadow-2xl">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-blue" />
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
               <span>Studio Invitation</span>
             </div>
 
@@ -150,7 +150,7 @@ export default function GuestPortalPage() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleStartListening();
                 }}
-                className="w-full px-3.5 py-2 rounded-md bg-canvas border border-hairline text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-blue/50 text-center transition-colors"
+                className="w-full px-3.5 py-2 rounded-md bg-canvas border border-hairline text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-green/50 text-center transition-colors"
               />
             </div>
 

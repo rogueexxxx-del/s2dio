@@ -13,6 +13,11 @@ export interface RecordedTake {
   vocalUrl: string | null;
 }
 
+export interface RecordingConfig {
+  format?: "wav" | "webm-320" | "webm-192";
+  routing?: "all" | "master" | "vocal";
+}
+
 export function useMultiTrackRecorder() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
@@ -38,16 +43,22 @@ export function useMultiTrackRecorder() {
     return "";
   };
 
-  const startRecording = useCallback((masterStream?: MediaStream | null, vocalStream?: MediaStream | null) => {
+  const startRecording = useCallback((masterStream?: MediaStream | null, vocalStream?: MediaStream | null, config?: RecordingConfig) => {
     if (isRecording) return;
     masterChunksRef.current = [];
     vocalChunksRef.current = [];
 
     const mimeType = getMimeType();
-    const options: MediaRecorderOptions = mimeType ? { mimeType } : {};
+    const options: MediaRecorderOptions = {
+      ...(mimeType ? { mimeType } : {}),
+      audioBitsPerSecond: config?.format === "webm-192" ? 192000 : 320000,
+    };
+
+    const shouldRecordMaster = !config?.routing || config.routing === "all" || config.routing === "master";
+    const shouldRecordVocal = !config?.routing || config.routing === "all" || config.routing === "vocal";
 
     // 1. Master DAW Stream Recorder
-    if (masterStream && masterStream.getAudioTracks().length > 0) {
+    if (shouldRecordMaster && masterStream && masterStream.getAudioTracks().length > 0) {
       try {
         const mr = new MediaRecorder(masterStream, options);
         mr.ondataavailable = (e) => {
@@ -61,7 +72,7 @@ export function useMultiTrackRecorder() {
     }
 
     // 2. Vocal / Talkback Stream Recorder
-    if (vocalStream && vocalStream.getAudioTracks().length > 0) {
+    if (shouldRecordVocal && vocalStream && vocalStream.getAudioTracks().length > 0) {
       try {
         const vr = new MediaRecorder(vocalStream, options);
         vr.ondataavailable = (e) => {

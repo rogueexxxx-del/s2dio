@@ -187,10 +187,11 @@ export function AudioStage({
                   }
                 }
               }}
-              className="px-2.5 py-1.5 rounded-md bg-surface/85 hover:bg-surface border border-hairline text-ink text-xs backdrop-blur-md transition-colors cursor-pointer"
+              className="px-2.5 py-1.5 rounded-md bg-surface/85 hover:bg-surface border border-hairline text-ink text-xs backdrop-blur-md transition-colors cursor-pointer inline-flex items-center gap-1.5"
               title="Toggle Fullscreen"
             >
-              ⛶ Fullscreen
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              <span>Fullscreen</span>
             </button>
             {isHost && videoStream && onToggleScreenShare && (
               <button
@@ -203,7 +204,7 @@ export function AudioStage({
             {isHost && cameraStream && onToggleCamera && (
               <button
                 onClick={onToggleCamera}
-                className="px-2.5 py-1.5 rounded-md bg-accent-blue/90 hover:bg-accent-blue text-white text-xs font-medium transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded-md bg-accent-red hover:bg-accent-red/90 text-white text-xs font-medium transition-colors cursor-pointer"
               >
                 Stop Cam
               </button>
@@ -310,7 +311,7 @@ export function AudioStage({
                   onClick={onToggleScreenShare}
                   className="btn-primary h-9 px-4 text-xs font-medium inline-flex items-center gap-2 whitespace-nowrap shadow-md cursor-pointer"
                 >
-                  <span>🖥</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                   <span>Share DAW Screen (60fps)</span>
                 </button>
               )}
@@ -369,7 +370,7 @@ export function AudioStage({
                     if (e.key === "Escape") setEditingId(null);
                   }}
                   autoFocus
-                  className="w-20 bg-canvas border border-accent-blue/50 rounded px-1.5 py-0.5 text-xs text-ink focus:outline-hidden"
+                  className="w-20 bg-canvas border border-accent-green/50 rounded px-1.5 py-0.5 text-xs text-ink focus:outline-hidden"
                 />
               ) : (
                 <button
@@ -404,7 +405,7 @@ export function AudioStage({
             className="flex items-center gap-1.5 px-2.5 py-1.5 bg-surface/80 hover:bg-surface border border-dashed border-hairline hover:border-hairline-strong rounded-md transition-all text-xs text-mute hover:text-ink cursor-pointer"
             title="Copy guest invite link"
           >
-            <span className="text-accent-blue font-bold">+</span>
+            <span className="text-accent-green font-bold">+</span>
             <span>Invite</span>
           </button>
         )}
@@ -429,11 +430,11 @@ export function AudioStage({
           </button>
         ) : (
           screenControlStatus === "requested" && (
-            <div className="flex items-center gap-1.5 bg-surface-elevated border border-accent-blue/40 px-2.5 py-1 rounded-md text-xs">
+            <div className="flex items-center gap-1.5 bg-surface-elevated border border-hairline-strong px-2.5 py-1 rounded-md text-xs">
               <span className="text-ink">Guest requested control</span>
               <button
                 onClick={() => onGrantControl(true)}
-                className="px-2 py-0.5 rounded bg-accent-blue text-white text-[11px] font-medium hover:bg-accent-blue/90"
+                className="px-2 py-0.5 rounded bg-accent-green text-surface-canvas text-[11px] font-semibold hover:bg-accent-green/90"
               >
                 Grant
               </button>

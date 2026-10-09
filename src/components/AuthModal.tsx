@@ -184,7 +184,7 @@ export function AuthModal({
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Enter your producer name or alias"
-                className="w-full px-3 py-2 bg-canvas border border-hairline rounded text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-blue/60"
+                className="w-full px-3 py-2 bg-canvas border border-hairline rounded text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-green/60"
               />
             </div>
           )}
@@ -197,7 +197,7 @@ export function AuthModal({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="producer@studio.com"
-              className="w-full px-3 py-2 bg-canvas border border-hairline rounded text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-blue/60"
+              className="w-full px-3 py-2 bg-canvas border border-hairline rounded text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-green/60"
             />
           </div>
 
@@ -211,7 +211,7 @@ export function AuthModal({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-3 py-2 bg-canvas border border-hairline rounded text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-blue/60"
+                className="w-full px-3 py-2 bg-canvas border border-hairline rounded text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-green/60"
               />
             </div>
           )}
