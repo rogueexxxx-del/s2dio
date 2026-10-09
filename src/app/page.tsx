@@ -175,14 +175,14 @@ export default function DashboardPage() {
       {/* ReactBits Technical Studio Grid Background */}
       <StudioGridBackground />
 
-      {/* Top Studio Header (Clean, Polished Spacing) */}
-      <header className="h-16 px-6 md:px-12 flex items-center justify-between bg-transparent z-30">
+      {/* Top Studio Header (Clean, Polished Spacing, Max-W Framed) */}
+      <header className="w-full max-w-6xl mx-auto h-16 px-4 sm:px-6 md:px-12 flex items-center justify-between bg-transparent z-30">
         <div className="flex items-center gap-3">
           <S2DioLogo variant="full" height={22} className="text-ink hover:text-white transition-colors" />
         </div>
 
         {/* Right Edge: Local port badge + VST3 download pill + User auth status pill + FAQ Help button */}
-        <div className="flex items-center gap-4 text-xs text-mute">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 text-xs text-mute">
           <div
             className="hidden sm:flex items-center gap-1.5 hover:text-ink transition-colors cursor-default"
             title="Local VST3 Bridge running on port 4949"
@@ -194,7 +194,7 @@ export default function DashboardPage() {
           <a
             href="/downloads/S2DIO-Windows-VST3.zip"
             download="S2DIO-Windows-VST3.zip"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-elevated hover:bg-surface-card border border-hairline text-ink hover:text-white transition-colors text-[11px] font-medium"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-elevated hover:bg-surface-card border border-hairline text-ink hover:text-white transition-colors text-[11px] font-medium"
             title="Download S2DIO Master Bridge VST3 and 1-click installer"
           >
             <span>Download VST3</span>
@@ -202,10 +202,12 @@ export default function DashboardPage() {
           </a>
 
           {user ? (
-            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-surface-elevated border border-hairline text-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
-              <span className="text-ink font-semibold tracking-tight">{user.name || user.email?.split("@")[0] || "Producer"}</span>
-              <span className="w-px h-3 bg-hairline" />
+            <div className="flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-surface-elevated border border-hairline text-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-green shrink-0" />
+              <span className="text-ink font-semibold tracking-tight max-w-[80px] sm:max-w-[140px] truncate">
+                {user.name || user.email?.split("@")[0] || "Producer"}
+              </span>
+              <span className="w-px h-3 bg-hairline shrink-0" />
               <button
                 onClick={async () => {
                   if (isSupabaseClientConfigured) {
@@ -220,7 +222,7 @@ export default function DashboardPage() {
                   }
                   setUser(null);
                 }}
-                className="text-[11px] text-mute hover:text-white transition-colors cursor-pointer"
+                className="text-[11px] text-mute hover:text-white transition-colors cursor-pointer shrink-0"
                 title="Sign Out"
               >
                 Sign Out
@@ -229,7 +231,7 @@ export default function DashboardPage() {
           ) : (
             <button
               onClick={() => setIsAuthModalOpen(true)}
-              className="px-3.5 py-1.5 rounded-full bg-surface-elevated hover:bg-surface-card border border-hairline text-xs text-ink hover:text-white transition-colors font-medium cursor-pointer"
+              className="px-3 sm:px-3.5 py-1.5 rounded-full bg-surface-elevated hover:bg-surface-card border border-hairline text-xs text-ink hover:text-white transition-colors font-medium cursor-pointer"
             >
               Sign In
             </button>
@@ -237,7 +239,7 @@ export default function DashboardPage() {
 
           <a
             href="#faqs"
-            className="w-7 h-7 rounded-full bg-surface-elevated hover:bg-surface-card border border-hairline flex items-center justify-center text-xs font-mono font-medium text-mute hover:text-ink transition-colors"
+            className="w-7 h-7 rounded-full bg-surface-elevated hover:bg-surface-card border border-hairline flex items-center justify-center text-xs font-mono font-medium text-mute hover:text-ink transition-colors shrink-0"
             title="Frequently Asked Questions & Help"
             aria-label="FAQ & Help"
           >
@@ -247,30 +249,30 @@ export default function DashboardPage() {
       </header>
 
       {/* Hero Section */}
-      <main className="max-w-5xl w-full mx-auto px-6 pt-14 pb-24 flex-1 flex flex-col items-center justify-center space-y-16 z-10">
+      <main className="max-w-5xl lg:max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-8 pt-10 sm:pt-14 pb-16 sm:pb-24 flex-1 flex flex-col items-center justify-center space-y-12 sm:space-y-16 lg:space-y-20 z-10">
         {/* Pitch Headline & Download Primary Action */}
-        <div className="text-center space-y-5 max-w-3xl mx-auto w-full">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
+        <div className="text-center space-y-4 sm:space-y-5 max-w-3xl mx-auto w-full">
+          <div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-[11px] sm:text-xs text-mute text-center">
             <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
             <span className="text-ink font-medium">S2DIO v1.0 for Windows</span>
-            <span className="text-stone">•</span>
+            <span className="text-stone hidden xs:inline">•</span>
             <span>48kHz Float32 Master Stream</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-lemon font-normal text-ink tracking-tight leading-tight">
+          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-lemon font-normal text-ink tracking-tight leading-snug sm:leading-tight">
             Real-time audio collaboration for music producers
           </h1>
 
-          <p className="text-base md:text-lg text-mute leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-mute leading-relaxed max-w-2xl mx-auto px-2">
             Stream your DAW master bus in uncompressed stereo directly to clients and collaborators with 60fps screen sharing, smart auto-ducking talkback, and drag-and-drop stem exchange.
           </p>
 
           {/* Primary Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-3 w-full max-w-sm sm:max-w-none mx-auto">
             <a
               href="/downloads/S2DIO-Windows-Setup.exe"
               download="S2DIO-Windows-Setup.exe"
-              className="btn-primary h-11 px-6 text-sm font-semibold inline-flex items-center gap-2.5 shadow-lg shadow-white/5 cursor-pointer"
+              className="btn-primary h-11 px-5 sm:px-6 text-sm font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-white/5 cursor-pointer w-full sm:w-auto"
             >
               <span>Download S2DIO Installer (.exe)</span>
               <span className="text-xs opacity-75">(5.0 MB)</span>
@@ -278,21 +280,21 @@ export default function DashboardPage() {
 
             <button
               onClick={() => setActiveTab(activeTab === "join" ? "create" : "join")}
-              className="btn-secondary h-11 px-5 text-sm cursor-pointer"
+              className="btn-secondary bg-surface-elevated sm:bg-transparent border border-hairline sm:border-hairline/80 hover:bg-surface-card h-11 px-5 text-sm cursor-pointer w-full sm:w-auto justify-center"
             >
               Join Room via Code
             </button>
 
             <button
               onClick={() => setIsScheduleOpen(true)}
-              className="btn-secondary h-11 px-5 text-sm inline-flex items-center cursor-pointer"
+              className="btn-secondary bg-surface-elevated sm:bg-transparent border border-hairline sm:border-hairline/80 hover:bg-surface-card h-11 px-5 text-sm inline-flex items-center cursor-pointer w-full sm:w-auto justify-center"
               title="Schedule session with calendar invite & .ics export"
             >
               <span>Schedule Session</span>
             </button>
           </div>
 
-          <div className="text-[11px] text-mute flex items-center justify-center gap-3 pt-1">
+          <div className="text-[11px] text-mute flex flex-wrap items-center justify-center gap-x-3 gap-y-1 pt-1 text-center">
             <span>Includes S2DIO Control Room (.exe)</span>
             <span>•</span>
             <span>VST3 64-bit Plugin</span>
@@ -330,20 +332,20 @@ export default function DashboardPage() {
         )}
 
         {/* Comprehensive How S2DIO Works Section with ReactBits Spotlight */}
-        <section className="w-full max-w-4xl space-y-8 pt-8">
-          <div className="text-center space-y-2">
+        <section className="w-full max-w-4xl lg:max-w-5xl space-y-6 sm:space-y-8 pt-4 sm:pt-8">
+          <div className="text-center space-y-2 px-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
               <span>Studio Ingest Pipeline</span>
             </div>
-            <h2 className="text-2xl font-semibold text-ink tracking-tight">How S2DIO Works</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold text-ink tracking-tight">How S2DIO Works</h2>
             <p className="text-xs text-mute max-w-lg mx-auto">
               A unified audio pipeline from your DAW master bus straight to your collaborator speakers with zero audio degradation.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <SpotlightCard className="p-6 space-y-3" spotlightColor="rgba(89, 212, 153, 0.08)">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+            <SpotlightCard className="p-5 sm:p-6 space-y-3" spotlightColor="rgba(89, 212, 153, 0.08)">
               <div className="flex items-center justify-between">
                 <div className="w-7 h-7 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
                   01
@@ -361,7 +363,7 @@ export default function DashboardPage() {
               </div>
             </SpotlightCard>
 
-            <SpotlightCard className="p-6 space-y-3" spotlightColor="rgba(89, 212, 153, 0.08)">
+            <SpotlightCard className="p-5 sm:p-6 space-y-3" spotlightColor="rgba(89, 212, 153, 0.08)">
               <div className="flex items-center justify-between">
                 <div className="w-7 h-7 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
                   02
@@ -379,7 +381,7 @@ export default function DashboardPage() {
               </div>
             </SpotlightCard>
 
-            <SpotlightCard className="p-6 space-y-3" spotlightColor="rgba(89, 212, 153, 0.08)">
+            <SpotlightCard className="p-5 sm:p-6 space-y-3 sm:col-span-2 lg:col-span-1" spotlightColor="rgba(89, 212, 153, 0.08)">
               <div className="flex items-center justify-between">
                 <div className="w-7 h-7 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
                   03
@@ -400,49 +402,49 @@ export default function DashboardPage() {
         </section>
 
         {/* Feature Grid: ReactBits Spotlight Cards, Clean Headings, NO Emojis/Icons */}
-        <section id="features" className="w-full max-w-4xl space-y-6 pt-10">
-          <div className="text-center space-y-1.5">
-            <h2 className="text-xl font-semibold text-ink tracking-tight">Built Specifically for Producers</h2>
+        <section id="features" className="w-full max-w-4xl lg:max-w-5xl space-y-6 pt-6 sm:pt-10">
+          <div className="text-center space-y-1.5 px-2">
+            <h2 className="text-xl sm:text-2xl font-semibold text-ink tracking-tight">Built Specifically for Producers</h2>
             <p className="text-xs text-mute">Engineered for mixdowns, tracking sessions, vocal direction, and remote arrangement.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            <SpotlightCard className="p-5 sm:p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
               <h3 className="text-sm font-semibold text-white tracking-tight">Lossless Float32 PCM</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Direct master bus ingestion with 48kHz 32-bit floating point precision. Zero lossy compression during mixdown evaluation.
               </p>
             </SpotlightCard>
 
-            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+            <SpotlightCard className="p-5 sm:p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
               <h3 className="text-sm font-semibold text-white tracking-tight">60fps DAW Screen Share</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Stream your arrangement timeline, piano roll, or plugin GUI in high-definition 60fps video with full-screen playback.
               </p>
             </SpotlightCard>
 
-            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+            <SpotlightCard className="p-5 sm:p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
               <h3 className="text-sm font-semibold text-white tracking-tight">Smart Talkback Ducking</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Speak naturally while the track plays. DAW playback automatically ducks by -12dB when talkback triggers, then snaps right back.
               </p>
             </SpotlightCard>
 
-            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+            <SpotlightCard className="p-5 sm:p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
               <h3 className="text-sm font-semibold text-white tracking-tight">Drag-to-DAW Stem Exchange</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Drop full mixes or vocal takes into the room. Collaborators can drag stems straight from the browser into their DAW timeline.
               </p>
             </SpotlightCard>
 
-            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+            <SpotlightCard className="p-5 sm:p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
               <h3 className="text-sm font-semibold text-white tracking-tight">Ultra-Low Ingest Latency</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Sub-5ms local buffer design gives instant feedback as you hit play, scrub markers, or tweak EQ in your DAW.
               </p>
             </SpotlightCard>
 
-            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+            <SpotlightCard className="p-5 sm:p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
               <h3 className="text-sm font-semibold text-white tracking-tight">Zero-Install Guest Portal</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Remote artists and clients join via Chrome, Safari, or Edge without downloading any software or creating an account.
@@ -452,12 +454,12 @@ export default function DashboardPage() {
         </section>
 
         {/* Comprehensive FAQs Section with ReactBits Accordion */}
-        <section id="faqs" className="w-full max-w-4xl space-y-6 pt-12">
-          <div className="text-center space-y-2">
+        <section id="faqs" className="w-full max-w-4xl lg:max-w-5xl space-y-6 pt-8 sm:pt-12">
+          <div className="text-center space-y-2 px-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
               <span>Producer Knowledge Base</span>
             </div>
-            <h2 className="text-2xl font-semibold text-ink tracking-tight">Frequently Asked Questions</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold text-ink tracking-tight">Frequently Asked Questions</h2>
             <p className="text-xs text-mute max-w-md mx-auto">
               Everything you need to know about setting up S2DIO, latency, audio fidelity, and remote control security.
             </p>
@@ -469,19 +471,19 @@ export default function DashboardPage() {
         </section>
 
         {/* Download Hub / CTA Card */}
-        <section className="w-full max-w-4xl bg-surface border border-hairline rounded-xl p-8 text-center space-y-6 shadow-2xl relative overflow-hidden">
-          <div className="space-y-2 max-w-xl mx-auto">
-            <h2 className="text-2xl font-semibold text-ink tracking-tight">Ready to Elevate Your Studio Sessions?</h2>
+        <section className="w-full max-w-4xl lg:max-w-5xl bg-surface border border-hairline rounded-xl p-5 sm:p-8 lg:p-10 text-center space-y-5 sm:space-y-6 shadow-2xl relative overflow-hidden">
+          <div className="space-y-2 max-w-xl mx-auto px-2">
+            <h2 className="text-xl sm:text-2xl font-semibold text-ink tracking-tight">Ready to Elevate Your Studio Sessions?</h2>
             <p className="text-xs text-mute leading-relaxed">
               Download the 64-bit Windows setup package or grab the standalone VST3 bundle. Collaborators connect instantly in their browser with zero setup.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 max-w-md sm:max-w-none mx-auto">
             <a
               href="/downloads/S2DIO-Windows-Setup.exe"
               download="S2DIO-Windows-Setup.exe"
-              className="btn-primary h-12 px-7 text-sm font-semibold inline-flex items-center gap-2.5 shadow-lg shadow-white/5 cursor-pointer w-full sm:w-auto justify-center"
+              className="btn-primary h-11 sm:h-12 px-6 sm:px-7 text-sm font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-white/5 cursor-pointer w-full sm:w-auto"
             >
               <span>Download S2DIO Setup (.exe)</span>
               <span className="text-xs opacity-75">(Windows 64-bit)</span>
@@ -490,13 +492,13 @@ export default function DashboardPage() {
             <a
               href="/downloads/S2DIO-Windows-VST3.zip"
               download="S2DIO-Windows-VST3.zip"
-              className="btn-secondary h-12 px-6 text-sm font-medium inline-flex items-center gap-2 w-full sm:w-auto justify-center"
+              className="btn-secondary bg-surface-elevated sm:bg-transparent border border-hairline hover:bg-surface-card h-11 sm:h-12 px-6 text-sm font-medium inline-flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               <span>Download VST3 Bundle (.zip)</span>
             </a>
           </div>
 
-          <div className="text-[11px] text-mute flex flex-wrap items-center justify-center gap-3 pt-2">
+          <div className="text-[11px] text-mute flex flex-wrap items-center justify-center gap-x-3 gap-y-1 pt-1 text-center">
             <span>Windows 10 & 11 (64-bit)</span>
             <span>•</span>
             <span>FL Studio • Ableton • Cubase • Reaper • Studio One</span>
@@ -506,7 +508,7 @@ export default function DashboardPage() {
         </section>
 
         {/* DAW Compatibility Badge Strip */}
-        <div className="w-full max-w-4xl py-6 px-4 bg-surface border border-hairline rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-mute">
+        <div className="w-full max-w-4xl lg:max-w-5xl py-4 sm:py-5 px-4 sm:px-6 bg-surface border border-hairline rounded-lg flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-mute text-center sm:text-left">
           <div>
             <span className="text-ink font-medium">DAW Support: </span>
             <span>FL Studio 20+ • Ableton Live 11+ • Cubase 12+ • Studio One 6+ • Reaper 7+</span>
@@ -517,17 +519,17 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Clean Studio Footer (Borderless, Blends into Background) */}
-      <footer className="py-8 px-6 md:px-12 bg-transparent text-xs text-mute/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      {/* Clean Studio Footer (Max-W Framed, Responsive Stacking) */}
+      <footer className="w-full max-w-6xl mx-auto py-8 px-4 sm:px-6 md:px-12 bg-transparent text-xs text-mute/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
           <span className="text-ink font-medium">S2DIO</span>
           <span className="text-stone">•</span>
           <span>Lossless Audio Collab for Music Creators</span>
         </div>
 
-        <div className="flex items-center gap-4 text-stone">
+        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 sm:gap-4 text-stone">
           <span>Latency target: ~3ms</span>
-          <span>•</span>
+          <span className="hidden xs:inline">•</span>
           <span>Float32 PCM • WebRTC Talkback</span>
         </div>
       </footer>

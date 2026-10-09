@@ -60,7 +60,7 @@ export function ScheduleModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xs p-4 select-none font-sans animate-in fade-in duration-150">
-      <div className="w-full max-w-md bg-surface border border-hairline rounded-xl overflow-hidden shadow-2xl space-y-5 p-6">
+      <div className="w-full max-w-md bg-surface border border-hairline rounded-xl overflow-hidden shadow-2xl space-y-5 p-4 sm:p-6">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-hairline/60 pb-3">
           <div className="flex items-center gap-2">
