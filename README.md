@@ -1,112 +1,113 @@
 # S2DIO
 
-Real-time audio collaboration for music producers and collaborators.
+Real-time, lossless audio collaboration platform for music producers, mix engineers, vocalists, and clients.
 
-S2DIO connects your digital audio workstation (DAW) to a private web room. You stream pristine stereo master bus audio directly to clients, vocalists, or co-producers with zero lag. Collaborators join directly in their web browser without installing a DAW, plugins, or creating an account.
+S2DIO connects your digital audio workstation (DAW) directly to a private control room. You stream pristine stereo master bus audio with zero lag and zero lossy speech-codec compression. Collaborators join directly in their web browser without installing a DAW, plugins, or creating an account.
 
 ---
 
-## How It Works
+## Architecture & Data Flow
 
 ```
-[Producer DAW]
+[Producer DAW (FL Studio, Ableton, Cubase, Studio One, Reaper)]
        │
-       ▼ (Lossless 48kHz Stereo Audio)
+       ▼ (Lossless 48kHz 32-bit Float Audio via Master Bus)
 [S2DIO Master Bridge VST3]
        │
-       ▼ (Local binary WebSocket on 127.0.0.1:4949)
-[Host Browser Studio Room]
+       ▼ (Local binary stream on 127.0.0.1:4949)
+[S2DIO Windows Control Room Desktop App]
        │
-       ▼ (Encrypted WebRTC Peer-to-Peer)
-[Collaborator Browser (Any device, anywhere)]
+       ▼ (Encrypted WebRTC Peer-to-Peer + 60fps DAW Screen Share)
+[Collaborator Browser (Chrome, Safari, Firefox, Edge on Windows/macOS/iOS/Android)]
 ```
 
 1. **For the Producer (Host)**:
-   - Place the `S2DIO Master Bridge` VST3 plugin on your Master channel in Ableton Live, FL Studio, Logic, Reaper, or Studio One.
-   - Open your studio session link in the browser.
-   - Hit play in your DAW. The web room immediately locks to the stream.
+   - Run the 1-click installer: `S2DIO-Windows-Setup.exe`.
+   - Place `S2DIO Master Bridge` VST3 on your Master mixer channel.
+   - Launch `S2DIO` desktop app from your desktop or start menu.
+   - The engine automatically binds to local port `:4949` and locks the master audio stream.
 
 2. **For the Collaborator (Guest)**:
-   - Open the invite link in any modern browser (Chrome, Safari, Firefox, Edge on macOS, Windows, iOS, or Android).
-   - Type your name and click **Start Listening**.
+   - Click the private room invite link sent by the producer.
+   - Join instantly in any browser with zero installation or account requirements.
    - Hear uncompressed 48kHz stereo master bus audio in real time.
-   - Talk back using push-to-talk, send notes in the side drawer, drag and drop stems, or request DAW screen control.
+   - Talk back using push-to-talk (with automatic DAW music ducking), exchange WAV stems, or request interactive screen co-pilot control.
 
 ---
 
 ## Core Capabilities
 
-- **Lossless DAW Stream**: Intercepts 48kHz 32-bit float audio directly inside `processBlock()` and streams binary PCM chunks via local loopback.
-- **Zero-Install Collaborator Access**: Collaborators only need a browser. No DAW, no audio drivers, and no account needed.
-- **Push-to-Talk with Smart Ducking**: Talkback microphone channel with automatic -12dB music ducking prevents audio feedback.
-- **Stem & File Exchange**: Drag and drop WAV, AIFF, and MIDI stems directly inside the session drawer with presigned storage uploads.
-- **Live Hardware-Calibrated Metering**: Real-time dual RMS and peak stereo VU meters calibrated to digital full-scale (dBFS).
-- **Remote DAW Screen Control**: Guests can request interactive control with single-click host approval.
+- **Lossless Float32 Master Audio**: Intercepts 48kHz 32-bit floating point audio directly inside `processBlock()` and streams binary PCM chunks via local loopback. Sub-5ms internal buffer latency.
+- **Native Windows Control Room (.exe)**: High-performance desktop host app with hardware-accelerated WebView2 engine and system tray integration.
+- **60fps DAW Screen Share**: High-definition, low-latency screen streaming designed for timelines, piano rolls, and third-party plugin GUIs.
+- **Zero-Install Collaborator Access**: Collaborators join via Chrome, Safari, Firefox, or Edge. No DAW, audio drivers, or software installation needed.
+- **Smart Talkback Ducking**: Auto-ducking talkback channel attenuates DAW playback by -12dB when speaking and snaps smoothly back to unity gain.
+- **Remote DAW Screen Control**: Collaborators can request interactive mouse/keyboard co-pilot control with instant ESC revoke by host.
+- **Stem & File Exchange**: Drag-to-DAW stem transfer zone supporting uncompressed WAV, AIFF, and MIDI files.
+- **Live Hardware-Calibrated Metering**: Real-time dual RMS and peak stereo VU meters calibrated to digital full-scale (dBFS) with clip detection.
+- **Producer Profiles & Online Friends**: Custom producer badges, telemetry stats, and 1-click room invites to online producer friends.
+- **ReactBits UI System**: Modern, responsive dark obsidian interface powered by ReactBits SpotlightCard, Accordion FAQ, and technical studio grid backgrounds.
+
+---
+
+## Windows Installation
+
+### Option 1: 1-Click Installer (Recommended)
+Download and run the installer:
+- **`dist/S2DIO-Windows-Setup-v1.0.0.exe`** (or `public/downloads/S2DIO-Windows-Setup.exe`)
+- Installs the native desktop app to `%ProgramFiles%\S2DIO`.
+- Installs `S2DIO Master Bridge.vst3` directly to `%CommonProgramFiles%\VST3` for FL Studio, Ableton Live, Cubase, Reaper, and Studio One.
+- Creates Desktop and Start Menu shortcuts.
+- Includes automated clean-slate wipe to ensure zero conflicts with older builds.
+
+### Option 2: Clean-Slate Uninstaller
+If you ever want to perform a 100% clean reset:
+- Run `public/downloads/Clean-Slate-Uninstall.bat` as Administrator.
+- Wipes all installed files, registry shortcuts, and local application cache cleanly.
 
 ---
 
 ## Tech Stack
 
-- **Frontend & Web Engine**: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS
-- **Audio Processing**: Web Audio API (AudioContext, AnalyserNode, ChannelSplitter, GainNode)
-- **Plugin Architecture**: JUCE 8, C++20, IXWebSocket (RFC 6455 binary frame streaming)
-- **Database & Storage**: Supabase (PostgreSQL with Row Level Security, Storage Buckets)
-- **Payments (Optional)**: Stripe Checkout & Billing Portal
+- **Desktop Application**: .NET 9 WinForms with Microsoft WebView2 Core, Win32 raw input and low-latency audio loopback.
+- **Frontend & Web Portal**: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS, ReactBits components.
+- **Audio Processing**: Web Audio API (AudioContext, AnalyserNode, ChannelSplitter, GainNode), 32-bit float PCM streamer.
+- **Plugin Architecture**: JUCE 8, C++20, universal 64-bit VST3 bundle with IXWebSocket RFC 6455 binary frame support.
+- **Database & Storage**: Supabase (PostgreSQL with RLS, storage buckets for stem sharing).
+- **Installer**: Inno Setup 6 with x64 solid LZMA2 compression.
 
 ---
 
-## Getting Started
+## Development & Building
 
 ### 1. Web Application
-
-Clone the repository and install dependencies:
-
 ```bash
 npm install
-```
-
-Run the development server:
-
-```bash
 npm run dev
 ```
 
-Build and run for production:
-
+Build for production:
 ```bash
 npm run build
 npm start
 ```
 
-Visit `http://localhost:3000` to launch a new studio room.
-
----
-
-### 2. Native VST3 Plugin
-
-Pre-compiled plugin binaries for Windows are located in the `dist/` directory:
-- `dist/S2DIO Master Bridge.vst3` (VST3 bundle)
-- `dist/S2DIO Master Bridge.exe` (Standalone test app)
-
-To install manually on Windows:
-Copy `dist/S2DIO Master Bridge.vst3` to your system VST3 directory:
-```
-C:\Program Files\Common Files\VST3\
+### 2. Desktop Application (.NET 9)
+```bash
+dotnet publish desktop-app/desktop-app.csproj -c Release -r win-x64 --self-contained false -o dist/app
 ```
 
-#### Building the Plugin from Source
-
-Requirements:
-- CMake 3.22 or higher
-- Visual Studio 2022 with C++ desktop workload (or Clang on macOS)
-
+### 3. VST3 Plugin (C++ / CMake)
 ```bash
 cd vst3
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-The build automatically pulls JUCE 8 and IXWebSocket via CMake FetchContent. Output binaries are generated in `vst3/build/S2DioBridge_artefacts/Release/`.
+### 4. Windows Installer (Inno Setup)
+```bash
+"C:\Users\<user>\AppData\Local\Programs\Inno Setup 6\ISCC.exe" installer\S2DIO.iss
+```
 
 ---
 
