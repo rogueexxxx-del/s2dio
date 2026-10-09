@@ -12,6 +12,8 @@ ArchitecturesInstallIn64BitMode=x64
 DisableProgramGroupPage=yes
 PrivilegesRequired=admin
 CloseApplications=yes
+SetupIconFile=app.ico
+UninstallIconFile=app.ico
 
 [InstallDelete]
 ; Delete any previous flat file so Windows can create the VST3 bundle directory cleanly
@@ -25,8 +27,8 @@ Source: "..\dist\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs c
 Source: "..\dist\S2DIO Master Bridge.vst3\*"; DestDir: "{commoncf}\VST3\S2DIO Master Bridge.vst3"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\S2DIO Control Room"; Filename: "{app}\S2DIO.exe"
-Name: "{autodesktop}\S2DIO Control Room"; Filename: "{app}\S2DIO.exe"
+Name: "{autoprograms}\S2DIO Control Room"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"
+Name: "{autodesktop}\S2DIO Control Room"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"
 
 [Run]
 Filename: "{app}\S2DIO.exe"; Description: "Launch S2DIO Control Room"; Flags: nowait postinstall skipifsilent
