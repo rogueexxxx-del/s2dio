@@ -11,6 +11,11 @@ OutputBaseFilename=S2DIO-Windows-Setup-v1.0.0
 ArchitecturesInstallIn64BitMode=x64
 DisableProgramGroupPage=yes
 PrivilegesRequired=admin
+CloseApplications=yes
+
+[InstallDelete]
+; Delete any previous flat file so Windows can create the VST3 bundle directory cleanly
+Type: files; Name: "{commoncf}\VST3\S2DIO Master Bridge.vst3"
 
 [Files]
 ; VST3 64-bit Plugin installed directly into Windows standard VST3 folder for FL Studio, Ableton, Cubase
@@ -29,3 +34,18 @@ Name: "{autodesktop}\S2DIO Control Room"; Filename: "{app}\S2DIO Control Room.ba
 
 [Run]
 Filename: "{app}\S2DIO Master Bridge.exe"; Description: "Launch S2DIO Master Bridge"; Flags: nowait postinstall skipifsilent
+
+[Code]
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  OldFile: String;
+begin
+  if CurStep = ssInstall then
+  begin
+    OldFile := ExpandConstant('{commoncf}\VST3\S2DIO Master Bridge.vst3');
+    if FileExists(OldFile) then
+    begin
+      DeleteFile(OldFile);
+    end;
+  end;
+end;
