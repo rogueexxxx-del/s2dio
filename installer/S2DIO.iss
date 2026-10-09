@@ -18,22 +18,18 @@ CloseApplications=yes
 Type: files; Name: "{commoncf}\VST3\S2DIO Master Bridge.vst3"
 
 [Files]
-; VST3 64-bit Plugin installed directly into Windows standard VST3 folder for FL Studio, Ableton, Cubase
+; 1. Native Windows Desktop Control Room App
+Source: "..\dist\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+; 2. VST3 64-bit Plugin installed directly into Windows standard VST3 folder for FL Studio, Ableton, Cubase
 Source: "..\dist\S2DIO Master Bridge.vst3\*"; DestDir: "{commoncf}\VST3\S2DIO Master Bridge.vst3"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-; Standalone Audio Engine Executable
-Source: "..\dist\S2DIO Master Bridge.exe"; DestDir: "{app}"; DestName: "S2DIO Master Bridge.exe"; Flags: ignoreversion
-
-; Desktop Launcher
-Source: "..\Run-S2DIO-Desktop.bat"; DestDir: "{app}"; DestName: "S2DIO Control Room.bat"; Flags: ignoreversion
-
 [Icons]
-Name: "{autoprograms}\S2DIO Master Bridge"; Filename: "{app}\S2DIO Master Bridge.exe"
-Name: "{autoprograms}\S2DIO Control Room"; Filename: "{app}\S2DIO Control Room.bat"
-Name: "{autodesktop}\S2DIO Control Room"; Filename: "{app}\S2DIO Control Room.bat"
+Name: "{autoprograms}\S2DIO Control Room"; Filename: "{app}\S2DIO.exe"
+Name: "{autodesktop}\S2DIO Control Room"; Filename: "{app}\S2DIO.exe"
 
 [Run]
-Filename: "{app}\S2DIO Master Bridge.exe"; Description: "Launch S2DIO Master Bridge"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\S2DIO.exe"; Description: "Launch S2DIO Control Room"; Flags: nowait postinstall skipifsilent
 
 [Code]
 procedure CurStepChanged(CurStep: TSetupStep);

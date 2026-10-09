@@ -39,3 +39,13 @@ Thumbs.db
 
 # Test artifacts
 /test-results/
+
+# .NET Build artifacts
+**/bin/
+**/obj/
+*.user
+
+# Dist binaries
+/dist/app/
+/dist/*.exe
+*.tsbuildinfo
