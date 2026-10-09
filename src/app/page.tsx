@@ -520,17 +520,27 @@ export default function DashboardPage() {
       </main>
 
       {/* Clean Studio Footer (Max-W Framed, Responsive Stacking) */}
-      <footer className="w-full max-w-6xl mx-auto py-8 px-4 sm:px-6 md:px-12 bg-transparent text-xs text-mute/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <footer className="w-full max-w-6xl mx-auto py-8 px-4 sm:px-6 md:px-12 bg-transparent text-xs text-mute/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left border-t border-hairline/30">
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
-          <span className="text-ink font-medium">S2DIO</span>
+          <span className="text-ink font-semibold tracking-tight">S2DIO</span>
           <span className="text-stone">•</span>
           <span>Lossless Audio Collab for Music Creators</span>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 sm:gap-4 text-stone">
-          <span>Latency target: ~3ms</span>
-          <span className="hidden xs:inline">•</span>
-          <span>Float32 PCM • WebRTC Talkback</span>
+        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 sm:gap-3 text-mute">
+          <span>
+            Designed and made by{" "}
+            <a
+              href="https://www.roguex.art"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-ink hover:text-accent-green font-medium transition-colors underline underline-offset-4 decoration-hairline hover:decoration-accent-green"
+            >
+              Revanth Rangisetti
+            </a>
+          </span>
+          <span className="hidden xs:inline text-stone">•</span>
+          <span className="text-stone">Float32 PCM • 48kHz VST3</span>
         </div>
       </footer>
 
