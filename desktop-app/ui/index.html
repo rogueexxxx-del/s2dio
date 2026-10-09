@@ -1115,24 +1115,26 @@
       letter-spacing: 0.05em;
     }
 
-    .field-input {
-      height: 42px;
-      background: var(--canvas);
+    .field-input, .profile-input, input[type="date"], input[type="time"], input[type="text"], select.profile-input {
+      height: 40px;
+      background: var(--surface-elevated);
       border: 1px solid var(--hairline);
       border-radius: 8px;
-      padding: 0 14px;
+      padding: 0 12px;
       font-size: 13px;
       color: var(--white);
       outline: none;
       transition: border-color 0.15s ease;
+      color-scheme: dark;
+      font-family: inherit;
     }
 
-    .field-input:focus {
+    .field-input:focus, .profile-input:focus, input[type="date"]:focus, input[type="time"]:focus {
       border-color: var(--hairline-strong);
     }
 
     .btn-submit {
-      height: 42px;
+      height: 40px;
       background: var(--white);
       color: #000;
       border-radius: 8px;
@@ -1155,7 +1157,7 @@
       line-height: 1.4;
     }
 
-    /* Engine Settings Options Grid */
+    /* Engine & Options Grid */
     .options-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1172,12 +1174,18 @@
       font-weight: 500;
       cursor: pointer;
       text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .opt-btn:hover {
+      background: var(--surface-card);
+      color: var(--white);
     }
 
     .opt-btn.active {
-      background: var(--white);
-      border-color: var(--white);
-      color: #000;
+      background: rgba(89, 212, 153, 0.15);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
       font-weight: 600;
     }
   </style>
@@ -1208,10 +1216,8 @@
       <span class="pipeline-text">48kHz VST3 Pipeline</span>
 
       <div class="participants-bar">
-        <button class="pill-btn" id="btnHostPill" title="Producer Profile & Account Details">
-          <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);" id="hostStatusDot"></span>
-          <span id="hostPillName">Producer</span>
-          <span style="font-size:9px; color:var(--mute); margin-left:2px;">[Host]</span>
+        <button class="pill-btn subtle" id="btnSchedulePill" title="Schedule studio session with calendar invite (.ics)">
+          <span>Schedule</span>
         </button>
 
         <button class="pill-btn subtle" id="btnFriendsPill" title="Friends & Collaborators">
@@ -1224,18 +1230,16 @@
           <span style="width:6px; height:6px; border-radius:50%; background:var(--ash);"></span>
           <span id="guestPillLabel">Collaborator</span>
         </button>
-
-        <button class="pill-btn subtle" id="btnSchedulePill" title="Schedule studio session with calendar invite (.ics)">
-          <span>📅 Schedule</span>
-        </button>
-
-        <button class="pill-btn subtle" id="btnInvitePill">
-          <span>+ Invite</span>
-        </button>
       </div>
 
       <button class="btn-invite" id="btnCopyInvite">
         <span id="copyInviteText">Copy Invite Link</span>
+      </button>
+
+      <button class="pill-btn" id="btnHostPill" title="Producer Profile & Account Details" style="margin-left:4px;">
+        <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);" id="hostStatusDot"></span>
+        <span id="hostPillName">Producer</span>
+        <span style="font-size:9px; color:var(--mute); margin-left:2px;">[Host]</span>
       </button>
     </div>
   </header>
@@ -1375,10 +1379,15 @@
       <span>Camera</span>
     </button>
 
-    <button class="dock-btn" id="btnDockRecord" title="Record Multi-Track Stems (Master DAW & Vocals)">
-      <span style="width:7px; height:7px; border-radius:50%; background:var(--accent-red);" id="recDot"></span>
-      <span id="recBtnLabel">Record</span>
-    </button>
+    <div style="display:flex; align-items:center; gap:2px;">
+      <button class="dock-btn" id="btnDockRecord" title="Record Multi-Track Stems (Master DAW & Vocals)">
+        <span style="width:7px; height:7px; border-radius:50%; background:var(--accent-red);" id="recDot"></span>
+        <span id="recBtnLabel">Record</span>
+      </button>
+      <button class="dock-btn" id="btnDockRecSettings" title="Recording Format & Stem Routing" style="padding:0 8px; font-size:11px; color:var(--mute);">
+        Options
+      </button>
+    </div>
 
     <button class="dock-btn" id="btnDockTakes" style="display:none; color:var(--accent-green);" title="View recorded takes & stems">
       <span id="takesCountLabel">Takes (0)</span>
@@ -1622,7 +1631,7 @@
     <div class="modal-card" style="width:420px;">
       <div class="modal-header-row">
         <div class="modal-title-group">
-          <span>📅 Schedule Studio Session</span>
+          <span>Schedule Studio Session</span>
         </div>
         <button class="modal-close-btn" id="btnCloseSchedule">&times;</button>
       </div>
@@ -1632,7 +1641,7 @@
         <input type="text" class="profile-input" id="schedTitle" value="Mixdown & Vocal Tracking">
       </div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
         <div class="form-field">
           <label class="field-label">Date</label>
           <input type="date" class="profile-input" id="schedDate">
@@ -1652,11 +1661,16 @@
         </div>
       </div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;">
-        <button class="btn-submit" id="btnExportIcs" style="margin-top:0;">📅 Export .ICS</button>
-        <button class="btn-submit" id="btnGoogleCal" style="margin-top:0; background:var(--surface-elevated); color:var(--white); border:1px solid var(--hairline);">Google Cal ↗</button>
+      <div style="padding:10px 12px; border-radius:6px; background:var(--surface-elevated); border:1px solid var(--hairline); font-size:11px;">
+        <div style="color:var(--mute); margin-bottom:2px;">Session Room Link:</div>
+        <div style="font-family:monospace; color:var(--accent-green); word-break:break-all;" id="schedRoomUrlDisplay">https://s2dio.live/session/studio</div>
       </div>
-      <button class="dock-btn" id="btnCopySchedInvite" style="width:100%; height:32px; margin-top:6px; justify-content:center;">Copy Invite Message</button>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px;">
+        <button class="btn-submit" id="btnExportIcs" style="margin-top:0;">Export .ICS File</button>
+        <button class="btn-submit" id="btnGoogleCal" style="margin-top:0; background:var(--surface-elevated); color:var(--white); border:1px solid var(--hairline);">Google Calendar ↗</button>
+      </div>
+      <button class="dock-btn" id="btnCopySchedInvite" style="width:100%; height:34px; margin-top:4px; justify-content:center;">Copy Invite Message</button>
     </div>
   </div>
 
@@ -1674,6 +1688,52 @@
       <div id="takesListContainer" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin-top:10px;">
         <div style="text-align:center; padding:20px; font-size:12px; color:var(--mute);">No takes recorded yet. Click Record in the dock to capture.</div>
       </div>
+    </div>
+  </div>
+
+  <!-- Recording Quality & Stem Routing Modal -->
+  <div class="modal-overlay" id="recOptionsModal">
+    <div class="modal-card" style="width:420px;">
+      <div class="modal-header-row">
+        <div class="modal-title-group">
+          <span style="color:var(--accent-red); font-size:14px;">●</span>
+          <span>Recording Format & Quality</span>
+        </div>
+        <button class="modal-close-btn" id="btnCloseRecOptions">&times;</button>
+      </div>
+
+      <!-- Format / Quality Selector -->
+      <div class="form-field">
+        <label class="field-label">Format & Bit Depth</label>
+        <div class="options-grid" id="recFormatGrid">
+          <div class="opt-btn active" data-fmt="wav">Lossless WAV (Float32)</div>
+          <div class="opt-btn" data-fmt="webm-320">WebM Opus (320k)</div>
+          <div class="opt-btn" data-fmt="webm-192">WebM Opus (192k)</div>
+        </div>
+        <div style="font-size:11px; color:var(--mute); margin-top:2px;" id="recFmtDesc">
+          Uncompressed 48.0 kHz 32-bit float stereo WAV for DAW drag-and-drop.
+        </div>
+      </div>
+
+      <!-- Stem Routing Selector -->
+      <div class="form-field">
+        <label class="field-label">Multi-Track Stem Routing</label>
+        <div class="options-grid" id="recRoutingGrid">
+          <div class="opt-btn active" data-routing="all">Master + Vocals</div>
+          <div class="opt-btn" data-routing="master">Master Bus Only</div>
+          <div class="opt-btn" data-routing="vocal">Vocals Only</div>
+        </div>
+        <div style="font-size:11px; color:var(--mute); margin-top:2px;" id="recRouteDesc">
+          Captures separate synchronized stem files for the DAW mix and performer microphone.
+        </div>
+      </div>
+
+      <div style="padding:10px 12px; border-radius:6px; background:var(--surface-elevated); border:1px solid var(--hairline); display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+        <span style="color:var(--mute);">Hardware Audio Pipeline</span>
+        <span style="font-family:monospace; color:var(--accent-green); font-weight:600;">48,000 Hz Stereo</span>
+      </div>
+
+      <button class="btn-submit" id="btnSaveRecOptions">Save & Apply</button>
     </div>
   </div>
 
@@ -2777,15 +2837,29 @@
     });
 
     // ==========================================
-    // 2. Multi-Track Local Stem Recording
+    // 2. Multi-Track Local Stem Recording Engine
     // ==========================================
     let isRecordingSession = false;
     let recElapsed = 0;
     let recTimer = null;
+    let recFormat = localStorage.getItem("s2dio_rec_fmt") || "wav"; // 'wav', 'webm-320', 'webm-192'
+    let recRouting = localStorage.getItem("s2dio_rec_routing") || "all"; // 'all', 'master', 'vocal'
+    
+    // WebM recorders
     let masterRecorder = null;
     let vocalRecorder = null;
     let masterChunks = [];
     let vocalChunks = [];
+
+    // Lossless WAV float buffers
+    let masterPcmL = [];
+    let masterPcmR = [];
+    let vocalPcmL = [];
+    let vocalPcmR = [];
+    let masterProc = null;
+    let vocalProc = null;
+    let micSourceNode = null;
+
     const recordedTakes = [];
 
     const btnDockRecord = document.getElementById("btnDockRecord");
@@ -2797,38 +2871,215 @@
     const btnCloseTakes = document.getElementById("btnCloseTakes");
     const takesListContainer = document.getElementById("takesListContainer");
 
+    const btnDockRecSettings = document.getElementById("btnDockRecSettings");
+    const recOptionsModal = document.getElementById("recOptionsModal");
+    const btnCloseRecOptions = document.getElementById("btnCloseRecOptions");
+    const btnSaveRecOptions = document.getElementById("btnSaveRecOptions");
+
+    // Rec Options Modal Open/Close
+    if (btnDockRecSettings) {
+      btnDockRecSettings.addEventListener("click", () => {
+        recOptionsModal.classList.add("open");
+      });
+    }
+    if (btnCloseRecOptions) {
+      btnCloseRecOptions.addEventListener("click", () => {
+        recOptionsModal.classList.remove("open");
+      });
+    }
+    if (btnSaveRecOptions) {
+      btnSaveRecOptions.addEventListener("click", () => {
+        recOptionsModal.classList.remove("open");
+      });
+    }
+
+    // Rec Options Format selector
+    const fmtButtons = document.querySelectorAll("#recFormatGrid .opt-btn");
+    fmtButtons.forEach(btn => {
+      if (btn.dataset.fmt === recFormat) btn.classList.add("active");
+      else btn.classList.remove("active");
+
+      btn.addEventListener("click", () => {
+        fmtButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        recFormat = btn.dataset.fmt;
+        localStorage.setItem("s2dio_rec_fmt", recFormat);
+
+        const desc = document.getElementById("recFmtDesc");
+        if (desc) {
+          if (recFormat === "wav") desc.textContent = "Uncompressed 48.0 kHz 32-bit float stereo WAV for DAW drag-and-drop.";
+          else if (recFormat === "webm-320") desc.textContent = "High-definition 320 kbps Opus stream in WebM container.";
+          else desc.textContent = "Standard 192 kbps Opus stream for lightweight transfer.";
+        }
+      });
+    });
+
+    // Rec Options Routing selector
+    const routingButtons = document.querySelectorAll("#recRoutingGrid .opt-btn");
+    routingButtons.forEach(btn => {
+      if (btn.dataset.routing === recRouting) btn.classList.add("active");
+      else btn.classList.remove("active");
+
+      btn.addEventListener("click", () => {
+        routingButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        recRouting = btn.dataset.routing;
+        localStorage.setItem("s2dio_rec_routing", recRouting);
+
+        const desc = document.getElementById("recRouteDesc");
+        if (desc) {
+          if (recRouting === "all") desc.textContent = "Captures separate synchronized stem files for the DAW mix and performer microphone.";
+          else if (recRouting === "master") desc.textContent = "Captures only the 48kHz DAW master arrangement stream.";
+          else desc.textContent = "Captures only the microphone talkback / vocal topline stream.";
+        }
+      });
+    });
+
     btnDockTakes.addEventListener("click", () => takesModal.classList.add("open"));
     btnCloseTakes.addEventListener("click", () => takesModal.classList.remove("open"));
 
-    btnDockRecord.addEventListener("click", () => {
+    // WAV Encoder: Writes true 32-bit IEEE float RIFF/WAVE container
+    function encodeWavBlob(samplesL, samplesR, sampleRate = 48000) {
+      const numFrames = samplesL.length;
+      const numChannels = samplesR ? 2 : 1;
+      const bytesPerSample = 4; // 32-bit float
+      const blockAlign = numChannels * bytesPerSample;
+      const byteRate = sampleRate * blockAlign;
+      const dataSize = numFrames * blockAlign;
+      const buffer = new ArrayBuffer(44 + dataSize);
+      const view = new DataView(buffer);
+
+      const writeStr = (offset, s) => {
+        for (let i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i));
+      };
+
+      writeStr(0, "RIFF");
+      view.setUint32(4, 36 + dataSize, true);
+      writeStr(8, "WAVE");
+      writeStr(12, "fmt ");
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 3, true); // IEEE float format code 3
+      view.setUint16(22, numChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, byteRate, true);
+      view.setUint16(32, blockAlign, true);
+      view.setUint16(34, 32, true); // 32 bits
+      writeStr(36, "data");
+      view.setUint32(40, dataSize, true);
+
+      let offset = 44;
+      if (numChannels === 2) {
+        for (let i = 0; i < numFrames; i++) {
+          view.setFloat32(offset, samplesL[i], true);
+          offset += 4;
+          view.setFloat32(offset, samplesR[i], true);
+          offset += 4;
+        }
+      } else {
+        for (let i = 0; i < numFrames; i++) {
+          view.setFloat32(offset, samplesL[i], true);
+          offset += 4;
+        }
+      }
+
+      return new Blob([buffer], { type: "audio/wav" });
+    }
+
+    async function ensureAudioReady() {
+      if (!audioCtx) initAudio();
+      if (audioCtx && audioCtx.state === "suspended") {
+        await audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    btnDockRecord.addEventListener("click", async () => {
+      await ensureAudioReady();
+
       if (!isRecordingSession) {
         // Start Recording
+        recElapsed = 0;
         masterChunks = [];
         vocalChunks = [];
-        recElapsed = 0;
+        masterPcmL = [];
+        masterPcmR = [];
+        vocalPcmL = [];
+        vocalPcmR = [];
 
-        let started = false;
-        if (audioCtx && dawGain) {
+        const shouldRecordMaster = recRouting === "all" || recRouting === "master";
+        const shouldRecordVocal = recRouting === "all" || recRouting === "vocal";
+
+        // If recording vocal and mic is not yet acquired, try acquiring it
+        if (shouldRecordVocal && !micStream) {
           try {
-            const dest = audioCtx.createMediaStreamDestination();
-            dawGain.connect(dest);
-            masterRecorder = new MediaRecorder(dest.stream);
-            masterRecorder.ondataavailable = (e) => { if (e.data.size > 0) masterChunks.push(e.data); };
-            masterRecorder.start(100);
-            started = true;
-          } catch (err) {
-            console.warn("Could not start master recorder:", err);
+            micStream = await navigator.mediaDevices.getUserMedia({
+              audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false,
+                sampleRate: 48000
+              }
+            });
+            if (audioCtx) {
+              micSourceNode = audioCtx.createMediaStreamSource(micStream);
+            }
+          } catch (e) {
+            console.warn("Vocal mic unavailable for recording:", e);
           }
         }
 
-        if (micStream) {
-          try {
-            vocalRecorder = new MediaRecorder(micStream);
-            vocalRecorder.ondataavailable = (e) => { if (e.data.size > 0) vocalChunks.push(e.data); };
-            vocalRecorder.start(100);
-            started = true;
-          } catch (err) {
-            console.warn("Could not start vocal recorder:", err);
+        if (recFormat === "wav") {
+          // Pure 32-bit Float PCM Capture via ScriptProcessor
+          if (shouldRecordMaster && dawGain && audioCtx) {
+            masterProc = audioCtx.createScriptProcessor(4096, 2, 2);
+            masterProc.onaudioprocess = (e) => {
+              if (!isRecordingSession) return;
+              masterPcmL.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+              masterPcmR.push(new Float32Array(e.inputBuffer.getChannelData(1)));
+            };
+            dawGain.connect(masterProc);
+            masterProc.connect(audioCtx.destination);
+          }
+
+          if (shouldRecordVocal && micStream && audioCtx) {
+            if (!micSourceNode) micSourceNode = audioCtx.createMediaStreamSource(micStream);
+            vocalProc = audioCtx.createScriptProcessor(4096, 1, 1);
+            vocalProc.onaudioprocess = (e) => {
+              if (!isRecordingSession) return;
+              vocalPcmL.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+            };
+            micSourceNode.connect(vocalProc);
+            vocalProc.connect(audioCtx.destination);
+          }
+        } else {
+          // WebM Opus Capture via MediaRecorder
+          const bps = recFormat === "webm-320" ? 320000 : 192000;
+          if (shouldRecordMaster && dawGain && audioCtx) {
+            try {
+              const dest = audioCtx.createMediaStreamDestination();
+              dawGain.connect(dest);
+              masterRecorder = new MediaRecorder(dest.stream, {
+                mimeType: MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/webm",
+                audioBitsPerSecond: bps
+              });
+              masterRecorder.ondataavailable = (e) => { if (e.data.size > 0) masterChunks.push(e.data); };
+              masterRecorder.start(100);
+            } catch (err) {
+              console.warn("Could not start master MediaRecorder:", err);
+            }
+          }
+
+          if (shouldRecordVocal && micStream) {
+            try {
+              vocalRecorder = new MediaRecorder(micStream, {
+                mimeType: MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/webm",
+                audioBitsPerSecond: bps
+              });
+              vocalRecorder.ondataavailable = (e) => { if (e.data.size > 0) vocalChunks.push(e.data); };
+              vocalRecorder.start(100);
+            } catch (err) {
+              console.warn("Could not start vocal MediaRecorder:", err);
+            }
           }
         }
 
@@ -2856,16 +3107,54 @@
         recBtnLabel.textContent = "Record";
 
         const onStopFinalize = () => {
-          const masterBlob = new Blob(masterChunks, { type: "audio/webm" });
-          const vocalBlob = vocalChunks.length > 0 ? new Blob(vocalChunks, { type: "audio/webm" }) : null;
           const takeNum = recordedTakes.length + 1;
           const takeName = `Take ${takeNum}`;
           const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const ext = recFormat === "wav" ? "wav" : "webm";
+
+          let masterBlob = null;
+          let vocalBlob = null;
+
+          if (recFormat === "wav") {
+            // Flatten Float32 arrays
+            if (masterPcmL.length > 0) {
+              const totalL = masterPcmL.reduce((acc, c) => acc + c.length, 0);
+              const flatL = new Float32Array(totalL);
+              const flatR = new Float32Array(totalL);
+              let offset = 0;
+              for (let i = 0; i < masterPcmL.length; i++) {
+                flatL.set(masterPcmL[i], offset);
+                flatR.set(masterPcmR[i], offset);
+                offset += masterPcmL[i].length;
+              }
+              masterBlob = encodeWavBlob(flatL, flatR, audioCtx ? audioCtx.sampleRate : 48000);
+            }
+
+            if (vocalPcmL.length > 0) {
+              const totalV = vocalPcmL.reduce((acc, c) => acc + c.length, 0);
+              const flatV = new Float32Array(totalV);
+              let offset = 0;
+              for (let i = 0; i < vocalPcmL.length; i++) {
+                flatV.set(vocalPcmL[i], offset);
+                offset += vocalPcmL[i].length;
+              }
+              vocalBlob = encodeWavBlob(flatV, null, audioCtx ? audioCtx.sampleRate : 48000);
+            }
+
+            // Disconnect processors
+            if (masterProc) { masterProc.disconnect(); masterProc = null; }
+            if (vocalProc) { vocalProc.disconnect(); vocalProc = null; }
+          } else {
+            if (masterChunks.length > 0) masterBlob = new Blob(masterChunks, { type: "audio/webm" });
+            if (vocalChunks.length > 0) vocalBlob = new Blob(vocalChunks, { type: "audio/webm" });
+          }
 
           const take = {
             id: `take-${Date.now()}`,
             name: `${takeName} (${timeStr})`,
-            durationSecs: finalSecs,
+            durationSecs: Math.max(1, finalSecs),
+            format: recFormat,
+            ext,
             masterBlob,
             vocalBlob
           };
@@ -2876,37 +3165,43 @@
           takesCountLabel.textContent = `Takes (${recordedTakes.length})`;
 
           // Add card to stems drawer
-          const stemsView = document.getElementById("stemsView");
-          const card = document.createElement("div");
-          card.className = "stem-card";
-          card.innerHTML = `
-            <div class="stem-icon">WAV</div>
-            <div class="stem-meta">
-              <div class="stem-name">${takeName}_Master.webm</div>
-              <div class="stem-sub">${(masterBlob.size / 1024).toFixed(0)} KB • Recorded Take</div>
-            </div>
-            <button class="stem-drag-handle" style="cursor:pointer;" onclick="downloadBlobTake('${take.id}', 'master')">Download</button>
-          `;
-          stemsView.prepend(card);
-          document.getElementById("tabStemsBtn").textContent = `Stems (${recordedTakes.length})`;
+          if (masterBlob) {
+            const stemsView = document.getElementById("stemsView");
+            const card = document.createElement("div");
+            card.className = "stem-card";
+            card.innerHTML = `
+              <div class="stem-icon">${ext.toUpperCase()}</div>
+              <div class="stem-meta">
+                <div class="stem-name">${takeName}_Master.${ext}</div>
+                <div class="stem-sub">${(masterBlob.size / 1024).toFixed(0)} KB • ${recFormat === "wav" ? "Lossless 48kHz WAV" : "Opus WebM"}</div>
+              </div>
+              <button class="stem-drag-handle" style="cursor:pointer;" onclick="downloadBlobTake('${take.id}', 'master')">Download</button>
+            `;
+            stemsView.prepend(card);
+            document.getElementById("tabStemsBtn").textContent = `Stems (${recordedTakes.length})`;
+          }
 
           // Render in takes modal
           renderTakesList();
           takesModal.classList.add("open");
         };
 
-        let pending = 0;
-        if (masterRecorder && masterRecorder.state !== "inactive") {
-          pending++;
-          masterRecorder.onstop = () => { pending--; if (pending <= 0) onStopFinalize(); };
-          masterRecorder.stop();
+        if (recFormat === "wav") {
+          onStopFinalize();
+        } else {
+          let pending = 0;
+          if (masterRecorder && masterRecorder.state !== "inactive") {
+            pending++;
+            masterRecorder.onstop = () => { pending--; if (pending <= 0) onStopFinalize(); };
+            masterRecorder.stop();
+          }
+          if (vocalRecorder && vocalRecorder.state !== "inactive") {
+            pending++;
+            vocalRecorder.onstop = () => { pending--; if (pending <= 0) onStopFinalize(); };
+            vocalRecorder.stop();
+          }
+          if (pending === 0) onStopFinalize();
         }
-        if (vocalRecorder && vocalRecorder.state !== "inactive") {
-          pending++;
-          vocalRecorder.onstop = () => { pending--; if (pending <= 0) onStopFinalize(); };
-          vocalRecorder.stop();
-        }
-        if (pending === 0) onStopFinalize();
       }
     });
 
@@ -2918,7 +3213,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${take.name.replace(/\s+/g, "_")}_${type === "master" ? "Master" : "Vocal"}.webm`;
+      a.download = `${take.name.replace(/[^a-zA-Z0-9_-]/g, "_")}_${type === "master" ? "Master" : "Vocal"}.${take.ext || "wav"}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -2926,18 +3221,36 @@
     };
 
     function renderTakesList() {
-      takesListContainer.innerHTML = recordedTakes.map(t => `
-        <div style="padding:10px; background:var(--surface-elevated); border:1px solid var(--hairline); border-radius:6px; display:flex; flex-direction:column; gap:6px;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-weight:600; font-size:12px; color:var(--white);">${t.name}</div>
-            <span style="font-size:10px; color:var(--mute); font-family:monospace;">${Math.floor(t.durationSecs / 60)}:${(t.durationSecs % 60).toString().padStart(2, "0")}</span>
+      takesListContainer.innerHTML = recordedTakes.map(t => {
+        const ext = (t.ext || "wav").toUpperCase();
+        const mSize = t.masterBlob ? `${(t.masterBlob.size / (1024 * 1024)).toFixed(2)} MB` : "N/A";
+        const vSize = t.vocalBlob ? `${(t.vocalBlob.size / (1024 * 1024)).toFixed(2)} MB` : "N/A";
+
+        return `
+          <div style="padding:12px; background:var(--surface-elevated); border:1px solid var(--hairline); border-radius:8px; display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:10px; font-weight:700; background:var(--canvas); padding:2px 6px; border-radius:4px; border:1px solid var(--hairline); color:var(--white);">${ext}</span>
+                <span style="font-weight:600; font-size:12px; color:var(--white);">${t.name}</span>
+              </div>
+              <span style="font-size:10px; color:var(--mute); font-family:monospace;">${Math.floor(t.durationSecs / 60)}:${(t.durationSecs % 60).toString().padStart(2, "0")}</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:2px;">
+              ${t.masterBlob ? `
+                <button class="dock-btn" style="justify-content:center; font-size:11px;" onclick="downloadBlobTake('${t.id}', 'master')">
+                  Master Stem (${mSize}) ↓
+                </button>
+              ` : `<div style="font-size:10px; color:var(--ash); align-self:center; text-align:center;">No Master Audio</div>`}
+
+              ${t.vocalBlob ? `
+                <button class="dock-btn" style="justify-content:center; font-size:11px;" onclick="downloadBlobTake('${t.id}', 'vocal')">
+                  Vocal Stem (${vSize}) ↓
+                </button>
+              ` : `<div style="font-size:10px; color:var(--ash); align-self:center; text-align:center;">No Vocal Audio</div>`}
+            </div>
           </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:2px;">
-            <button class="dock-btn" style="justify-content:center; font-size:11px;" onclick="downloadBlobTake('${t.id}', 'master')">Master Stem ↓</button>
-            ${t.vocalBlob ? `<button class="dock-btn" style="justify-content:center; font-size:11px;" onclick="downloadBlobTake('${t.id}', 'vocal')">Vocal Stem ↓</button>` : `<div style="font-size:10px; color:var(--ash); align-self:center; text-align:center;">No Vocal Audio</div>`}
-          </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
     }
 
     // ==========================================

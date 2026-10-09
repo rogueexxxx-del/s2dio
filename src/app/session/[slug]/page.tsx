@@ -502,11 +502,28 @@ export default function StudioRoomPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 text-xs">
-          {/* User Account / Login details */}
+        <div className="flex items-center gap-2.5 text-xs">
+          {/* Schedule Session Modal */}
+          <button
+            onClick={() => setIsScheduleModalOpen(true)}
+            className="btn-secondary text-xs h-8 px-3 whitespace-nowrap cursor-pointer flex items-center"
+            title="Schedule session with calendar invite & .ics export"
+          >
+            <span>Schedule</span>
+          </button>
+
+          {/* Copy Invite Link */}
+          <button
+            onClick={handleCopyInvite}
+            className="btn-primary text-xs h-8 px-3.5 whitespace-nowrap cursor-pointer"
+          >
+            {copiedLink ? "✓ Copied" : "Copy Invite Link"}
+          </button>
+
+          {/* User Account / Login details on FAR RIGHT */}
           {user ? (
-            <div className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface border border-hairline text-xs">
-              <span className="w-2 h-2 rounded-full bg-accent-blue" />
+            <div className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface border border-hairline text-xs ml-1">
+              <span className="w-2 h-2 rounded-full bg-accent-green" />
               <span className="text-ink font-medium max-w-[140px] truncate">{user.name || user.email}</span>
               <button
                 onClick={async () => {
@@ -527,29 +544,11 @@ export default function StudioRoomPage() {
           ) : (
             <button
               onClick={() => setIsAuthModalOpen(true)}
-              className="text-xs text-mute hover:text-ink font-medium px-2.5 py-1 rounded-md bg-surface border border-hairline transition-colors cursor-pointer"
+              className="text-xs text-mute hover:text-ink font-medium px-2.5 py-1 rounded-md bg-surface border border-hairline transition-colors cursor-pointer ml-1"
             >
               Sign In
             </button>
           )}
-
-          {/* Schedule Session Modal */}
-          <button
-            onClick={() => setIsScheduleModalOpen(true)}
-            className="btn-secondary text-xs h-8 px-3 whitespace-nowrap cursor-pointer flex items-center gap-1.5"
-            title="Schedule session with calendar invite & .ics export"
-          >
-            <span>📅</span>
-            <span>Schedule</span>
-          </button>
-
-          {/* Copy Invite Link */}
-          <button
-            onClick={handleCopyInvite}
-            className="btn-primary text-xs h-8 px-3.5 whitespace-nowrap cursor-pointer"
-          >
-            {copiedLink ? "✓ Copied" : "Copy Invite Link"}
-          </button>
         </div>
       </header>
 

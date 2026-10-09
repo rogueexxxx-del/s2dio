@@ -1,16 +1,52 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using Microsoft.Web.WebView2.Core;
 
 namespace desktop_app
 {
     public partial class MainWindow : Window
     {
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern IntPtr LoadImage(IntPtr hinst, string lpszName, uint uType, int cxDesired, int cyDesired, uint fuLoad);
+
+        private const uint WM_SETICON = 0x0080;
+        private const IntPtr ICON_SMALL = 0;
+        private const IntPtr ICON_BIG = 1;
+        private const uint IMAGE_ICON = 1;
+        private const uint LR_LOADFROMFILE = 0x0010;
+
         public MainWindow()
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            try
+            {
+                var hwnd = new WindowInteropHelper(this).Handle;
+                string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                string iconPath = Path.Combine(appDir, "app.ico");
+                if (File.Exists(iconPath))
+                {
+                    IntPtr hIconBig = LoadImage(IntPtr.Zero, iconPath, IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
+                    IntPtr hIconSmall = LoadImage(IntPtr.Zero, iconPath, IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+
+                    if (hIconBig != IntPtr.Zero)
+                        SendMessage(hwnd, WM_SETICON, ICON_BIG, hIconBig);
+                    if (hIconSmall != IntPtr.Zero)
+                        SendMessage(hwnd, WM_SETICON, ICON_SMALL, hIconSmall);
+                }
+            }
+            catch { /* Ignore non-critical icon handle exceptions */ }
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)

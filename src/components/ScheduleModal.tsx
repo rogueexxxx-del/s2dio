@@ -145,7 +145,6 @@ export function ScheduleModal({
               className="btn-primary h-9 text-xs font-semibold flex items-center justify-center gap-1.5"
               title="Download standard .ics file for Apple Calendar, Outlook, and Google Calendar"
             >
-              <span>📅</span>
               <span>Export .ICS File</span>
             </button>
 

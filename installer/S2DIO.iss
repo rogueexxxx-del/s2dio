@@ -30,8 +30,8 @@ Source: "..\dist\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs c
 Source: "..\dist\S2DIO Master Bridge.vst3\*"; DestDir: "{commoncf}\VST3\S2DIO Master Bridge.vst3"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\S2DIO"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"
-Name: "{autodesktop}\S2DIO"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"
+Name: "{autoprograms}\S2DIO"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"; AppUserModelID: "S2DIO.ControlRoom.Studio.v1.0"
+Name: "{autodesktop}\S2DIO"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"; AppUserModelID: "S2DIO.ControlRoom.Studio.v1.0"
 
 [Run]
 Filename: "{app}\S2DIO.exe"; Description: "Launch S2DIO"; Flags: nowait postinstall skipifsilent
