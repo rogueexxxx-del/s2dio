@@ -183,7 +183,7 @@ export function AuthModal({
                 required
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="e.g. Maya, Metro, Solar"
+                placeholder="Enter your producer name or alias"
                 className="w-full px-3 py-2 bg-canvas border border-hairline rounded text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-blue/60"
               />
             </div>

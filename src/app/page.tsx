@@ -272,42 +272,72 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* 3-Step Setup Guide */}
-        <section className="w-full max-w-4xl space-y-6 pt-6">
-          <div className="text-center space-y-1.5">
-            <h2 className="text-lg font-semibold text-ink tracking-tight">How S2DIO Works</h2>
-            <p className="text-xs text-mute">One unified pipeline from your DAW master bus straight to your collaborator's speakers.</p>
+        {/* Comprehensive How S2DIO Works Section */}
+        <section className="w-full max-w-4xl space-y-8 pt-8">
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
+              <span>Studio Ingest Pipeline</span>
+            </div>
+            <h2 className="text-2xl font-semibold text-ink tracking-tight">How S2DIO Works</h2>
+            <p className="text-xs text-mute max-w-lg mx-auto">
+              A unified audio pipeline from your DAW master bus straight to your collaborator speakers with zero audio degradation.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <div className="w-6 h-6 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
-                1
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="bg-surface border border-hairline rounded-lg p-6 space-y-3 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="w-7 h-7 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
+                  01
+                </div>
+                <span className="text-[10px] font-mono text-mute px-2 py-0.5 rounded bg-surface-elevated">VST3 Plugin</span>
               </div>
-              <h3 className="text-sm font-medium text-ink">Install & Insert</h3>
+              <h3 className="text-sm font-semibold text-ink">Insert Master Bridge</h3>
               <p className="text-xs text-mute leading-relaxed">
-                Run the 1-click installer and insert <code className="text-ink">S2DIO Master Bridge</code> onto your Master mixer track in FL Studio, Ableton, Cubase, or Reaper.
+                Insert <code className="text-ink bg-surface-elevated px-1 py-0.5 rounded">S2DIO Master Bridge</code> on the final slot of your Master mixer track in FL Studio, Ableton Live, Cubase, Studio One, or Reaper.
               </p>
+              <div className="text-[11px] text-stone space-y-1 pt-1 border-t border-hairline/60">
+                <div>• Ingests 48kHz 32-bit float audio</div>
+                <div>• Sub-5ms internal buffer latency</div>
+                <div>• Real-time peak telemetry & clip guard</div>
+              </div>
             </div>
 
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <div className="w-6 h-6 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
-                2
+            <div className="bg-surface border border-hairline rounded-lg p-6 space-y-3 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="w-7 h-7 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
+                  02
+                </div>
+                <span className="text-[10px] font-mono text-mute px-2 py-0.5 rounded bg-surface-elevated">:4949 Engine</span>
               </div>
-              <h3 className="text-sm font-medium text-ink">Launch Control Room (.exe)</h3>
+              <h3 className="text-sm font-semibold text-ink">Launch Control Room</h3>
               <p className="text-xs text-mute leading-relaxed">
-                Open the native S2DIO desktop app. It instantly hooks into your DAW master stream with zero mixed-content blocks, mixer trims, and talkback calibration.
+                Open the native S2DIO desktop application. It immediately binds to local loopback port :4949, locking your master audio stream with zero mixed-content barriers.
               </p>
+              <div className="text-[11px] text-stone space-y-1 pt-1 border-t border-hairline/60">
+                <div>• 60fps high-definition DAW screen share</div>
+                <div>• Auto-ducking talkback microphone (-12dB)</div>
+                <div>• Producer profile & online friends drawer</div>
+              </div>
             </div>
 
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <div className="w-6 h-6 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
-                3
+            <div className="bg-surface border border-hairline rounded-lg p-6 space-y-3 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="w-7 h-7 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
+                  03
+                </div>
+                <span className="text-[10px] font-mono text-mute px-2 py-0.5 rounded bg-surface-elevated">Zero-Install</span>
               </div>
-              <h3 className="text-sm font-medium text-ink">Send Zero-Install Link</h3>
+              <h3 className="text-sm font-semibold text-ink">Share Guest Link</h3>
               <p className="text-xs text-mute leading-relaxed">
-                Click Copy Invite Link and send it to your artists or clients. They join directly in their web browser with no plugin, no login, and no DAW installed.
+                Click Copy Invite Link to send a private room URL to your client or artist. They join instantly inside any browser without installing software or registering.
               </p>
+              <div className="text-[11px] text-stone space-y-1 pt-1 border-t border-hairline/60">
+                <div>• Uncompressed stereo listening in browser</div>
+                <div>• Drag-to-DAW WAV stem exchange</div>
+                <div>• Remote co-pilot control with ESC revoke</div>
+              </div>
             </div>
           </div>
         </section>
@@ -315,8 +345,8 @@ export default function DashboardPage() {
         {/* Feature Grid */}
         <section id="features" className="w-full max-w-4xl space-y-6 pt-10">
           <div className="text-center space-y-1.5">
-            <h2 className="text-lg font-semibold text-ink tracking-tight">Built Specifically for Producers</h2>
-            <p className="text-xs text-mute">Everything you need for live production, vocal direction, and mixdown sessions.</p>
+            <h2 className="text-xl font-semibold text-ink tracking-tight">Built Specifically for Producers</h2>
+            <p className="text-xs text-mute">Engineered for mixdowns, tracking sessions, vocal direction, and remote arrangement.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -379,6 +409,138 @@ export default function DashboardPage() {
                 Remote artists and clients join via Chrome, Safari, or Edge without downloading any software or creating an account.
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* Comprehensive FAQs Section */}
+        <section id="faqs" className="w-full max-w-4xl space-y-6 pt-12">
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
+              <span>Producer Knowledge Base</span>
+            </div>
+            <h2 className="text-2xl font-semibold text-ink tracking-tight">Frequently Asked Questions</h2>
+            <p className="text-xs text-mute max-w-md mx-auto">
+              Everything you need to know about setting up S2DIO, latency, audio fidelity, and remote control security.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                <span className="text-accent-green">Q:</span>
+                How does S2DIO achieve pristine DAW audio with low latency?
+              </h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Standard communication software filters sound through voice speech codecs that strip bass frequencies and stereo imaging. S2DIO runs a native 64-bit C++ VST3 plugin directly on your master bus, capturing 48kHz 32-bit floating point audio straight from the ASIO output buffer and streaming it over low-overhead WebRTC with sub-5ms local ingest latency.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                <span className="text-accent-green">Q:</span>
+                Do artists or clients need to install any software or plugins?
+              </h3>
+              <p className="text-xs text-mute leading-relaxed">
+                No. S2DIO features a zero-install browser portal. Anyone you send your guest invite link to can listen in full stereo fidelity, watch your DAW screen at 60fps, talk back through their microphone, and exchange stems right inside Google Chrome, Apple Safari, Microsoft Edge, or Firefox without installing plugins or creating an account.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                <span className="text-accent-green">Q:</span>
+                Which DAWs and operating systems are supported?
+              </h3>
+              <p className="text-xs text-mute leading-relaxed">
+                The S2DIO Master Bridge is a universal 64-bit VST3 plugin tested across FL Studio (20/21/24), Ableton Live (11/12), Steinberg Cubase (12/13/14), PreSonus Studio One (6+), Cockos Reaper (7+), and Bitwig Studio. The host app runs on Windows 10 and 11. Remote collaborators can join from any operating system including Windows, macOS, Linux, iOS, and Android.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                <span className="text-accent-green">Q:</span>
+                How does remote DAW screen control work, and is it secure?
+              </h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Remote control lets your co-producer adjust plugin knobs, scrub timeline markers, or edit arrangement regions directly on your screen. Remote input is disabled by default and requires explicit host authorization per session. While active, the collaborator actions are rendered with a distinct co-pilot cursor, and the host can instantly revoke control at any millisecond by hitting the ESC key.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                <span className="text-accent-green">Q:</span>
+                How does smart talkback ducking prevent feedback and echo?
+              </h3>
+              <p className="text-xs text-mute leading-relaxed">
+                S2DIO includes an automated hardware-calibrated ducking circuit. When you or your collaborator speak into the talkback microphone, the DAW master playback stream is instantaneously attenuated by -12dB so conversation remains crystal clear over loud tracks. The moment you stop talking, DAW playback smoothly returns to unity gain without clicks or pops.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                <span className="text-accent-green">Q:</span>
+                Can I transfer large multi-gigabyte stem files during sessions?
+              </h3>
+              <p className="text-xs text-mute leading-relaxed">
+                Yes. S2DIO includes a drag-to-DAW stem exchange zone. You can drag and drop uncompressed 24-bit or 32-bit WAV, AIFF, and MIDI stems directly into the side drawer. Collaborators can download them immediately or drag them straight onto their local DAW timeline without leaving the live session.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                <span className="text-accent-green">Q:</span>
+                Do I need to configure firewall or router port forwarding?
+              </h3>
+              <p className="text-xs text-mute leading-relaxed">
+                No router port forwarding is required. The VST3 plugin communicates with the S2DIO desktop application over local loopback (127.0.0.1:4949), which never exposes raw audio outside your physical machine. Outbound session streaming uses standard WebRTC STUN/TURN traversal over secure HTTPS/WSS (ports 443/80), working transparently behind standard home and studio firewalls.
+              </p>
+            </div>
+
+            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+                <span className="text-accent-green">Q:</span>
+                What is included in the installer download?
+              </h3>
+              <p className="text-xs text-mute leading-relaxed">
+                The Windows setup package (S2DIO-Windows-Setup.exe) installs both the native S2DIO Control Room desktop application and the S2DIO Master Bridge VST3 plugin into your system standard Common Files\VST3 folder. A standalone ZIP archive with manual installation scripts is also provided for custom studio workstation setups.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Download Hub / CTA Card */}
+        <section className="w-full max-w-4xl bg-surface border border-hairline rounded-xl p-8 text-center space-y-6 shadow-2xl relative overflow-hidden">
+          <div className="space-y-2 max-w-xl mx-auto">
+            <h2 className="text-2xl font-semibold text-ink tracking-tight">Ready to Elevate Your Studio Sessions?</h2>
+            <p className="text-xs text-mute leading-relaxed">
+              Download the 64-bit Windows setup package or grab the standalone VST3 bundle. Collaborators connect instantly in their browser with zero setup.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href="/downloads/S2DIO-Windows-Setup.exe"
+              download="S2DIO-Windows-Setup.exe"
+              className="btn-primary h-12 px-7 text-sm font-semibold inline-flex items-center gap-2.5 shadow-lg shadow-white/5 cursor-pointer w-full sm:w-auto justify-center"
+            >
+              <span>Download S2DIO Setup (.exe)</span>
+              <span className="text-xs opacity-75">(Windows 64-bit)</span>
+            </a>
+
+            <a
+              href="/downloads/S2DIO-Windows-VST3.zip"
+              download="S2DIO-Windows-VST3.zip"
+              className="btn-secondary h-12 px-6 text-sm font-medium inline-flex items-center gap-2 w-full sm:w-auto justify-center"
+            >
+              <span>Download VST3 Bundle (.zip)</span>
+            </a>
+          </div>
+
+          <div className="text-[11px] text-mute flex flex-wrap items-center justify-center gap-3 pt-2">
+            <span>Windows 10 & 11 (64-bit)</span>
+            <span>•</span>
+            <span>FL Studio • Ableton • Cubase • Reaper • Studio One</span>
+            <span>•</span>
+            <span>Free for Artists & Collaborators</span>
           </div>
         </section>
 

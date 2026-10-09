@@ -260,25 +260,9 @@ export default function StudioRoomPage() {
       timestamp: "00:00",
       isSystem: true,
     },
-    {
-      id: "m-2",
-      senderId: "u-2",
-      senderName: "Alex",
-      text: "Audio is coming through pristine and wide.",
-      timestamp: "00:02",
-    },
   ]);
 
-  const [files, setFiles] = useState<SessionFile[]>([
-    {
-      id: "f-1",
-      name: "Lead_Vocal_Take1_24bit.wav",
-      sizeBytes: 18454932,
-      uploaderName: "Alex",
-      type: "wav",
-      uploadedAt: "00:01",
-    },
-  ]);
+  const [files, setFiles] = useState<SessionFile[]>([]);
 
   // Audio Engine Lifecycle
   useEffect(() => {

@@ -91,4 +91,5 @@ function Write-IcoFile($outputPath, $bytesArray, $sizesArray) {
 
 Write-IcoFile "H:\OPENCODE\desktop-app\app.ico" $pngBytesList $sizes
 Write-IcoFile "H:\OPENCODE\installer\app.ico" $pngBytesList $sizes
-Write-Host "Generated pure white/dark S2 icons successfully!"
+Write-IcoFile "H:\OPENCODE\dist\app\app.ico" $pngBytesList $sizes
+Write-Host "Generated pure white/dark S2 icons successfully across all targets!"

@@ -62,6 +62,7 @@ private:
     int peakHoldTimerL = 0;
     int peakHoldTimerR = 0;
     int copyFeedbackTimer = 0;
+    std::unique_ptr<juce::Drawable> logoDrawable;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(S2DioAudioProcessorEditor)
 };

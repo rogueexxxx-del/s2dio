@@ -159,7 +159,7 @@ export default function LoginPage() {
                   required
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="e.g. Maya, Solar, Metro"
+                  placeholder="Enter your producer name or moniker"
                   className="w-full px-3 py-2 bg-canvas border border-hairline rounded text-ink text-xs placeholder:text-mute focus:outline-hidden focus:border-accent-blue/60"
                 />
               </div>

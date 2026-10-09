@@ -144,7 +144,7 @@ export default function GuestPortalPage() {
             <div className="max-w-xs mx-auto space-y-1.5">
               <input
                 type="text"
-                placeholder="Enter your name (e.g. Maya, Chris, Client)"
+                placeholder="Enter your name or alias (e.g. Producer, Artist, Engineer)"
                 value={guestName}
                 onChange={(e) => setGuestName(e.target.value)}
                 onKeyDown={(e) => {
