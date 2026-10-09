@@ -19,3 +19,8 @@ Breakout rooms for songwriting camps,collaboration,could,yes,no,Enterprise sub-r
 Automated session audio transcription & chat export,collaboration,could,yes,no,Cloud STT lyrical brainstorming
 Spark AI chord progression generator,ai,could,yes,skip,Third-party standalone AI chord generation product outside core loop
 Legacy macOS/Windows OS support (macOS 10.13),platform,could,yes,skip,Targeting modern standard platforms (macOS 12+ Windows 10/11 Web)
+Automated talkback master audio ducking (-12dB),audio,should,no,yes,Automatically attenuates master DAW playback by -12dB when speaking with smooth ramp back
+Producer profile with studio telemetry and online friends list,collaboration,should,no,yes,Monogram profile drawer with 1-click friend invites to room
+Emergency ESC revoke for remote screen control,screen,should,no,yes,Host can instantly revoke mouse/keyboard control with single ESC press
+HTML5 Drag-to-DAW direct stem timeline drop,collaboration,should,no,yes,Stem cards drag straight from browser into Ableton or FL Studio timeline
+Clean slate installer and uninstaller suite,onboarding,should,no,yes,Inno Setup installer with automatic wipe and standalone admin uninstaller
