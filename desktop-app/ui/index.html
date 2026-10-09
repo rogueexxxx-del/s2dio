@@ -253,6 +253,190 @@
       color: #fff;
     }
 
+    /* Remote Screen Control Toolbar */
+    .video-floating-remote {
+      position: absolute;
+      top: 16px;
+      left: 190px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 25;
+    }
+
+    .video-btn.active-remote {
+      background: rgba(89, 212, 153, 0.2);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .remote-cursor-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: auto;
+      z-index: 18;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    .remote-cursor-pointer {
+      position: absolute;
+      pointer-events: none;
+      transform: translate(-2px, -2px);
+      transition: left 0.04s ease-out, top 0.04s ease-out;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      z-index: 30;
+    }
+
+    .remote-cursor-tag {
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(7, 8, 10, 0.9);
+      border: 1px solid var(--accent-red);
+      font-size: 10px;
+      color: #fff;
+      margin-top: 2px;
+      margin-left: 12px;
+      white-space: nowrap;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+    }
+
+    .click-ripple {
+      position: absolute;
+      border: 2px solid var(--accent-red);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: rippleAnim 0.6s ease-out forwards;
+      z-index: 29;
+    }
+
+    @keyframes rippleAnim {
+      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+    }
+
+    /* Friends & Collaborators System Styles */
+    .friend-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline);
+      transition: border-color 0.15s ease;
+    }
+
+    .friend-row:hover {
+      border-color: var(--hairline-strong);
+    }
+
+    .friend-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .friend-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--white);
+      position: relative;
+    }
+
+    .friend-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+      border: 1.5px solid var(--canvas);
+    }
+
+    .friend-status-dot.online {
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green-soft);
+    }
+
+    .friend-status-dot.offline {
+      background: var(--ash);
+    }
+
+    .friend-btn-invite {
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      color: var(--white);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .friend-btn-invite:hover {
+      background: var(--white);
+      color: #000;
+      border-color: var(--white);
+    }
+
+    .friend-btn-invite.invited {
+      background: rgba(89, 212, 153, 0.15);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    /* Profile Details Modal Styles */
+    .profile-avatar-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .profile-large-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--hairline-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--white);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    }
+
+    .profile-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline);
+      font-size: 11px;
+    }
+
     .video-filament-indicator {
       position: absolute;
       bottom: 84px;
@@ -980,15 +1164,21 @@
       <span class="pipeline-text">48kHz VST3 Pipeline</span>
 
       <div class="participants-bar">
-        <button class="pill-btn" id="btnHostPill" title="Producer Profile / Settings">
-          <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);"></span>
+        <button class="pill-btn" id="btnHostPill" title="Producer Profile & Account Details">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);" id="hostStatusDot"></span>
           <span id="hostPillName">Producer</span>
           <span style="font-size:9px; color:var(--mute); margin-left:2px;">[Host]</span>
         </button>
 
+        <button class="pill-btn subtle" id="btnFriendsPill" title="Friends & Collaborators">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);"></span>
+          <span>Friends</span>
+          <span style="font-size:9px; color:var(--mute); margin-left:2px;" id="hdrFriendsCount">[3 online]</span>
+        </button>
+
         <button class="pill-btn subtle" id="btnGuestPill">
           <span style="width:6px; height:6px; border-radius:50%; background:var(--ash);"></span>
-          <span>Collaborator</span>
+          <span id="guestPillLabel">Collaborator</span>
         </button>
 
         <button class="pill-btn subtle" id="btnInvitePill">
@@ -1019,10 +1209,30 @@
           <span style="color:var(--mute); font-size:11px;">• 60fps</span>
         </div>
 
+        <!-- Floating Remote DAW Control Toolbar -->
+        <div class="video-floating-remote" id="remoteControlToolbar">
+          <button class="video-btn" id="btnToggleRemote" title="Toggle Remote DAW Screen Control">
+            <span style="width:6px; height:6px; border-radius:50%; background:var(--ash);" id="remoteStatusDot"></span>
+            <span id="remoteControlLabel">Remote Control: OFF</span>
+          </button>
+          <button class="video-btn subtle" id="btnGrantGuestControl" title="Grant DAW control to collaborator">Grant Control</button>
+          <button class="video-btn danger" id="btnRevokeControl" style="display:none;" title="Instantly take back control (ESC)">Revoke (ESC)</button>
+        </div>
+
         <!-- Floating actions on video -->
         <div class="video-floating-actions">
           <button class="video-btn" id="btnFullscreen">⛶ Fullscreen</button>
           <button class="video-btn danger" id="btnStopVideo">Stop DAW</button>
+        </div>
+
+        <!-- Interactive Remote Co-Pilot Cursor Overlay -->
+        <div class="remote-cursor-layer" id="remoteCursorLayer">
+          <div class="remote-cursor-pointer" id="guestCursor" style="display:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--accent-red)" stroke="#ffffff" stroke-width="1.5">
+              <path d="M3 3l7 18 3-7 7-3L3 3z" />
+            </svg>
+            <div class="remote-cursor-tag" id="guestCursorTag">Alex (Remote Control)</div>
+          </div>
         </div>
 
         <!-- Picture in Picture (Camera over Screen) -->
@@ -1144,6 +1354,7 @@
       <div class="drawer-tabs">
         <div class="drawer-tab active" id="tabNotesBtn">Notes (2)</div>
         <div class="drawer-tab" id="tabStemsBtn">Stems (1)</div>
+        <div class="drawer-tab" id="tabFriendsBtn">Friends (<span id="drawerFriendsCount">3</span>)</div>
       </div>
       <button class="modal-close-btn" id="btnCloseDrawer">&times;</button>
     </div>
@@ -1173,6 +1384,24 @@
           <div style="font-size:10px; color:var(--mute);">18.4 MB • Alex</div>
         </div>
         <span style="font-size:11px; color:var(--accent-green);">Downloaded</span>
+      </div>
+    </div>
+
+    <!-- Friends & Collaborators Tab -->
+    <div class="drawer-content" id="friendsView" style="display:none;">
+      <div style="font-size:12px; color:var(--mute); margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:600; color:var(--white);">Studio Collaborators</span>
+        <span style="font-size:10px; color:var(--accent-green);">Live Presence</span>
+      </div>
+      
+      <!-- Add Friend Box -->
+      <div style="display:flex; gap:8px; margin-bottom:8px;">
+        <input type="text" class="chat-input" id="inputFriendTag" placeholder="Add producer by tag or email...">
+        <button class="dock-btn" id="btnAddFriend" style="height:36px; padding:0 12px; font-size:11px;">+ Add</button>
+      </div>
+
+      <div id="friendsListContainer" style="display:flex; flex-direction:column; gap:8px;">
+        <!-- Dynamically rendered friends -->
       </div>
     </div>
   </div>
@@ -1360,6 +1589,72 @@
 
       <button class="btn-submit" id="btnSubmitAuth">Sign In</button>
       <div class="modal-footer-note">Collaborators joining via guest link do not need an account.</div>
+    </div>
+  </div>
+
+  <!-- Producer Profile & Account Details Modal -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-card">
+      <div class="modal-header-row">
+        <div class="modal-title-group">
+          <!-- Monogram in crisp white -->
+          <svg viewBox="0 0 345.59 188.67" height="18" fill="#ffffff">
+            <path d="M176.35,58.81c.37,6.08-66.64,7.51-72.03,2.87-4.36-3.69-2.69-6.16-5.39-8.95-4.4-4.55-17.54-4.29-18.33,2.46-.74,6.35,4.31,8.68,9.38,9.93,9.93,2.45,51.63,4.08,60.95,8.12,37.55,16.31,32.77,55.11,25.21,74.31-6.87,17.43-21.83,26.46-39.24,33.17-22.1,8.51-65.06,10.08-88.38,4.47C-4.89,172.34,3.14,125.7,3.55,123.27c1.47-8.9,50.55-6.07,77.06-2.29,1.93,6.11,6.79,10.84,12.94,12.62,8.56,2.26,18.99-9.57,5.91-16.74-9.49-5.19-73.59,3.21-91.15-19.34C-4.63,80.91-2.03,49.14,13.12,25.34,31.36-3.35,77.21.01,107.47.22c83.34.59,68.43,51.16,68.88,58.58h0Z"/>
+            <path d="M193.1,117.43c5.52-10.46,12.56-20.06,20.87-28.47,21.68-22.88,64.96-7.39,63.74-31.4-.34-6.81-12.69-7.05-16.7-2.48-2.46,2.8,1.67,12.14-3.42,12.71-1.33.15-63.98,5.78-67.9-.6-1.28-2.07-.84-9.18-.42-14.25.95-11.78,4.38-50.83,63.96-50.58,27.57.11,69.34-3.59,85.97,25.22,6.48,14.78,8.09,31.25,4.59,47-2.7,11.37-9.45,21.38-18.98,28.15-12.8,9.15-40.5,5.01-49.74,17.7,4.35,1.57,38.22.27,38.5.31,10.82,1.35,11.86-.05,24.06-.38,2-.05.83,11.46.83,12.94,0,9.43.73,22.36,1.21,31.77.3,6.07.69,15.86.35,21.62-4.29.48-8.6.68-12.91.59-8.33,1.22-16.76,1.61-25.17,1.16-26.32-2.74-55.15.48-81.6-.38-6.97-.23-18.85,1.72-26.89-.39-5.29-1.39-5.09-31.77-4.59-37.01.71-7.55-1.22-21.95,4.25-33.23Z"/>
+          </svg>
+          <span>Producer Profile</span>
+        </div>
+        <button class="modal-close-btn" id="btnCloseProfile">&times;</button>
+      </div>
+
+      <!-- Avatar & Status -->
+      <div class="profile-avatar-row">
+        <div class="profile-large-avatar" id="profileLargeAvatar">P</div>
+        <div>
+          <div style="font-size:15px; font-weight:700; color:var(--white);" id="profileDisplayName">Producer</div>
+          <div style="font-size:11px; color:var(--mute); font-family:monospace;" id="profileDisplayTag">@producer</div>
+          <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+            <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);"></span>
+            <span style="font-size:11px; color:var(--accent-green); font-weight:500;" id="profilePresenceTxt">Active in Studio Session</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry Meta Grid -->
+      <div class="profile-meta-grid">
+        <div>
+          <div style="color:var(--mute);">Studio ID</div>
+          <div style="font-family:monospace; color:var(--white); font-weight:600;">S2DIO-SESSION-01</div>
+        </div>
+        <div>
+          <div style="color:var(--mute);">Audio Ingest</div>
+          <div style="font-family:monospace; color:var(--white); font-weight:600;">127.0.0.1:4949</div>
+        </div>
+        <div>
+          <div style="color:var(--mute);">Stream Quality</div>
+          <div style="font-family:monospace; color:var(--white); font-weight:600;">48kHz 32-bit Float</div>
+        </div>
+        <div>
+          <div style="color:var(--mute);">Role</div>
+          <div style="font-family:monospace; color:var(--white); font-weight:600;">Master Host</div>
+        </div>
+      </div>
+
+      <!-- Editable Details -->
+      <div class="form-field">
+        <label class="field-label">Producer Tag / Name</label>
+        <input type="text" class="field-input" id="profileInputName" placeholder="e.g. Rogue Studio">
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Email Address</label>
+        <input type="email" class="field-input" id="profileInputEmail" readonly style="opacity:0.75; cursor:not-allowed;">
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:4px;">
+        <button class="btn-submit" id="btnSaveProfile" style="flex:2;">Save Profile</button>
+        <button class="dock-btn" id="btnSignOutProfile" style="flex:1; height:38px; justify-content:center; color:var(--accent-red); border-color:rgba(255,87,87,0.3);">Sign Out</button>
+      </div>
     </div>
   </div>
 
@@ -1806,45 +2101,373 @@
       }
     }
 
-    // Slide-over Notes & Stems Drawer
+    // Slide-over Drawer Tabs (Notes, Stems, Friends)
     const stemsDrawer = document.getElementById("stemsDrawer");
     const btnDockDrawer = document.getElementById("btnDockDrawer");
     const btnCloseDrawer = document.getElementById("btnCloseDrawer");
     const tabNotesBtn = document.getElementById("tabNotesBtn");
     const tabStemsBtn = document.getElementById("tabStemsBtn");
+    const tabFriendsBtn = document.getElementById("tabFriendsBtn");
     const notesView = document.getElementById("notesView");
     const stemsView = document.getElementById("stemsView");
+    const friendsView = document.getElementById("friendsView");
     const notesInputRow = document.getElementById("notesInputRow");
 
     btnDockDrawer.addEventListener("click", () => stemsDrawer.classList.toggle("open"));
     btnCloseDrawer.addEventListener("click", () => stemsDrawer.classList.remove("open"));
 
-    tabNotesBtn.addEventListener("click", () => {
-      tabNotesBtn.classList.add("active");
-      tabStemsBtn.classList.remove("active");
-      notesView.style.display = "flex";
-      notesInputRow.style.display = "flex";
-      stemsView.style.display = "none";
-    });
+    function switchDrawerTab(tab) {
+      tabNotesBtn.classList.toggle("active", tab === "notes");
+      tabStemsBtn.classList.toggle("active", tab === "stems");
+      tabFriendsBtn.classList.toggle("active", tab === "friends");
 
-    tabStemsBtn.addEventListener("click", () => {
-      tabStemsBtn.classList.add("active");
-      tabNotesBtn.classList.remove("active");
-      notesView.style.display = "none";
-      notesInputRow.style.display = "none";
-      stemsView.style.display = "flex";
-    });
+      notesView.style.display = tab === "notes" ? "flex" : "none";
+      notesInputRow.style.display = tab === "notes" ? "flex" : "none";
+      stemsView.style.display = tab === "stems" ? "flex" : "none";
+      friendsView.style.display = tab === "friends" ? "flex" : "none";
+    }
 
+    tabNotesBtn.addEventListener("click", () => switchDrawerTab("notes"));
+    tabStemsBtn.addEventListener("click", () => switchDrawerTab("stems"));
+    tabFriendsBtn.addEventListener("click", () => switchDrawerTab("friends"));
+
+    // Chat notes sender
     document.getElementById("btnSendChat").addEventListener("click", () => {
       const input = document.getElementById("chatInput");
       const val = input.value.trim();
       if (!val) return;
       const b = document.createElement("div");
       b.className = "chat-bubble";
-      b.innerHTML = `<div style="font-size:11px; font-weight:600; color:var(--white); margin-bottom:2px;">Producer</div><div>${val}</div>`;
+      const uName = localStorage.getItem("s2dio_username") || "Producer";
+      b.innerHTML = `<div style="font-size:11px; font-weight:600; color:var(--white); margin-bottom:2px;">${uName}</div><div>${val}</div>`;
       notesView.appendChild(b);
       input.value = "";
       notesView.scrollTop = notesView.scrollHeight;
+    });
+
+    // -------------------------------------------------------------
+    // Friends & Collaborators System
+    // -------------------------------------------------------------
+    let friendsList = [
+      { id: 1, name: "Alex Rivers", tag: "@alex_fl", status: "online", daw: "FL Studio 24", avatar: "AR" },
+      { id: 2, name: "Marcus Beats", tag: "@marcus", status: "online", daw: "Ableton Live 12", avatar: "MB" },
+      { id: 3, name: "Solar Vocalist", tag: "@solar", status: "online", daw: "Studio Mic In", avatar: "SV" },
+      { id: 4, name: "Elena Strings", tag: "@elena", status: "offline", daw: "Offline (2h ago)", avatar: "ES" }
+    ];
+
+    try {
+      const savedFriends = localStorage.getItem("s2dio_friends");
+      if (savedFriends) friendsList = JSON.parse(savedFriends);
+    } catch (e) {}
+
+    function renderFriendsList() {
+      const container = document.getElementById("friendsListContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const onlineCount = friendsList.filter(f => f.status === "online").length;
+      document.getElementById("hdrFriendsCount").textContent = `[${onlineCount} online]`;
+      document.getElementById("drawerFriendsCount").textContent = `${friendsList.length}`;
+
+      friendsList.forEach(friend => {
+        const row = document.createElement("div");
+        row.className = "friend-row";
+        const isOnline = friend.status === "online";
+
+        row.innerHTML = `
+          <div class="friend-info">
+            <div class="friend-avatar">
+              ${friend.avatar}
+              <span class="friend-status-dot ${friend.status}"></span>
+            </div>
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--white);">${friend.name}</div>
+              <div style="font-size:10px; color:var(--mute);">${friend.tag} • <span style="color:${isOnline ? 'var(--accent-green)' : 'var(--ash)'}">${friend.daw}</span></div>
+            </div>
+          </div>
+          <button class="friend-btn-invite" data-id="${friend.id}" ${!isOnline ? 'style="opacity:0.4; pointer-events:none;"' : ''}>
+            ${isOnline ? 'Invite' : 'Offline'}
+          </button>
+        `;
+
+        const btnInv = row.querySelector(".friend-btn-invite");
+        if (btnInv && isOnline) {
+          btnInv.addEventListener("click", (e) => {
+            btnInv.textContent = "✓ Dispatched";
+            btnInv.classList.add("invited");
+            navigator.clipboard.writeText("https://s2dio.app/guest/studio");
+
+            // Post notification in Notes
+            const b = document.createElement("div");
+            b.className = "chat-bubble system";
+            b.textContent = `Direct studio invitation dispatched to ${friend.name} (${friend.tag}) with 48kHz audio ingest link.`;
+            notesView.appendChild(b);
+            notesView.scrollTop = notesView.scrollHeight;
+
+            setTimeout(() => {
+              btnInv.textContent = "Invite";
+              btnInv.classList.remove("invited");
+            }, 3000);
+          });
+        }
+
+        container.appendChild(row);
+      });
+    }
+
+    renderFriendsList();
+
+    // Header Friends Pill opens drawer directly to Friends tab
+    document.getElementById("btnFriendsPill").addEventListener("click", () => {
+      stemsDrawer.classList.add("open");
+      switchDrawerTab("friends");
+    });
+
+    // Add Friend Form
+    document.getElementById("btnAddFriend").addEventListener("click", () => {
+      const input = document.getElementById("inputFriendTag");
+      const val = input.value.trim();
+      if (!val) return;
+
+      const cleanTag = val.startsWith("@") ? val : `@${val}`;
+      const namePart = cleanTag.substring(1);
+      const initials = namePart.substring(0, 2).toUpperCase();
+
+      friendsList.unshift({
+        id: Date.now(),
+        name: namePart.charAt(0).toUpperCase() + namePart.slice(1),
+        tag: cleanTag,
+        status: "online",
+        daw: "Studio Standby",
+        avatar: initials
+      });
+
+      localStorage.setItem("s2dio_friends", JSON.stringify(friendsList));
+      input.value = "";
+      renderFriendsList();
+    });
+
+    // -------------------------------------------------------------
+    // Remote Screen Control System
+    // -------------------------------------------------------------
+    let isRemoteControlActive = false;
+    let isGuestInControl = false;
+    const btnToggleRemote = document.getElementById("btnToggleRemote");
+    const remoteStatusDot = document.getElementById("remoteStatusDot");
+    const remoteControlLabel = document.getElementById("remoteControlLabel");
+    const btnGrantGuestControl = document.getElementById("btnGrantGuestControl");
+    const btnRevokeControl = document.getElementById("btnRevokeControl");
+    const guestCursor = document.getElementById("guestCursor");
+    const remoteCursorLayer = document.getElementById("remoteCursorLayer");
+
+    function setRemoteControlState(active, guestControl = false) {
+      isRemoteControlActive = active;
+      isGuestInControl = guestControl;
+
+      if (active) {
+        btnToggleRemote.classList.add("active-remote");
+        remoteStatusDot.style.background = "var(--accent-green)";
+        remoteStatusDot.style.boxShadow = "0 0 6px var(--accent-green-soft)";
+        remoteControlLabel.textContent = guestControl ? "Remote Control: GUEST IN CONTROL" : "Remote Control: ON";
+        btnGrantGuestControl.style.display = guestControl ? "none" : "inline-flex";
+        btnRevokeControl.style.display = "inline-flex";
+        guestCursor.style.display = guestControl ? "flex" : "none";
+      } else {
+        btnToggleRemote.classList.remove("active-remote");
+        remoteStatusDot.style.background = "var(--ash)";
+        remoteStatusDot.style.boxShadow = "none";
+        remoteControlLabel.textContent = "Remote Control: OFF";
+        btnGrantGuestControl.style.display = "none";
+        btnRevokeControl.style.display = "none";
+        guestCursor.style.display = "none";
+      }
+    }
+
+    btnToggleRemote.addEventListener("click", () => {
+      setRemoteControlState(!isRemoteControlActive, false);
+      const b = document.createElement("div");
+      b.className = "chat-bubble system";
+      b.textContent = isRemoteControlActive 
+        ? "Remote DAW Control enabled. Collaborators can now be granted mouse/keyboard control." 
+        : "Remote DAW Control disabled by host.";
+      notesView.appendChild(b);
+      notesView.scrollTop = notesView.scrollHeight;
+    });
+
+    btnGrantGuestControl.addEventListener("click", () => {
+      setRemoteControlState(true, true);
+      const b = document.createElement("div");
+      b.className = "chat-bubble system";
+      b.style.borderColor = "var(--accent-green)";
+      b.textContent = "Collaborator (Alex) granted full remote control over DAW screen. Host can revoke anytime with ESC.";
+      notesView.appendChild(b);
+      notesView.scrollTop = notesView.scrollHeight;
+    });
+
+    btnRevokeControl.addEventListener("click", () => {
+      setRemoteControlState(true, false);
+      const b = document.createElement("div");
+      b.className = "chat-bubble system";
+      b.style.borderColor = "var(--accent-red)";
+      b.textContent = "Host took back control. Remote collaborator input revoked.";
+      notesView.appendChild(b);
+      notesView.scrollTop = notesView.scrollHeight;
+    });
+
+    // Safety: Emergency Revoke with ESC key
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isGuestInControl) {
+        setRemoteControlState(true, false);
+      }
+    });
+
+    // Remote Co-pilot cursor simulation & click ripple over screen video
+    if (remoteCursorLayer) {
+      remoteCursorLayer.addEventListener("mousemove", (e) => {
+        if (!isRemoteControlActive || !isGuestInControl) return;
+        const rect = remoteCursorLayer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        guestCursor.style.left = `${x}px`;
+        guestCursor.style.top = `${y}px`;
+      });
+
+      remoteCursorLayer.addEventListener("mousedown", (e) => {
+        if (!isRemoteControlActive || !isGuestInControl) return;
+        const rect = remoteCursorLayer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Visual click ripple
+        const ripple = document.createElement("div");
+        ripple.className = "click-ripple";
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        remoteCursorLayer.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // Producer Profile & Auth Modal Logic
+    // -------------------------------------------------------------
+    const authModal = document.getElementById("authModal");
+    const profileModal = document.getElementById("profileModal");
+    const btnHostPill = document.getElementById("btnHostPill");
+    const btnCloseAuth = document.getElementById("btnCloseAuth");
+    const btnCloseProfile = document.getElementById("btnCloseProfile");
+    const hostPillName = document.getElementById("hostPillName");
+
+    function isUserLoggedIn() {
+      return !!localStorage.getItem("s2dio_auth_email");
+    }
+
+    function openProfile() {
+      const email = localStorage.getItem("s2dio_auth_email") || "producer@s2dio.app";
+      const name = localStorage.getItem("s2dio_username") || "Producer";
+      const tag = `@${name.toLowerCase().replace(/\s+/g, '_')}`;
+
+      document.getElementById("profileDisplayName").textContent = name;
+      document.getElementById("profileDisplayTag").textContent = tag;
+      document.getElementById("profileLargeAvatar").textContent = name.substring(0, 2).toUpperCase();
+      document.getElementById("profileInputName").value = name;
+      document.getElementById("profileInputEmail").value = email;
+
+      profileModal.classList.add("open");
+    }
+
+    btnHostPill.addEventListener("click", () => {
+      if (isUserLoggedIn()) {
+        openProfile();
+      } else {
+        authModal.classList.add("open");
+      }
+    });
+
+    btnCloseAuth.addEventListener("click", () => authModal.classList.remove("open"));
+    btnCloseProfile.addEventListener("click", () => profileModal.classList.remove("open"));
+
+    // Save Profile Details
+    document.getElementById("btnSaveProfile").addEventListener("click", () => {
+      const newName = document.getElementById("profileInputName").value.trim() || "Producer";
+      localStorage.setItem("s2dio_username", newName);
+      hostPillName.textContent = newName;
+      document.getElementById("profileDisplayName").textContent = newName;
+      document.getElementById("profileLargeAvatar").textContent = newName.substring(0, 2).toUpperCase();
+      profileModal.classList.remove("open");
+    });
+
+    // Sign Out / Switch Account
+    document.getElementById("btnSignOutProfile").addEventListener("click", () => {
+      localStorage.removeItem("s2dio_auth_email");
+      localStorage.removeItem("s2dio_username");
+      hostPillName.textContent = "Producer";
+      profileModal.classList.remove("open");
+      authModal.classList.add("open");
+    });
+
+    // Auth Modal Tabs
+    let authMode = "signin";
+    const tabSignIn = document.getElementById("tabSignIn");
+    const tabCreateAccount = document.getElementById("tabCreateAccount");
+    const tabMagicLink = document.getElementById("tabMagicLink");
+    const fieldProducerName = document.getElementById("fieldProducerName");
+    const fieldPassword = document.getElementById("fieldPassword");
+    const btnSubmitAuth = document.getElementById("btnSubmitAuth");
+    const authFeedback = document.getElementById("authFeedback");
+
+    tabSignIn.addEventListener("click", () => {
+      authMode = "signin";
+      tabSignIn.classList.add("active");
+      tabCreateAccount.classList.remove("active");
+      tabMagicLink.classList.remove("active");
+      fieldProducerName.style.display = "none";
+      fieldPassword.style.display = "flex";
+      btnSubmitAuth.textContent = "Sign In";
+      authFeedback.style.display = "none";
+    });
+
+    tabCreateAccount.addEventListener("click", () => {
+      authMode = "signup";
+      tabCreateAccount.classList.add("active");
+      tabSignIn.classList.remove("active");
+      tabMagicLink.classList.remove("active");
+      fieldProducerName.style.display = "flex";
+      fieldPassword.style.display = "flex";
+      btnSubmitAuth.textContent = "Create Account";
+      authFeedback.style.display = "none";
+    });
+
+    tabMagicLink.addEventListener("click", () => {
+      authMode = "magic";
+      tabMagicLink.classList.add("active");
+      tabSignIn.classList.remove("active");
+      tabCreateAccount.classList.remove("active");
+      fieldProducerName.style.display = "none";
+      fieldPassword.style.display = "none";
+      btnSubmitAuth.textContent = "Send Magic Link";
+      authFeedback.style.display = "none";
+    });
+
+    btnSubmitAuth.addEventListener("click", () => {
+      const email = document.getElementById("inputAuthEmail").value.trim() || "producer@s2dio.app";
+      let name = document.getElementById("inputProducerName").value.trim();
+      if (!name) name = email.split("@")[0] || "Producer";
+
+      localStorage.setItem("s2dio_auth_email", email);
+      localStorage.setItem("s2dio_username", name);
+      hostPillName.textContent = name;
+
+      authFeedback.style.display = "block";
+      authFeedback.style.background = "rgba(89, 212, 153, 0.1)";
+      authFeedback.style.border = "1px solid var(--accent-green)";
+      authFeedback.style.color = "var(--accent-green)";
+      authFeedback.textContent = authMode === "magic" ? "Magic link sent to your email." : "Signed in successfully.";
+
+      setTimeout(() => {
+        authModal.classList.remove("open");
+        openProfile();
+      }, 500);
     });
 
     // Vertical Mixer Popover
@@ -1921,74 +2544,6 @@
       connectVstBridge();
     });
 
-    // Auth Modal & Tabs
-    const authModal = document.getElementById("authModal");
-    const btnHostPill = document.getElementById("btnHostPill");
-    const btnCloseAuth = document.getElementById("btnCloseAuth");
-
-    btnHostPill.addEventListener("click", () => authModal.classList.add("open"));
-    btnCloseAuth.addEventListener("click", () => authModal.classList.remove("open"));
-
-    let authMode = "signin";
-    const tabSignIn = document.getElementById("tabSignIn");
-    const tabCreateAccount = document.getElementById("tabCreateAccount");
-    const tabMagicLink = document.getElementById("tabMagicLink");
-    const fieldProducerName = document.getElementById("fieldProducerName");
-    const fieldPassword = document.getElementById("fieldPassword");
-    const btnSubmitAuth = document.getElementById("btnSubmitAuth");
-    const authFeedback = document.getElementById("authFeedback");
-
-    tabSignIn.addEventListener("click", () => {
-      authMode = "signin";
-      tabSignIn.classList.add("active");
-      tabCreateAccount.classList.remove("active");
-      tabMagicLink.classList.remove("active");
-      fieldProducerName.style.display = "none";
-      fieldPassword.style.display = "flex";
-      btnSubmitAuth.textContent = "Sign In";
-      authFeedback.style.display = "none";
-    });
-
-    tabCreateAccount.addEventListener("click", () => {
-      authMode = "signup";
-      tabCreateAccount.classList.add("active");
-      tabSignIn.classList.remove("active");
-      tabMagicLink.classList.remove("active");
-      fieldProducerName.style.display = "flex";
-      fieldPassword.style.display = "flex";
-      btnSubmitAuth.textContent = "Create Account";
-      authFeedback.style.display = "none";
-    });
-
-    tabMagicLink.addEventListener("click", () => {
-      authMode = "magic";
-      tabMagicLink.classList.add("active");
-      tabSignIn.classList.remove("active");
-      tabCreateAccount.classList.remove("active");
-      fieldProducerName.style.display = "none";
-      fieldPassword.style.display = "none";
-      btnSubmitAuth.textContent = "Send Magic Link";
-      authFeedback.style.display = "none";
-    });
-
-    btnSubmitAuth.addEventListener("click", () => {
-      const email = document.getElementById("inputAuthEmail").value.trim() || "producer@s2dio.app";
-      let name = document.getElementById("inputProducerName").value.trim();
-      if (!name) name = email.split("@")[0] || "Producer";
-
-      localStorage.setItem("s2dio_auth_email", email);
-      localStorage.setItem("s2dio_username", name);
-      document.getElementById("hostPillName").textContent = name;
-
-      authFeedback.style.display = "block";
-      authFeedback.style.background = "rgba(89, 212, 153, 0.1)";
-      authFeedback.style.border = "1px solid var(--accent-green)";
-      authFeedback.style.color = "var(--accent-green)";
-      authFeedback.textContent = authMode === "magic" ? "Magic link sent to your email." : "Signed in successfully.";
-
-      setTimeout(() => authModal.classList.remove("open"), 600);
-    });
-
     // Copy Invite Link
     function copyInvite() {
       navigator.clipboard.writeText("https://s2dio.app/guest/studio");
@@ -2001,7 +2556,7 @@
 
     // Initial storage check
     const savedName = localStorage.getItem("s2dio_username");
-    if (savedName) document.getElementById("hostPillName").textContent = savedName;
+    if (savedName) hostPillName.textContent = savedName;
 
     // Start VST3 connection
     connectVstBridge();

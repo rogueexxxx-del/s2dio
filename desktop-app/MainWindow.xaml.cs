@@ -21,7 +21,11 @@ namespace desktop_app
                 string iconPath = Path.Combine(appDir, "app.ico");
                 if (File.Exists(iconPath))
                 {
-                    Icon = new System.Windows.Media.Imaging.BitmapImage(new Uri(iconPath));
+                    Icon = System.Windows.Media.Imaging.BitmapFrame.Create(
+                        new Uri(iconPath),
+                        System.Windows.Media.Imaging.BitmapCreateOptions.None,
+                        System.Windows.Media.Imaging.BitmapCacheOption.OnLoad
+                    );
                 }
                 // Store user data in %LOCALAPPDATA%\S2DIO\WebView2 to prevent 0x80070005 (E_ACCESSDENIED)
                 string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
