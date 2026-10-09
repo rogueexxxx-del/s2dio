@@ -17,6 +17,9 @@ interface AudioStageProps {
   videoStream?: MediaStream | null;
   isScreenSharing?: boolean;
   onToggleScreenShare?: () => void;
+  cameraStream?: MediaStream | null;
+  isCameraActive?: boolean;
+  onToggleCamera?: () => void;
 }
 
 export function AudioStage({
@@ -33,9 +36,13 @@ export function AudioStage({
   videoStream,
   isScreenSharing,
   onToggleScreenShare,
+  cameraStream,
+  isCameraActive,
+  onToggleCamera,
 }: AudioStageProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const cameraRef = useRef<HTMLVideoElement | null>(null);
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [tempName, setTempName] = React.useState("");
 
@@ -44,6 +51,12 @@ export function AudioStage({
       videoRef.current.srcObject = videoStream;
     }
   }, [videoStream]);
+
+  useEffect(() => {
+    if (cameraRef.current && cameraStream) {
+      cameraRef.current.srcObject = cameraStream;
+    }
+  }, [cameraStream]);
 
   // Audio waveform animation on canvas
   useEffect(() => {
@@ -117,31 +130,60 @@ export function AudioStage({
       )}
 
       {/* Video Viewport or Center Hardware Studio Console */}
-      {videoStream ? (
+      {(videoStream || cameraStream) ? (
         <div className="relative w-full max-w-5xl h-[72vh] flex items-center justify-center rounded-lg overflow-hidden border border-hairline bg-surface shadow-2xl z-10">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full h-full object-contain bg-canvas"
-          />
+          {videoStream ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-contain bg-canvas"
+            />
+          ) : (
+            <video
+              ref={cameraRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover bg-canvas"
+            />
+          )}
 
           {/* Floating live indicator on video */}
           <div className="absolute top-4 left-4 flex items-center gap-2 bg-surface/85 backdrop-blur-md px-3 py-1.5 rounded-md border border-hairline text-xs shadow-md">
             <span className="w-2 h-2 rounded-full bg-accent-red animate-pulse" />
-            <span className="text-ink font-medium">DAW Screen Live</span>
-            <span className="text-mute text-[11px]">• 60fps</span>
+            <span className="text-ink font-medium">
+              {videoStream ? "DAW Screen Live" : "Studio Camera Live"}
+            </span>
+            <span className="text-mute text-[11px]">• {videoStream ? "60fps" : "720p"}</span>
           </div>
+
+          {/* Picture-in-Picture Camera when Screen Sharing is ALSO active */}
+          {videoStream && cameraStream && (
+            <div className="absolute bottom-16 right-5 w-52 h-36 rounded-lg overflow-hidden border border-hairline-strong shadow-2xl bg-black z-20 animate-in fade-in duration-200">
+              <video
+                ref={cameraRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-surface/85 backdrop-blur-md text-[10px] text-ink font-medium border border-hairline">
+                Studio Cam
+              </div>
+            </div>
+          )}
 
           <div className="absolute top-4 right-4 flex items-center gap-2">
             <button
               onClick={() => {
-                if (videoRef.current) {
+                const el = videoRef.current || cameraRef.current;
+                if (el) {
                   if (document.fullscreenElement) {
                     document.exitFullscreen();
                   } else {
-                    videoRef.current.requestFullscreen();
+                    el.requestFullscreen();
                   }
                 }
               }}
@@ -150,12 +192,20 @@ export function AudioStage({
             >
               ⛶ Fullscreen
             </button>
-            {isHost && onToggleScreenShare && (
+            {isHost && videoStream && onToggleScreenShare && (
               <button
                 onClick={onToggleScreenShare}
                 className="px-2.5 py-1.5 rounded-md bg-accent-red hover:bg-accent-red/90 text-white text-xs font-medium transition-colors cursor-pointer"
               >
-                Stop Sharing
+                Stop DAW
+              </button>
+            )}
+            {isHost && cameraStream && onToggleCamera && (
+              <button
+                onClick={onToggleCamera}
+                className="px-2.5 py-1.5 rounded-md bg-accent-blue/90 hover:bg-accent-blue text-white text-xs font-medium transition-colors cursor-pointer"
+              >
+                Stop Cam
               </button>
             )}
           </div>

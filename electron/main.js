@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, session, desktopCapturer } = require('electron');
 const path = require('path');
 
 function createWindow() {
@@ -20,6 +20,23 @@ function createWindow() {
   });
 
   win.removeMenu();
+
+  // Handle getDisplayMedia (Screen / DAW sharing in Electron)
+  session.defaultSession.setDisplayMediaRequestHandler((request, callback) => {
+    desktopCapturer.getSources({ types: ['screen', 'window'] }).then((sources) => {
+      // Find a window with "FL Studio", "Ableton", "Cubase", "Reaper" or pick primary screen
+      const dawSource = sources.find(s => /fl studio|ableton|cubase|reaper|studio one|bitwig/i.test(s.name)) || sources[0];
+      callback({ video: dawSource });
+    }).catch((err) => {
+      console.error('desktopCapturer error:', err);
+      callback({});
+    });
+  });
+
+  // Automatically grant camera, mic, and screen capture permissions
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+    callback(true);
+  });
 
   win.once('ready-to-show', () => {
     win.show();

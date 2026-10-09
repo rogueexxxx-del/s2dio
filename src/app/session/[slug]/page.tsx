@@ -28,6 +28,8 @@ export default function StudioRoomPage() {
   const [screenControlStatus, setScreenControlStatus] = useState<ScreenControlStatus>("none");
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
   const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
@@ -63,6 +65,41 @@ export default function StudioRoomPage() {
       }
     } catch (err) {
       console.log("Screen share cancelled or not allowed:", err);
+    }
+  };
+
+  const handleToggleCamera = async () => {
+    if (isCameraActive && cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      setCameraStream(null);
+      setIsCameraActive(false);
+      return;
+    }
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: "user",
+          },
+          audio: false,
+        });
+
+        const videoTrack = stream.getVideoTracks()[0];
+        if (videoTrack) {
+          videoTrack.onended = () => {
+            setCameraStream(null);
+            setIsCameraActive(false);
+          };
+        }
+
+        setCameraStream(stream);
+        setIsCameraActive(true);
+      }
+    } catch (err) {
+      console.log("Camera access error or cancelled:", err);
     }
   };
 
@@ -491,6 +528,9 @@ export default function StudioRoomPage() {
           videoStream={screenStream}
           isScreenSharing={isScreenSharing}
           onToggleScreenShare={handleToggleScreenShare}
+          cameraStream={cameraStream}
+          isCameraActive={isCameraActive}
+          onToggleCamera={handleToggleCamera}
         />
 
         {/* Slide-over Notes & Files Drawer */}
@@ -529,7 +569,21 @@ export default function StudioRoomPage() {
           title="Stream DAW Window or Screen Live (60fps)"
         >
           <span>🖥</span>
-          <span>{isScreenSharing ? "Stop Video" : "Share DAW"}</span>
+          <span>{isScreenSharing ? "Stop DAW" : "Share DAW"}</span>
+        </button>
+
+        {/* Toggle Studio Camera Video Transmission */}
+        <button
+          onClick={handleToggleCamera}
+          className={`h-9 px-3.5 text-xs rounded-md border transition-colors inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+            isCameraActive
+              ? "bg-accent-blue text-white border-accent-blue font-medium"
+              : "btn-tertiary"
+          }`}
+          title="Broadcast Studio Webcam"
+        >
+          <span>📷</span>
+          <span>{isCameraActive ? "Stop Cam" : "Camera"}</span>
         </button>
 
         {/* Play/Stop Audio Test */}

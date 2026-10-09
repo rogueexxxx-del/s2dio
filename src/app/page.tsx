@@ -219,12 +219,12 @@ export default function DashboardPage() {
           {/* Primary Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
             <a
-              href="/downloads/S2DIO-Windows-VST3.zip"
-              download="S2DIO-Windows-VST3.zip"
-              className="btn-primary h-11 px-6 text-sm font-semibold inline-flex items-center gap-2.5 shadow-lg shadow-white/5"
+              href="/downloads/S2DIO-Windows-Setup.exe"
+              download="S2DIO-Windows-Setup.exe"
+              className="btn-primary h-11 px-6 text-sm font-semibold inline-flex items-center gap-2.5 shadow-lg shadow-white/5 cursor-pointer"
             >
-              <span>Download S2DIO for Windows</span>
-              <span className="text-xs opacity-75">(.zip • 7.5 MB)</span>
+              <span>Download S2DIO Installer (.exe)</span>
+              <span className="text-xs opacity-75">(5.0 MB)</span>
             </a>
 
             <button
