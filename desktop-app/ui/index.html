@@ -499,21 +499,24 @@
       object-fit: cover;
     }
 
-    /* Hardware Ingest Header Card (when video is not sharing) */
+    /* Hardware Ingest Header Card (positioned below center so the audio visualizer is fully visible) */
     .ingest-card {
-      position: relative;
+      position: absolute;
+      bottom: 92px;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 15;
-      width: 100%;
+      width: calc(100% - 32px);
       max-width: 640px;
-      background: rgba(13, 13, 13, 0.95);
+      background: rgba(13, 13, 13, 0.90);
       border: 1px solid var(--hairline);
       border-radius: 12px;
-      padding: 24px;
+      padding: 18px 24px;
       box-shadow: 0 20px 48px rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
     .card-top-row {

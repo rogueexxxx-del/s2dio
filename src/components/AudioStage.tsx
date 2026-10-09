@@ -220,9 +220,9 @@ export function AudioStage({
           </div>
         </div>
       ) : (
-        <div className="relative z-10 w-full max-w-2xl mx-auto space-y-6">
+        <div className="absolute bottom-20 sm:bottom-24 left-1/2 -translate-x-1/2 z-10 w-[calc(100%-32px)] max-w-2xl mx-auto space-y-3">
           {/* Hardware Ingest Header Card */}
-          <div className="bg-surface/95 border border-hairline rounded-xl p-6 shadow-2xl space-y-5 backdrop-blur-md">
+          <div className="bg-surface/90 border border-hairline rounded-xl p-5 shadow-2xl space-y-4 backdrop-blur-md">
             {/* Top Bar: Connection & Stream Type */}
             <div className="flex items-center justify-between border-b border-hairline pb-4">
               <div className="flex items-center gap-2.5">
