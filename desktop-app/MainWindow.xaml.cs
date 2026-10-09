@@ -17,6 +17,12 @@ namespace desktop_app
         {
             try
             {
+                string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                string iconPath = Path.Combine(appDir, "app.ico");
+                if (File.Exists(iconPath))
+                {
+                    Icon = new System.Windows.Media.Imaging.BitmapImage(new Uri(iconPath));
+                }
                 // Store user data in %LOCALAPPDATA%\S2DIO\WebView2 to prevent 0x80070005 (E_ACCESSDENIED)
                 string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 string userDataFolder = Path.Combine(localAppData, "S2DIO", "WebView2");
@@ -35,7 +41,6 @@ namespace desktop_app
                 webView.CoreWebView2.PermissionRequested += CoreWebView2_PermissionRequested;
 
                 // Load self-contained local UI first (instant, 100% offline, zero server dependencies)
-                string appDir = AppDomain.CurrentDomain.BaseDirectory;
                 string uiDir = Path.Combine(appDir, "ui");
 
                 if (Directory.Exists(uiDir) && File.Exists(Path.Combine(uiDir, "index.html")))

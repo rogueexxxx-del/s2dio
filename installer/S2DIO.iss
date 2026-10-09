@@ -1,5 +1,6 @@
 [Setup]
-AppName=S2DIO Studio
+AppName=S2DIO
+AppId={{C8E192A0-47F1-4949-A1B2-8D7F6E5A4B3C}}
 AppVersion=1.0.0
 AppPublisher=S2DIO
 DefaultDirName={autopf}\S2DIO
@@ -13,7 +14,6 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=admin
 CloseApplications=yes
 SetupIconFile=app.ico
-UninstallIconFile=app.ico
 
 [InstallDelete]
 ; Delete any previous flat file so Windows can create the VST3 bundle directory cleanly
@@ -27,11 +27,11 @@ Source: "..\dist\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs c
 Source: "..\dist\S2DIO Master Bridge.vst3\*"; DestDir: "{commoncf}\VST3\S2DIO Master Bridge.vst3"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\S2DIO Control Room"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"
-Name: "{autodesktop}\S2DIO Control Room"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"
+Name: "{autoprograms}\S2DIO"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"
+Name: "{autodesktop}\S2DIO"; Filename: "{app}\S2DIO.exe"; IconFilename: "{app}\app.ico"
 
 [Run]
-Filename: "{app}\S2DIO.exe"; Description: "Launch S2DIO Control Room"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\S2DIO.exe"; Description: "Launch S2DIO"; Flags: nowait postinstall skipifsilent
 
 [Code]
 procedure CurStepChanged(CurStep: TSetupStep);
