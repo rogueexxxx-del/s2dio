@@ -10,18 +10,17 @@ foreach ($size in $sizes) {
     $visual = New-Object System.Windows.Media.DrawingVisual
     $dc = $visual.RenderOpen()
 
-    # Dark rounded background tile
-    $bgBrush = New-Object System.Windows.Media.SolidColorBrush([System.Windows.Media.Color]::FromArgb(255, 11, 15, 23))
+    # Dark background tile (#07080a) with subtle hairline border (#242728) - NO BLUE
+    $bgBrush = New-Object System.Windows.Media.SolidColorBrush([System.Windows.Media.Color]::FromArgb(255, 7, 8, 10))
     $borderPen = New-Object System.Windows.Media.Pen(
-        (New-Object System.Windows.Media.SolidColorBrush([System.Windows.Media.Color]::FromArgb(180, 56, 189, 248))),
+        (New-Object System.Windows.Media.SolidColorBrush([System.Windows.Media.Color]::FromArgb(200, 36, 39, 40))),
         ($size * 0.03)
     )
     $radius = $size * 0.22
     $rect = New-Object System.Windows.Rect(0, 0, $size, $size)
     $dc.DrawRoundedRectangle($bgBrush, $borderPen, $rect, $radius, $radius)
 
-    # Monogram S2 path
-    # Original SVG viewBox is 345.59 x 188.67
+    # Monogram S2 path in pure crisp white (#ffffff)
     $scaleX = ($size * 0.72) / 345.59
     $scaleY = ($size * 0.72) / (345.59 * (188.67 / 345.59))
     $scale = [Math]::Min($scaleX, $scaleY)
@@ -38,15 +37,10 @@ foreach ($size in $sizes) {
     $sGeom = [System.Windows.Media.Geometry]::Parse($sGeomStr)
     $twoGeom = [System.Windows.Media.Geometry]::Parse($twoGeomStr)
 
-    $fgBrush = New-Object System.Windows.Media.LinearGradientBrush(
-        [System.Windows.Media.Color]::FromArgb(255, 56, 189, 248),
-        [System.Windows.Media.Color]::FromArgb(255, 255, 255, 255),
-        (New-Object System.Windows.Point(0, 0)),
-        (New-Object System.Windows.Point(1, 1))
-    )
+    $whiteBrush = New-Object System.Windows.Media.SolidColorBrush([System.Windows.Media.Color]::FromArgb(255, 255, 255, 255))
 
-    $dc.DrawGeometry($fgBrush, $null, $sGeom)
-    $dc.DrawGeometry($fgBrush, $null, $twoGeom)
+    $dc.DrawGeometry($whiteBrush, $null, $sGeom)
+    $dc.DrawGeometry($whiteBrush, $null, $twoGeom)
     $dc.Pop()
 
     $dc.Close()
@@ -68,10 +62,9 @@ function Write-IcoFile($outputPath, $bytesArray, $sizesArray) {
     $fs = [System.IO.File]::Create($outputPath)
     $bw = New-Object System.IO.BinaryWriter($fs)
 
-    # ICONDIR header
-    $bw.Write([uint16]0) # Reserved
-    $bw.Write([uint16]1) # Type (1 = icon)
-    $bw.Write([uint16]$sizesArray.Length) # Count
+    $bw.Write([uint16]0)
+    $bw.Write([uint16]1)
+    $bw.Write([uint16]$sizesArray.Length)
 
     $offset = 6 + (16 * $sizesArray.Length)
     for ($i = 0; $i -lt $sizesArray.Length; $i++) {
@@ -79,16 +72,15 @@ function Write-IcoFile($outputPath, $bytesArray, $sizesArray) {
         $h = if ($sizesArray[$i] -ge 256) { 0 } else { [byte]$sizesArray[$i] }
         $bw.Write([byte]$w)
         $bw.Write([byte]$h)
-        $bw.Write([byte]0) # Colors
-        $bw.Write([byte]0) # Reserved
-        $bw.Write([uint16]1) # Planes
-        $bw.Write([uint16]32) # Bit count
-        $bw.Write([uint32]$bytesArray[$i].Length) # Size in bytes
-        $bw.Write([uint32]$offset) # Offset
+        $bw.Write([byte]0)
+        $bw.Write([byte]0)
+        $bw.Write([uint16]1)
+        $bw.Write([uint16]32)
+        $bw.Write([uint32]$bytesArray[$i].Length)
+        $bw.Write([uint32]$offset)
         $offset += $bytesArray[$i].Length
     }
 
-    # Write PNG payloads
     for ($i = 0; $i -lt $sizesArray.Length; $i++) {
         $bw.Write($bytesArray[$i])
     }
@@ -99,4 +91,4 @@ function Write-IcoFile($outputPath, $bytesArray, $sizesArray) {
 
 Write-IcoFile "H:\OPENCODE\desktop-app\app.ico" $pngBytesList $sizes
 Write-IcoFile "H:\OPENCODE\installer\app.ico" $pngBytesList $sizes
-Write-Host "Generated H:\OPENCODE\desktop-app\app.ico and installer\app.ico successfully!"
+Write-Host "Generated pure white/dark S2 icons successfully!"

@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S2DIO Control Room</title>
+  <title>S2DIO Studio</title>
   <style>
     :root {
-      --bg: #07080a;
-      --card-bg: #0d1117;
-      --surface: #161b22;
-      --surface-hover: #21262d;
-      --border: #21262d;
-      --border-subtle: #1b2028;
-      --accent: #38bdf8;
-      --accent-glow: rgba(56, 189, 248, 0.25);
-      --text: #f0f6fc;
-      --text-muted: #8b949e;
-      --text-dim: #6e7681;
-      --green: #22c55e;
-      --green-glow: rgba(34, 197, 94, 0.3);
-      --amber: #f59e0b;
-      --red: #ef4444;
-      --red-glow: rgba(239, 68, 68, 0.4);
+      --canvas: #07080a;
+      --surface: #0d0d0d;
+      --surface-elevated: #101111;
+      --surface-card: #121212;
+      --hairline: #242728;
+      --hairline-soft: rgba(255, 255, 255, 0.08);
+      --hairline-strong: rgba(255, 255, 255, 0.16);
+      --ink: #f4f4f6;
+      --body: #cdcdcd;
+      --mute: #9c9c9d;
+      --ash: #6a6b6c;
+      --accent-red: #ff5757;
+      --accent-red-soft: rgba(255, 87, 87, 0.15);
+      --accent-green: #59d499;
+      --accent-green-soft: rgba(89, 212, 153, 0.15);
+      --white: #ffffff;
     }
 
     * {
@@ -33,140 +33,175 @@
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--text);
+      background-color: var(--canvas);
+      color: var(--body);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       height: 100vh;
+      width: 100vw;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
-    /* Top Navigation */
+    /* Top Navigation Header */
     header {
       height: 56px;
-      background-color: rgba(13, 17, 23, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      border-bottom: 1px solid var(--hairline-soft);
+      background: transparent;
+      z-index: 20;
       flex-shrink: 0;
-      z-index: 50;
     }
 
-    .brand {
+    .header-left {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .brand svg {
-      height: 28px;
-      width: auto;
-    }
-
-    .session-badge {
+    .brand-logo {
       display: flex;
       align-items: center;
-      gap: 8px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: 9999px;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    .brand-logo svg {
+      height: 20px;
+      width: auto;
+      fill: currentColor;
+    }
+
+    .header-sep {
+      height: 14px;
+      width: 1px;
+      background: var(--hairline);
+    }
+
+    .session-slug {
       font-size: 12px;
-      font-weight: 500;
-      color: var(--text-muted);
+      color: var(--mute);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .ingest-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 10px;
+      color: var(--mute);
+      margin-left: 4px;
     }
 
     .status-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: var(--amber);
-      box-shadow: 0 0 8px var(--amber);
-      transition: background 0.3s, box-shadow 0.3s;
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green-soft);
+      animation: pulse 2s infinite ease-in-out;
     }
 
-    .status-dot.active {
-      background: var(--green);
-      box-shadow: 0 0 8px var(--green-glow);
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
 
-    .header-actions {
+    .header-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      font-size: 12px;
     }
 
-    .btn {
+    .pipeline-text {
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: var(--mute);
+    }
+
+    .participants-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-btn {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 6px;
-      height: 32px;
-      padding: 0 12px;
+      padding: 4px 10px;
       border-radius: 6px;
-      font-size: 12px;
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      color: var(--ink);
+      font-size: 11px;
       font-weight: 500;
       cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
       transition: all 0.15s ease;
-      outline: none;
     }
 
-    .btn:hover {
-      background: var(--surface-hover);
-      border-color: #30363d;
-      color: #fff;
+    .pill-btn:hover {
+      background: var(--surface-elevated);
+      border-color: var(--hairline-strong);
     }
 
-    .btn-primary {
-      background: #0284c7;
-      border-color: #38bdf8;
-      color: #fff;
-      box-shadow: 0 0 12px var(--accent-glow);
+    .pill-btn.subtle {
+      color: var(--mute);
     }
 
-    .btn-primary:hover {
-      background: #0369a1;
-      border-color: #7dd3fc;
+    .btn-invite {
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 6px;
+      background: var(--white);
+      color: #000;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      white-space: nowrap;
     }
 
-    .btn-active {
-      background: #1e293b;
-      border-color: var(--accent);
-      color: var(--accent);
+    .btn-invite:hover {
+      background: #e8e8e8;
     }
 
-    /* Main Studio Stage */
+    /* Main Stage */
     main {
       flex: 1;
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      overflow: hidden;
+      display: flex;
       position: relative;
+      overflow: hidden;
     }
 
-    .stage-viewport {
+    .stage-canvas-container {
+      width: 100%;
+      height: 100%;
       position: relative;
-      background: #000;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      background: var(--canvas);
     }
 
     #filamentCanvas {
-      width: 100%;
-      height: 100%;
       position: absolute;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
     }
 
@@ -176,21 +211,22 @@
       object-fit: contain;
       background: #000;
       display: none;
+      z-index: 10;
     }
 
     #pipContainer {
       position: absolute;
-      bottom: 20px;
-      right: 20px;
+      bottom: 96px;
+      right: 28px;
       width: 220px;
       height: 124px;
       border-radius: 8px;
       overflow: hidden;
-      border: 2px solid var(--accent);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+      border: 1px solid var(--hairline-strong);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.9);
       display: none;
-      z-index: 30;
-      background: #111;
+      z-index: 25;
+      background: #000;
     }
 
     #pipVideo {
@@ -199,300 +235,410 @@
       object-fit: cover;
     }
 
-    .center-overlay {
-      position: absolute;
+    /* Center Stage Standby Card */
+    .center-card {
+      position: relative;
+      z-index: 15;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 12px;
-      z-index: 10;
-      pointer-events: none;
+      text-align: center;
+      max-width: 440px;
     }
 
-    .center-overlay.hidden {
-      display: none;
-    }
-
-    .center-logo {
-      width: 90px;
-      height: auto;
-      opacity: 0.85;
-      filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.4));
-    }
-
-    .center-title {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      color: #f1f5f9;
-    }
-
-    .center-subtitle {
-      font-size: 12px;
-      color: var(--text-dim);
-    }
-
-    /* Right Console (Meters & Mixer) */
-    .console-sidebar {
-      background: var(--card-bg);
-      border-left: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 16px;
-      gap: 16px;
-      overflow-y: auto;
-    }
-
-    .panel-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .panel-header {
-      display: flex;
+    .center-badge {
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline);
       font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-    }
-
-    .format-pill {
-      font-size: 10px;
       font-weight: 500;
-      color: var(--accent);
-      background: rgba(56, 189, 248, 0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      color: var(--mute);
     }
 
-    /* Stereo Hardware VU Meters */
-    .meters-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 6px 0;
+    .center-heading {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
     }
 
-    .meter-channel {
+    .center-subtext {
+      font-size: 13px;
+      color: var(--mute);
+      line-height: 1.5;
+    }
+
+    .btn-share-center {
+      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 38px;
+      padding: 0 16px;
+      border-radius: 8px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-share-center:hover {
+      background: var(--surface-card);
+      border-color: var(--hairline-strong);
+      color: var(--white);
+    }
+
+    /* Floating Studio Meters (Left & Right Flanks) */
+    .floating-meter {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 240px;
+      width: 22px;
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 6px;
+      z-index: 15;
     }
 
-    .meter-label-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 10px;
+    .floating-meter.left {
+      left: 36px;
+    }
+
+    .floating-meter.right {
+      right: 36px;
+    }
+
+    .meter-label {
+      font-size: 9px;
       font-weight: 600;
-      color: var(--text-dim);
+      color: var(--ash);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
-    .meter-numeric {
-      font-family: monospace;
-      color: var(--text-muted);
-    }
-
-    .ladder-meter {
-      height: 180px;
-      background: #050608;
-      border: 1px solid #1c222c;
-      border-radius: 4px;
-      padding: 4px;
+    .meter-bar-track {
+      flex: 1;
+      width: 6px;
+      background: #111112;
+      border-radius: 3px;
+      overflow: hidden;
       display: flex;
       flex-direction: column-reverse;
-      gap: 2px;
+      gap: 1.5px;
+      padding: 1px;
     }
 
-    .led-bar {
+    .led-unit {
       height: 4px;
       width: 100%;
-      border-radius: 1px;
-      background: #11161d;
-      transition: background 0.05s ease;
+      border-radius: 0.5px;
+      background: #18191a;
+      transition: background 0.04s ease;
     }
 
-    .led-bar.lit-green {
-      background: var(--green);
-      box-shadow: 0 0 4px var(--green-glow);
+    .led-unit.on-green {
+      background: var(--accent-green);
+      box-shadow: 0 0 3px var(--accent-green);
     }
 
-    .led-bar.lit-amber {
-      background: var(--amber);
-      box-shadow: 0 0 4px rgba(245, 158, 11, 0.4);
+    .led-unit.on-amber {
+      background: #ffc533;
+      box-shadow: 0 0 3px #ffc533;
     }
 
-    .led-bar.lit-red {
-      background: var(--red);
-      box-shadow: 0 0 6px var(--red-glow);
+    .led-unit.on-red {
+      background: var(--accent-red);
+      box-shadow: 0 0 5px var(--accent-red);
     }
 
-    /* Channel Fader Strips */
-    .fader-strip {
+    .meter-db-text {
+      font-size: 9px;
+      color: var(--ash);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Floating Bottom Zen Dock */
+    .dock-container {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 12px;
+      padding: 6px 8px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+      white-space: nowrap;
+    }
+
+    .dock-btn {
+      height: 36px;
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      border: 1px solid var(--hairline);
+      background: var(--surface-elevated);
+      color: var(--body);
+      display: inline-flex;
+      align-items: center;
       gap: 6px;
-    }
-
-    .fader-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .fader-slider {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 4px;
-      border-radius: 2px;
-      background: #21262d;
+      cursor: pointer;
+      transition: all 0.15s ease;
       outline: none;
     }
 
-    .fader-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--accent);
-      cursor: pointer;
-      box-shadow: 0 0 8px var(--accent-glow);
+    .dock-btn:hover {
+      background: var(--surface-card);
+      border-color: var(--hairline-strong);
+      color: var(--white);
     }
 
-    /* Bottom Control Bar */
-    footer {
-      height: 64px;
-      background-color: rgba(13, 17, 23, 0.95);
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      flex-shrink: 0;
-      z-index: 50;
-    }
-
-    .dock-left, .dock-center, .dock-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .ptt-btn {
-      height: 44px;
-      padding: 0 20px;
-      border-radius: 8px;
-      font-size: 13px;
+    .dock-btn.active {
+      background: var(--accent-red);
+      border-color: var(--accent-red);
+      color: var(--white);
       font-weight: 600;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      display: flex;
+    }
+
+    .dock-sep {
+      height: 18px;
+      width: 1px;
+      background: var(--hairline);
+      margin: 0 2px;
+    }
+
+    .ptt-talk-btn {
+      height: 36px;
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--hairline);
+      background: #18191a;
+      color: var(--ink);
+      display: inline-flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
 
-    .ptt-btn.talking {
-      background: #b91c1c;
-      border-color: var(--red);
-      color: #fff;
-      box-shadow: 0 0 16px var(--red-glow);
+    .ptt-talk-btn.talking {
+      background: var(--accent-red);
+      border-color: var(--accent-red);
+      color: var(--white);
+      box-shadow: 0 0 16px var(--accent-red-soft);
     }
 
-    .ptt-shortcut {
-      font-size: 10px;
+    .ptt-shortcut-badge {
+      font-size: 9px;
       background: rgba(255, 255, 255, 0.1);
-      padding: 2px 5px;
+      padding: 1px 4px;
       border-radius: 3px;
-      color: var(--text-muted);
+      color: var(--mute);
     }
 
-    /* Modal / Popups */
-    .modal-backdrop {
+    /* Modals & Drawers */
+    .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(6px);
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 100;
     }
 
-    .modal-backdrop.open {
+    .modal-overlay.open {
       display: flex;
     }
 
-    .modal-dialog {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+    .modal-card {
+      background: var(--surface-card);
+      border: 1px solid var(--hairline);
       border-radius: 12px;
-      width: 380px;
+      width: 360px;
       max-width: 90vw;
-      padding: 20px;
-      box-shadow: 0 16px 36px rgba(0,0,0,0.8);
+      padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 16px;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.9);
     }
 
-    .modal-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
+    .modal-header-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
 
-    .modal-close {
-      cursor: pointer;
-      color: var(--text-muted);
+    .modal-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .modal-close-btn {
       background: transparent;
       border: none;
+      color: var(--mute);
       font-size: 18px;
+      cursor: pointer;
     }
 
-    .input-group {
+    .modal-close-btn:hover {
+      color: var(--white);
+    }
+
+    .tabs-row {
+      display: flex;
+      border-bottom: 1px solid var(--hairline);
+      padding-bottom: 8px;
+      gap: 16px;
+    }
+
+    .tab-item {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--mute);
+      cursor: pointer;
+      padding-bottom: 4px;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .tab-item.active {
+      color: var(--white);
+      border-color: var(--white);
+    }
+
+    .form-field {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .input-label {
+    .field-label {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--mute);
       font-weight: 500;
     }
 
-    .text-input {
+    .field-input {
+      height: 38px;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 1px solid var(--hairline);
       border-radius: 6px;
-      height: 36px;
-      padding: 0 10px;
-      color: #fff;
+      padding: 0 12px;
       font-size: 13px;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .field-input:focus {
+      border-color: var(--hairline-strong);
+    }
+
+    .btn-submit {
+      height: 38px;
+      background: var(--white);
+      color: #000;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.15s ease;
+    }
+
+    .btn-submit:hover {
+      background: #e8e8e8;
+    }
+
+    .modal-footer-note {
+      font-size: 11px;
+      color: var(--ash);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* Popover Mixer Card */
+    .mixer-popover {
+      position: absolute;
+      bottom: 74px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(16, 17, 17, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 12px;
+      padding: 16px 20px;
+      width: 320px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 35;
+    }
+
+    .mixer-popover.open {
+      display: flex;
+    }
+
+    .mixer-fader-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .fader-title-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--body);
+    }
+
+    .fader-track {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--hairline);
       outline: none;
     }
 
-    .text-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 8px var(--accent-glow);
+    .fader-track::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--white);
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
     }
   </style>
 </head>
@@ -500,222 +646,239 @@
 
   <!-- Top Navigation Header -->
   <header>
-    <div class="brand">
-      <svg id="s2Logo" viewBox="0 0 345.59 188.67">
-        <path fill="#38bdf8" d="M176.35,58.81c.37,6.08-66.64,7.51-72.03,2.87-4.36-3.69-2.69-6.16-5.39-8.95-4.4-4.55-17.54-4.29-18.33,2.46-.74,6.35,4.31,8.68,9.38,9.93,9.93,2.45,51.63,4.08,60.95,8.12,37.55,16.31,32.77,55.11,25.21,74.31-6.87,17.43-21.83,26.46-39.24,33.17-22.1,8.51-65.06,10.08-88.38,4.47C-4.89,172.34,3.14,125.7,3.55,123.27c1.47-8.9,50.55-6.07,77.06-2.29,1.93,6.11,6.79,10.84,12.94,12.62,8.56,2.26,18.99-9.57,5.91-16.74-9.49-5.19-73.59,3.21-91.15-19.34C-4.63,80.91-2.03,49.14,13.12,25.34,31.36-3.35,77.21.01,107.47.22c83.34.59,68.43,51.16,68.88,58.58h0Z"/>
-        <path fill="#ffffff" d="M193.1,117.43c5.52-10.46,12.56-20.06,20.87-28.47,21.68-22.88,64.96-7.39,63.74-31.4-.34-6.81-12.69-7.05-16.7-2.48-2.46,2.8,1.67,12.14-3.42,12.71-1.33.15-63.98,5.78-67.9-.6-1.28-2.07-.84-9.18-.42-14.25.95-11.78,4.38-50.83,63.96-50.58,27.57.11,69.34-3.59,85.97,25.22,6.48,14.78,8.09,31.25,4.59,47-2.7,11.37-9.45,21.38-18.98,28.15-12.8,9.15-40.5,5.01-49.74,17.7,4.35,1.57,38.22.27,38.5.31,10.82,1.35,11.86-.05,24.06-.38,2-.05.83,11.46.83,12.94,0,9.43.73,22.36,1.21,31.77.3,6.07.69,15.86.35,21.62-4.29.48-8.6.68-12.91.59-8.33,1.22-16.76,1.61-25.17,1.16-26.32-2.74-55.15.48-81.6-.38-6.97-.23-18.85,1.72-26.89-.39-5.29-1.39-5.09-31.77-4.59-37.01.71-7.55-1.22-21.95,4.25-33.23Z"/>
-      </svg>
-      <div class="session-badge">
+    <div class="header-left">
+      <!-- Full S2DIO vector logo matching web app -->
+      <div class="brand-logo" title="S2DIO Studio">
+        <svg viewBox="0 0 798.93 192.1" height="18">
+          <path d="M176.35,62.22c.37,6.08-66.64,7.51-72.03,2.87-4.36-3.69-2.69-6.16-5.39-8.95-4.4-4.55-17.54-4.29-18.33,2.46-.74,6.35,4.31,8.68,9.38,9.93,9.93,2.45,51.63,4.08,60.95,8.12,37.55,16.31,32.77,55.11,25.21,74.31-6.87,17.43-21.83,26.46-39.24,33.17-22.1,8.51-65.06,10.08-88.38,4.47C-4.89,175.75,3.14,129.11,3.55,126.68c1.47-8.9,50.55-6.07,77.06-2.29,1.93,6.11,6.79,10.84,12.94,12.62,8.56,2.26,18.99-9.57,5.91-16.74-9.49-5.19-73.59,3.21-91.15-19.34C-4.63,84.32-2.03,52.55,13.12,28.75,31.36.06,77.21,3.42,107.47,3.63c83.34.59,68.43,51.16,68.88,58.58h0Z"/>
+          <path d="M193.1,120.84c5.52-10.46,12.56-20.06,20.87-28.47,21.68-22.88,64.96-7.39,63.74-31.4-.34-6.81-12.69-7.05-16.7-2.48-2.46,2.8,1.67,12.14-3.42,12.71-1.33.15-63.98,5.78-67.9-.6-1.28-2.07-.84-9.18-.42-14.25.95-11.78,4.38-50.83,63.96-50.58,27.57.11,69.34-3.59,85.97,25.22,6.48,14.78,8.09,31.25,4.59,47-2.7,11.37-9.45,21.38-18.98,28.15-12.8,9.15-40.5,5.01-49.74,17.7,4.35,1.57,38.22.27,38.5.31,10.82,1.35,11.86-.05,24.06-.38,2-.05.83,11.46.83,12.94,0,9.43.73,22.36,1.21,31.77.3,6.07.69,15.86.35,21.62-4.29.48-8.6.68-12.91.59-8.33,1.22-16.76,1.61-25.17,1.16-26.32-2.74-55.15.48-81.6-.38-6.97-.23-18.85,1.72-26.89-.39-5.29-1.39-5.09-31.77-4.59-37.01.71-7.55-1.22-21.95,4.25-33.23Z"/>
+          <path d="M505.98,168.74c-12.92,15.53-38.87,17.79-57.08,21.63-26.57,5.6-91.13-4.28-91.13-4.28-.5-7.76-.81-15.51-.93-23.27-.24-16.1.1-31.39,1.36-46.5,1.53-18.23.49-35.99.23-54.07-.17-11.98-6.47-34.01.39-44.73,7.36-11.51,24.42-9.34,35.84-9.91,35.04-1.75,55.89-10.34,88.73,8.82,14.39,8.39,22.77,22.98,27.43,38.48,10.19,33.76,19.85,84.12-4.85,113.84ZM441.97,69.73l-3.12,2.41c-.25,4.71-.26,9.43-.03,14.14.15,3.61.37,7.21.27,10.82-.04,1.26-.95,5.34-.16,6.76,2.75,5.02,9.52.49,11.55-2.28,7.24-9.82,7.67-32.02-8.51-31.85Z"/>
+          <path d="M611.53,60.54c.4,37.04-.57,86.22-.66,97.39-.07,7.76,3.17,27.46-4.47,31.73-3.85,2.16-68.23,4.46-75.04-1.55-4.86-4.28-2.91-17.48-2.62-23.57.28-5.97,2.02-31.89,2.12-61.53.04-10.61-1.46-22.64-1.46-33.08,0-28.39-.14-52.92-.48-56.39-1.07-10.69,85.21-11.43,83.54-.8-.26,1.65-1.22,22.38-.94,47.8Z"/>
+          <path d="M795.35,131.17c-9.79,33.19-29.97,55.4-63.82,59.7-13.83,1.76-38.99,1.88-52.13-1.65-19.67-5.29-35.32-14.84-45.76-33.62-4.04-7.27-10.57-19.26-12.02-27.37-5.86-32.84.2-73.26,15.16-94.56,31.27-44.5,100.26-43.65,135.61-4.79,22.33,24.55,32.48,69.98,22.96,102.29ZM722.66,90.26c-.44-5.85-8.93-10.24-12.82-10.12-3.32-.1-6.55,1.11-8.98,3.38-3.64,3.9-4.7,11.89-1.07,15.23,3.66,6.69,11.98,4.86,16.96,2.63,3.98-2.23,6.29-6.57,5.91-11.12Z"/>
+        </svg>
+      </div>
+
+      <div class="header-sep"></div>
+      <span class="session-slug">studio</span>
+
+      <div class="ingest-badge" title="Local VST3 Ingest on 127.0.0.1:4949">
         <span class="status-dot" id="vstStatusDot"></span>
-        <span id="vstStatusText">Connecting DAW Bridge...</span>
+        <span id="vstStatusText">:4949 Ingest</span>
       </div>
     </div>
 
-    <div class="header-actions">
-      <button class="btn" id="btnInvite" title="Copy Guest Invite Link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        <span id="inviteBtnText">Copy Guest Link</span>
-      </button>
+    <div class="header-right">
+      <span class="pipeline-text">48kHz VST3 Pipeline</span>
 
-      <button class="btn" id="btnUserBadge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span id="userBadgeText">Producer</span>
-      </button>
+      <div class="participants-bar">
+        <button class="pill-btn" id="btnUserPill">
+          <span style="width:5px; height:5px; border-radius:50%; background:var(--accent-green);"></span>
+          <span id="userPillName">Producer</span>
+          <span style="font-size:9px; color:var(--mute); margin-left:2px;">[Host]</span>
+        </button>
 
-      <button class="btn" id="btnSettings" title="Audio & Engine Settings">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <button class="pill-btn subtle">
+          <span style="width:5px; height:5px; border-radius:50%; background:var(--ash);"></span>
+          <span>Collaborator</span>
+        </button>
+
+        <button class="pill-btn subtle" id="btnAddGuest">
+          <span>+ Invite</span>
+        </button>
+      </div>
+
+      <button class="btn-invite" id="btnCopyInvite">
+        <span id="copyInviteText">Copy Invite Link</span>
       </button>
     </div>
   </header>
 
-  <!-- Studio Stage & Meter Console -->
+  <!-- Main Canvas Stage -->
   <main>
-    <!-- Left Stage Viewport -->
-    <div class="stage-viewport">
+    <div class="stage-canvas-container">
       <canvas id="filamentCanvas"></canvas>
       <video id="screenVideo" autoplay playsinline muted></video>
       <video id="cameraVideo" autoplay playsinline muted></video>
 
-      <!-- Picture in picture box when both are active -->
+      <!-- PiP Container when both active -->
       <div id="pipContainer">
         <video id="pipVideo" autoplay playsinline muted></video>
       </div>
 
-      <!-- Center Logo & Status Overlay -->
-      <div class="center-overlay" id="centerOverlay">
-        <svg class="center-logo" viewBox="0 0 345.59 188.67">
-          <path fill="#38bdf8" d="M176.35,58.81c.37,6.08-66.64,7.51-72.03,2.87-4.36-3.69-2.69-6.16-5.39-8.95-4.4-4.55-17.54-4.29-18.33,2.46-.74,6.35,4.31,8.68,9.38,9.93,9.93,2.45,51.63,4.08,60.95,8.12,37.55,16.31,32.77,55.11,25.21,74.31-6.87,17.43-21.83,26.46-39.24,33.17-22.1,8.51-65.06,10.08-88.38,4.47C-4.89,172.34,3.14,125.7,3.55,123.27c1.47-8.9,50.55-6.07,77.06-2.29,1.93,6.11,6.79,10.84,12.94,12.62,8.56,2.26,18.99-9.57,5.91-16.74-9.49-5.19-73.59,3.21-91.15-19.34C-4.63,80.91-2.03,49.14,13.12,25.34,31.36-3.35,77.21.01,107.47.22c83.34.59,68.43,51.16,68.88,58.58h0Z"/>
-          <path fill="#ffffff" d="M193.1,117.43c5.52-10.46,12.56-20.06,20.87-28.47,21.68-22.88,64.96-7.39,63.74-31.4-.34-6.81-12.69-7.05-16.7-2.48-2.46,2.8,1.67,12.14-3.42,12.71-1.33.15-63.98,5.78-67.9-.6-1.28-2.07-.84-9.18-.42-14.25.95-11.78,4.38-50.83,63.96-50.58,27.57.11,69.34-3.59,85.97,25.22,6.48,14.78,8.09,31.25,4.59,47-2.7,11.37-9.45,21.38-18.98,28.15-12.8,9.15-40.5,5.01-49.74,17.7,4.35,1.57,38.22.27,38.5.31,10.82,1.35,11.86-.05,24.06-.38,2-.05.83,11.46.83,12.94,0,9.43.73,22.36,1.21,31.77.3,6.07.69,15.86.35,21.62-4.29.48-8.6.68-12.91.59-8.33,1.22-16.76,1.61-25.17,1.16-26.32-2.74-55.15.48-81.6-.38-6.97-.23-18.85,1.72-26.89-.39-5.29-1.39-5.09-31.77-4.59-37.01.71-7.55-1.22-21.95,4.25-33.23Z"/>
-        </svg>
-        <div class="center-title">S2DIO Studio Stage</div>
-        <div class="center-subtitle" id="centerSubtext">Insert S2DIO Master Bridge in your DAW to begin stream</div>
-      </div>
-    </div>
-
-    <!-- Right Sidebar Console -->
-    <div class="console-sidebar">
-      <!-- Hardware VU Meters Card -->
-      <div class="panel-card">
-        <div class="panel-header">
-          <span>Master Bus Metering</span>
-          <span class="format-pill">48kHz Float32</span>
-        </div>
-
-        <div class="meters-container">
-          <!-- Left Channel -->
-          <div class="meter-channel">
-            <div class="meter-label-row">
-              <span>CH 1 (L)</span>
-              <span class="meter-numeric" id="dbTextL">-inf dB</span>
-            </div>
-            <div class="ladder-meter" id="ladderL"></div>
-          </div>
-
-          <!-- Right Channel -->
-          <div class="meter-channel">
-            <div class="meter-label-row">
-              <span>CH 2 (R)</span>
-              <span class="meter-numeric" id="dbTextR">-inf dB</span>
-            </div>
-            <div class="ladder-meter" id="ladderR"></div>
-          </div>
-        </div>
+      <!-- Left Vertical Stereo VU Meter (Channel 1 - L) -->
+      <div class="floating-meter left">
+        <span class="meter-label">L</span>
+        <div class="meter-bar-track" id="ladderL"></div>
+        <span class="meter-db-text" id="dbTextL">-inf</span>
       </div>
 
-      <!-- Quick Mixer Sliders -->
-      <div class="panel-card">
-        <div class="panel-header">
-          <span>Mixer Levels</span>
-          <span style="font-size:10px; color:var(--text-dim);">Post-Fader</span>
-        </div>
-
-        <div class="fader-strip">
-          <div class="fader-header">
-            <span>DAW Master Gain</span>
-            <span id="dawGainVal">0 dB</span>
-          </div>
-          <input type="range" min="-30" max="6" value="0" step="0.5" class="fader-slider" id="faderDaw">
-        </div>
-
-        <div class="fader-strip">
-          <div class="fader-header">
-            <span>Talkback Mic</span>
-            <span id="micGainVal">0 dB</span>
-          </div>
-          <input type="range" min="-30" max="6" value="0" step="0.5" class="fader-slider" id="faderMic">
-        </div>
-
-        <div class="fader-strip">
-          <div class="fader-header">
-            <span>Client Monitor</span>
-            <span id="clientGainVal">0 dB</span>
-          </div>
-          <input type="range" min="-30" max="6" value="0" step="0.5" class="fader-slider" id="faderClient">
-        </div>
+      <!-- Right Vertical Stereo VU Meter (Channel 2 - R) -->
+      <div class="floating-meter right">
+        <span class="meter-label">R</span>
+        <div class="meter-bar-track" id="ladderR"></div>
+        <span class="meter-db-text" id="dbTextR">-inf</span>
       </div>
 
-      <!-- Engine Status Card -->
-      <div class="panel-card">
-        <div class="panel-header">
-          <span>Bridge Connection</span>
-          <span style="font-size:10px; color:var(--accent);">ws://127.0.0.1:4949</span>
+      <!-- Center Standby Message (exactly matching web app) -->
+      <div class="center-card" id="centerStandby">
+        <div class="center-badge">
+          <span style="width:5px; height:5px; border-radius:50%; background:var(--ash);"></span>
+          <span>DAW Audio Standby</span>
+          <span style="color:var(--hairline-strong);">&bull;</span>
+          <span>48kHz VST3</span>
         </div>
-        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
-          Direct native loopback ingest from DAW master bus. Zero compression, lossless 32-bit float PCM.
-        </div>
+        <div class="center-heading">Audio stream is ready</div>
+        <div class="center-subtext">Trigger playback in your DAW or press Play Demo in the dock to test.</div>
+        <button class="btn-share-center" id="btnShareCenter">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Share DAW Screen</span>
+        </button>
       </div>
     </div>
   </main>
 
-  <!-- Bottom Control Dock -->
-  <footer>
-    <div class="dock-left">
-      <button class="ptt-btn" id="btnPtt">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-        <span id="pttText">Push to Talk</span>
-        <span class="ptt-shortcut">SPACE</span>
-      </button>
+  <!-- Floating Zen Bottom Dock -->
+  <div class="dock-container">
+    <button class="ptt-talk-btn" id="btnPtt">
+      <span style="font-size:10px; letter-spacing:0.1em; color:var(--ash);">.....</span>
+      <span id="pttLabel">TALKBACK</span>
+      <span class="ptt-shortcut-badge">SPACE</span>
+    </button>
+
+    <div class="dock-sep"></div>
+
+    <button class="dock-btn" id="btnDockShareDaw" title="Share DAW window or display">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span>Share DAW</span>
+    </button>
+
+    <button class="dock-btn" id="btnDockCamera" title="Studio Webcam">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span>Camera</span>
+    </button>
+
+    <button class="dock-btn" id="btnDockDemo" title="Test audio tone & meters">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span id="demoBtnLabel">Play Demo</span>
+    </button>
+
+    <button class="dock-btn" id="btnDockMixer" title="Mixer Trims">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+      <span>Mixer Trims</span>
+    </button>
+
+    <button class="dock-btn" id="btnDockFiles" title="Notes & Stems">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Notes & Stems</span>
+    </button>
+
+    <button class="dock-btn" id="btnDockEngine" title="Engine Settings">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Engine</span>
+    </button>
+  </div>
+
+  <!-- Mixer Popover Drawer -->
+  <div class="mixer-popover" id="mixerPopover">
+    <div style="font-size:12px; font-weight:600; color:var(--white); border-bottom:1px solid var(--hairline); padding-bottom:8px;">Mixer Trims</div>
+    <div class="mixer-fader-row">
+      <div class="fader-title-row">
+        <span>Master DAW Bus</span>
+        <span id="lblDawGain" style="font-family:monospace; color:var(--mute);">0 dB</span>
+      </div>
+      <input type="range" min="-30" max="6" value="0" step="0.5" class="fader-track" id="faderDaw">
     </div>
-
-    <div class="dock-center">
-      <button class="btn" id="btnShareScreen">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        <span>Share DAW</span>
-      </button>
-
-      <button class="btn" id="btnCamera">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        <span>📷 Camera</span>
-      </button>
-
-      <button class="btn" id="btnTestTone">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-        <span id="testToneText">Test Tone</span>
-      </button>
+    <div class="mixer-fader-row">
+      <div class="fader-title-row">
+        <span>Talkback Mic</span>
+        <span id="lblMicGain" style="font-family:monospace; color:var(--mute);">0 dB</span>
+      </div>
+      <input type="range" min="-30" max="6" value="0" step="0.5" class="fader-track" id="faderMic">
     </div>
-
-    <div class="dock-right">
-      <div style="font-size: 11px; color: var(--text-dim); display: flex; gap: 6px; align-items: center;">
-        <span>Room:</span>
-        <span style="font-family: monospace; color: var(--text); background: var(--surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);">STUDIO</span>
+    <div class="mixer-fader-row">
+      <div class="fader-title-row">
+        <span>Collaborator Monitor</span>
+        <span id="lblGuestGain" style="font-family:monospace; color:var(--mute);">0 dB</span>
       </div>
-    </div>
-  </footer>
-
-  <!-- User Account Modal -->
-  <div class="modal-backdrop" id="authModal">
-    <div class="modal-dialog">
-      <div class="modal-title">
-        <span>S2DIO Account</span>
-        <button class="modal-close" onclick="closeAuthModal()">✕</button>
-      </div>
-      <div class="input-group">
-        <label class="input-label">Producer Display Name</label>
-        <input type="text" class="text-input" id="authDisplayName" placeholder="e.g. Master Producer">
-      </div>
-      <div class="input-group">
-        <label class="input-label">Email Address</label>
-        <input type="email" class="text-input" id="authEmail" placeholder="producer@s2dio.app">
-      </div>
-      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
-        <button class="btn" onclick="signOut()">Sign Out</button>
-        <button class="btn btn-primary" onclick="saveUser()">Save & Connect</button>
-      </div>
+      <input type="range" min="-30" max="6" value="0" step="0.5" class="fader-track" id="faderGuest">
     </div>
   </div>
 
-  <!-- Settings Modal -->
-  <div class="modal-backdrop" id="settingsModal">
-    <div class="modal-dialog">
-      <div class="modal-title">
-        <span>Engine Settings</span>
-        <button class="modal-close" onclick="closeSettingsModal()">✕</button>
-      </div>
-      <div class="input-group">
-        <label class="input-label">Sample Rate</label>
-        <input type="text" class="text-input" value="48,000 Hz (Fixed Lossless)" disabled style="opacity: 0.7;">
-      </div>
-      <div class="input-group">
-        <label class="input-label">DAW VST3 Bridge Port</label>
-        <input type="number" class="text-input" id="cfgPort" value="4949">
-      </div>
-      <div class="input-group">
-        <label class="input-label">Talkback Ducking Reduction</label>
-        <input type="range" min="6" max="24" value="12" step="1" class="fader-slider" id="cfgDucking">
-        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-dim);">
-          <span>-6 dB</span>
-          <span id="duckingValText">-12 dB</span>
-          <span>-24 dB</span>
+  <!-- Auth Modal (Exact match to media_1791484707074_c5f5498c.png) -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-card">
+      <div class="modal-header-row">
+        <div class="modal-title-group">
+          <!-- Monogram S2 in white -->
+          <svg viewBox="0 0 345.59 188.67" height="18" fill="#ffffff">
+            <path d="M176.35,58.81c.37,6.08-66.64,7.51-72.03,2.87-4.36-3.69-2.69-6.16-5.39-8.95-4.4-4.55-17.54-4.29-18.33,2.46-.74,6.35,4.31,8.68,9.38,9.93,9.93,2.45,51.63,4.08,60.95,8.12,37.55,16.31,32.77,55.11,25.21,74.31-6.87,17.43-21.83,26.46-39.24,33.17-22.1,8.51-65.06,10.08-88.38,4.47C-4.89,172.34,3.14,125.7,3.55,123.27c1.47-8.9,50.55-6.07,77.06-2.29,1.93,6.11,6.79,10.84,12.94,12.62,8.56,2.26,18.99-9.57,5.91-16.74-9.49-5.19-73.59,3.21-91.15-19.34C-4.63,80.91-2.03,49.14,13.12,25.34,31.36-3.35,77.21.01,107.47.22c83.34.59,68.43,51.16,68.88,58.58h0Z"/>
+            <path d="M193.1,117.43c5.52-10.46,12.56-20.06,20.87-28.47,21.68-22.88,64.96-7.39,63.74-31.4-.34-6.81-12.69-7.05-16.7-2.48-2.46,2.8,1.67,12.14-3.42,12.71-1.33.15-63.98,5.78-67.9-.6-1.28-2.07-.84-9.18-.42-14.25.95-11.78,4.38-50.83,63.96-50.58,27.57.11,69.34-3.59,85.97,25.22,6.48,14.78,8.09,31.25,4.59,47-2.7,11.37-9.45,21.38-18.98,28.15-12.8,9.15-40.5,5.01-49.74,17.7,4.35,1.57,38.22.27,38.5.31,10.82,1.35,11.86-.05,24.06-.38,2-.05.83,11.46.83,12.94,0,9.43.73,22.36,1.21,31.77.3,6.07.69,15.86.35,21.62-4.29.48-8.6.68-12.91.59-8.33,1.22-16.76,1.61-25.17,1.16-26.32-2.74-55.15.48-81.6-.38-6.97-.23-18.85,1.72-26.89-.39-5.29-1.39-5.09-31.77-4.59-37.01.71-7.55-1.22-21.95,4.25-33.23Z"/>
+          </svg>
+          <span>S2DIO Studio</span>
         </div>
+        <button class="modal-close-btn" onclick="toggleAuthModal(false)">&times;</button>
       </div>
-      <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
-        <button class="btn btn-primary" onclick="saveSettings()">Apply</button>
+
+      <div class="tabs-row">
+        <span class="tab-item active" id="tabSignIn">Sign In</span>
+        <span class="tab-item" id="tabCreateAccount">Create Account</span>
+        <span class="tab-item" id="tabMagicLink">Magic Link</span>
       </div>
+
+      <div class="form-field">
+        <label class="field-label">Email Address</label>
+        <input type="email" class="field-input" id="inputEmail" placeholder="roguessss@gmail.com">
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Password</label>
+        <input type="password" class="field-input" id="inputPassword" placeholder="••••••••••••">
+      </div>
+
+      <div id="authStatusBanner" style="display:none; padding:8px 12px; border-radius:6px; background:rgba(89,212,153,0.1); border:1px solid var(--accent-green); color:var(--accent-green); font-size:12px;">
+        Signed in locally.
+      </div>
+
+      <button class="btn-submit" id="btnAuthSubmit">Sign In</button>
+      <div class="modal-footer-note">Collaborators joining via guest link do not need an account.</div>
+    </div>
+  </div>
+
+  <!-- Engine Settings Modal -->
+  <div class="modal-overlay" id="engineModal">
+    <div class="modal-card">
+      <div class="modal-header-row">
+        <div class="modal-title-group">
+          <span>Engine Settings</span>
+        </div>
+        <button class="modal-close-btn" onclick="toggleEngineModal(false)">&times;</button>
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Sample Rate</label>
+        <input type="text" class="field-input" value="48,000 Hz (Fixed Lossless Float32)" disabled style="opacity:0.6;">
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">DAW VST3 Ingest Port</label>
+        <input type="number" class="field-input" id="cfgPort" value="4949">
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Talkback Ducking Level</label>
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--mute);">
+          <span>DAW reduction when talking</span>
+          <span id="duckingDbText">-12 dB</span>
+        </div>
+        <input type="range" min="6" max="24" value="12" step="1" class="fader-track" id="cfgDucking">
+      </div>
+
+      <button class="btn-submit" onclick="saveEngineSettings()">Apply</button>
     </div>
   </div>
 
   <script>
-    // Audio Engine State
+    // Audio Context & Graph
     let audioCtx = null;
     let masterGain = null;
     let dawGain = null;
@@ -724,16 +887,16 @@
     let analyserR = null;
     let vstWs = null;
     let isVstConnected = false;
-    let testOsc = null;
-    let testLfo = null;
-    let isTestingTone = false;
+    let isPlayingDemo = false;
+    let demoOsc = null;
+    let demoLfo = null;
     let duckingDb = -12;
 
     // Streams
     let screenStream = null;
     let cameraStream = null;
 
-    // Build LED ladders (24 segments each)
+    // Build 24 LED segments for Left & Right vertical meters
     const NUM_SEGMENTS = 24;
     const ladderL = document.getElementById("ladderL");
     const ladderR = document.getElementById("ladderR");
@@ -741,22 +904,21 @@
     const ledsR = [];
 
     for (let i = 0; i < NUM_SEGMENTS; i++) {
-      const barL = document.createElement("div");
-      barL.className = "led-bar";
-      ladderL.appendChild(barL);
-      ledsL.push(barL);
+      const bL = document.createElement("div");
+      bL.className = "led-unit";
+      ladderL.appendChild(bL);
+      ledsL.push(bL);
 
-      const barR = document.createElement("div");
-      barR.className = "led-bar";
-      ladderR.appendChild(barR);
-      ledsR.push(barR);
+      const bR = document.createElement("div");
+      bR.className = "led-unit";
+      ladderR.appendChild(bR);
+      ledsR.push(bR);
     }
 
-    // Init Web Audio
     function initAudio() {
       if (audioCtx) return;
-      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-      audioCtx = new AudioCtxClass({ sampleRate: 48000 });
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContextClass({ sampleRate: 48000 });
 
       masterGain = audioCtx.createGain();
       masterGain.connect(audioCtx.destination);
@@ -779,7 +941,7 @@
       splitter.connect(analyserR, 1);
     }
 
-    // Connect to C++ JUCE VST3 plugin WebSocket bridge
+    // Connect to VST3 WebSocket Bridge (ws://127.0.0.1:4949)
     function connectVstBridge() {
       const port = localStorage.getItem("s2dio_vst_port") || "4949";
       try {
@@ -791,12 +953,11 @@
           updateVstUi(true);
         };
 
-        vstWs.onmessage = (event) => {
+        vstWs.onmessage = (e) => {
           if (!audioCtx) initAudio();
           if (audioCtx.state === "suspended") audioCtx.resume();
-          // Raw 32-bit float PCM audio
-          if (event.data instanceof ArrayBuffer) {
-            handleVstAudioBuffer(event.data);
+          if (e.data instanceof ArrayBuffer) {
+            handleAudioPacket(e.data);
           }
         };
 
@@ -810,15 +971,15 @@
           isVstConnected = false;
           updateVstUi(false);
         };
-      } catch (e) {
+      } catch (err) {
         setTimeout(connectVstBridge, 2000);
       }
     }
 
     let nextPlayTime = 0;
-    function handleVstAudioBuffer(arrayBuffer) {
+    function handleAudioPacket(buffer) {
       if (!audioCtx) return;
-      const float32 = new Float32Array(arrayBuffer);
+      const float32 = new Float32Array(buffer);
       const numFrames = float32.length / 2;
       if (numFrames <= 0) return;
 
@@ -844,23 +1005,22 @@
     function updateVstUi(connected) {
       const dot = document.getElementById("vstStatusDot");
       const text = document.getElementById("vstStatusText");
-      const sub = document.getElementById("centerSubtext");
       if (connected) {
-        dot.className = "status-dot active";
-        text.textContent = "DAW Bridge Active (48kHz)";
-        sub.textContent = "DAW audio stream active: 32-bit float PCM";
+        dot.style.background = "var(--accent-green)";
+        dot.style.boxShadow = "0 0 6px var(--accent-green-soft)";
+        text.textContent = ":4949 Ingest Active";
       } else {
-        dot.className = "status-dot";
-        text.textContent = "Waiting for DAW Ingest...";
-        sub.textContent = "Insert S2DIO Master Bridge in your DAW to begin stream";
+        dot.style.background = "var(--ash)";
+        dot.style.boxShadow = "none";
+        text.textContent = ":4949 Ingest";
       }
     }
 
-    // VU Meter Rendering Loop
+    // VU Meter Animation
     const bufL = new Float32Array(128);
     const bufR = new Float32Array(128);
 
-    function updateMeters() {
+    function renderMeters() {
       let rmsDbL = -100;
       let rmsDbR = -100;
 
@@ -868,8 +1028,7 @@
         analyserL.getFloatTimeDomainData(bufL);
         analyserR.getFloatTimeDomainData(bufR);
 
-        let sumL = 0;
-        let sumR = 0;
+        let sumL = 0, sumR = 0;
         for (let i = 0; i < 128; i++) {
           sumL += bufL[i] * bufL[i];
           sumR += bufR[i] * bufR[i];
@@ -881,39 +1040,37 @@
         rmsDbR = rmsR > 0.00001 ? 20 * Math.log10(rmsR) : -100;
       }
 
-      // Update text
-      document.getElementById("dbTextL").textContent = rmsDbL > -60 ? `${rmsDbL.toFixed(1)} dB` : "-inf dB";
-      document.getElementById("dbTextR").textContent = rmsDbR > -60 ? `${rmsDbR.toFixed(1)} dB` : "-inf dB";
+      document.getElementById("dbTextL").textContent = rmsDbL > -60 ? `${rmsDbL.toFixed(0)}` : "-inf";
+      document.getElementById("dbTextR").textContent = rmsDbR > -60 ? `${rmsDbR.toFixed(0)}` : "-inf";
 
-      // Map dB to 24 segments (-48dB to 0dB)
       const litL = Math.max(0, Math.min(NUM_SEGMENTS, Math.floor(((rmsDbL + 48) / 48) * NUM_SEGMENTS)));
       const litR = Math.max(0, Math.min(NUM_SEGMENTS, Math.floor(((rmsDbR + 48) / 48) * NUM_SEGMENTS)));
 
       for (let i = 0; i < NUM_SEGMENTS; i++) {
         // Left
         if (i < litL) {
-          if (i >= 21) ledsL[i].className = "led-bar lit-red";
-          else if (i >= 15) ledsL[i].className = "led-bar lit-amber";
-          else ledsL[i].className = "led-bar lit-green";
+          if (i >= 21) ledsL[i].className = "led-unit on-red";
+          else if (i >= 15) ledsL[i].className = "led-unit on-amber";
+          else ledsL[i].className = "led-unit on-green";
         } else {
-          ledsL[i].className = "led-bar";
+          ledsL[i].className = "led-unit";
         }
 
         // Right
         if (i < litR) {
-          if (i >= 21) ledsR[i].className = "led-bar lit-red";
-          else if (i >= 15) ledsR[i].className = "led-bar lit-amber";
-          else ledsR[i].className = "led-bar lit-green";
+          if (i >= 21) ledsR[i].className = "led-unit on-red";
+          else if (i >= 15) ledsR[i].className = "led-unit on-amber";
+          else ledsR[i].className = "led-unit on-green";
         } else {
-          ledsR[i].className = "led-bar";
+          ledsR[i].className = "led-unit";
         }
       }
 
-      requestAnimationFrame(updateMeters);
+      requestAnimationFrame(renderMeters);
     }
-    requestAnimationFrame(updateMeters);
+    requestAnimationFrame(renderMeters);
 
-    // Canvas Filament Waveform Visualizer
+    // Canvas Filament Wave
     const canvas = document.getElementById("filamentCanvas");
     const ctx = canvas.getContext("2d");
     let phase = 0;
@@ -923,126 +1080,87 @@
       const h = canvas.height = canvas.offsetHeight;
       ctx.clearRect(0, 0, w, h);
 
-      const isActive = isVstConnected || isTestingTone;
-      const level = isActive ? 0.45 : 0.08;
+      const isActive = isVstConnected || isPlayingDemo;
+      const level = isActive ? 0.35 : 0.05;
       const centerY = h / 2;
 
       ctx.lineWidth = 1.5;
-      ctx.strokeStyle = isActive ? "rgba(244, 244, 246, 0.7)" : "rgba(100, 110, 130, 0.25)";
+      ctx.strokeStyle = isActive ? "rgba(244, 244, 246, 0.6)" : "rgba(106, 107, 108, 0.25)";
       ctx.beginPath();
 
       const step = 4;
       for (let x = 0; x <= w; x += step) {
         const normX = x / w;
         const envelope = Math.sin(normX * Math.PI);
-        const wave = Math.sin(normX * 8 + phase) * 24 * level * envelope;
-        const harmonic = Math.sin(normX * 18 - phase * 1.5) * 10 * level * envelope;
+        const wave = Math.sin(normX * 8 + phase) * 28 * level * envelope;
+        const harmonic = Math.sin(normX * 18 - phase * 1.5) * 12 * level * envelope;
         const y = centerY + wave + harmonic;
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
       ctx.stroke();
 
-      if (isActive) {
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "rgba(56, 189, 248, 0.5)";
-        ctx.beginPath();
-        for (let x = 0; x <= w; x += step) {
-          const normX = x / w;
-          const envelope = Math.sin(normX * Math.PI);
-          const wave = Math.cos(normX * 10 - phase * 0.8) * 18 * level * envelope;
-          const y = centerY + wave;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
-
       phase += isActive ? 0.04 : 0.01;
       requestAnimationFrame(renderFilament);
     }
     requestAnimationFrame(renderFilament);
 
-    // Test Tone Generator
-    document.getElementById("btnTestTone").addEventListener("click", () => {
+    // Play Demo / Test Tone (440Hz sweep)
+    const btnDockDemo = document.getElementById("btnDockDemo");
+    btnDockDemo.addEventListener("click", () => {
       initAudio();
       if (audioCtx.state === "suspended") audioCtx.resume();
 
-      if (isTestingTone) {
-        if (testOsc) {
-          testOsc.stop();
-          testOsc.disconnect();
-          testOsc = null;
+      if (isPlayingDemo) {
+        if (demoOsc) {
+          demoOsc.stop();
+          demoOsc.disconnect();
+          demoOsc = null;
         }
-        if (testLfo) {
-          testLfo.stop();
-          testLfo.disconnect();
-          testLfo = null;
+        if (demoLfo) {
+          demoLfo.stop();
+          demoLfo.disconnect();
+          demoLfo = null;
         }
-        isTestingTone = false;
-        document.getElementById("testToneText").textContent = "Test Tone";
-        document.getElementById("btnTestTone").classList.remove("btn-active");
+        isPlayingDemo = false;
+        document.getElementById("demoBtnLabel").textContent = "Play Demo";
+        btnDockDemo.classList.remove("active");
       } else {
-        testOsc = audioCtx.createOscillator();
-        testOsc.type = "sine";
-        testOsc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        demoOsc = audioCtx.createOscillator();
+        demoOsc.type = "sine";
+        demoOsc.frequency.setValueAtTime(440, audioCtx.currentTime);
 
         const oscGain = audioCtx.createGain();
         oscGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
 
-        testLfo = audioCtx.createOscillator();
-        testLfo.frequency.setValueAtTime(2, audioCtx.currentTime);
+        demoLfo = audioCtx.createOscillator();
+        demoLfo.frequency.setValueAtTime(2, audioCtx.currentTime);
         const lfoGain = audioCtx.createGain();
         lfoGain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        testLfo.connect(lfoGain);
+        demoLfo.connect(lfoGain);
         lfoGain.connect(oscGain.gain);
 
-        testOsc.connect(oscGain);
+        demoOsc.connect(oscGain);
         oscGain.connect(dawGain);
 
-        testOsc.start();
-        testLfo.start();
-        isTestingTone = true;
-        document.getElementById("testToneText").textContent = "Stop Tone";
-        document.getElementById("btnTestTone").classList.add("btn-active");
+        demoOsc.start();
+        demoLfo.start();
+        isPlayingDemo = true;
+        document.getElementById("demoBtnLabel").textContent = "Stop Audio";
+        btnDockDemo.classList.add("active");
       }
     });
 
-    // Faders
-    document.getElementById("faderDaw").addEventListener("input", (e) => {
-      const db = parseFloat(e.target.value);
-      document.getElementById("dawGainVal").textContent = `${db > 0 ? "+" : ""}${db} dB`;
-      if (dawGain && audioCtx) {
-        const linear = Math.pow(10, db / 20);
-        dawGain.gain.setValueAtTime(linear, audioCtx.currentTime);
-      }
-    });
-
-    document.getElementById("faderMic").addEventListener("input", (e) => {
-      const db = parseFloat(e.target.value);
-      document.getElementById("micGainVal").textContent = `${db > 0 ? "+" : ""}${db} dB`;
-    });
-
-    document.getElementById("faderClient").addEventListener("input", (e) => {
-      const db = parseFloat(e.target.value);
-      document.getElementById("clientGainVal").textContent = `${db > 0 ? "+" : ""}${db} dB`;
-      if (masterGain && audioCtx) {
-        const linear = Math.pow(10, db / 20);
-        masterGain.gain.setValueAtTime(linear, audioCtx.currentTime);
-      }
-    });
-
-    // Push to Talk & Ducking
-    const pttBtn = document.getElementById("btnPtt");
+    // Talkback & Ducking
+    const btnPtt = document.getElementById("btnPtt");
     let isTalking = false;
 
     function startTalking() {
       if (isTalking) return;
       isTalking = true;
-      pttBtn.classList.add("talking");
-      document.getElementById("pttText").textContent = "TALKING LIVE";
+      btnPtt.classList.add("talking");
+      document.getElementById("pttLabel").textContent = "TALKING LIVE";
 
-      // Duck DAW Audio
       if (dawGain && audioCtx) {
         const duckLinear = Math.pow(10, duckingDb / 20);
         dawGain.gain.setTargetAtTime(duckLinear, audioCtx.currentTime, 0.05);
@@ -1052,10 +1170,9 @@
     function stopTalking() {
       if (!isTalking) return;
       isTalking = false;
-      pttBtn.classList.remove("talking");
-      document.getElementById("pttText").textContent = "Push to Talk";
+      btnPtt.classList.remove("talking");
+      document.getElementById("pttLabel").textContent = "TALKBACK";
 
-      // Restore DAW Audio
       if (dawGain && audioCtx) {
         const db = parseFloat(document.getElementById("faderDaw").value);
         const normalLinear = Math.pow(10, db / 20);
@@ -1063,7 +1180,7 @@
       }
     }
 
-    pttBtn.addEventListener("mousedown", startTalking);
+    btnPtt.addEventListener("mousedown", startTalking);
     window.addEventListener("mouseup", stopTalking);
 
     window.addEventListener("keydown", (e) => {
@@ -1080,17 +1197,18 @@
     });
 
     // Share DAW Screen
-    const btnShareScreen = document.getElementById("btnShareScreen");
+    const btnDockShareDaw = document.getElementById("btnDockShareDaw");
+    const btnShareCenter = document.getElementById("btnShareCenter");
     const screenVideo = document.getElementById("screenVideo");
-    const centerOverlay = document.getElementById("centerOverlay");
+    const centerStandby = document.getElementById("centerStandby");
 
-    btnShareScreen.addEventListener("click", async () => {
+    async function toggleScreenShare() {
       if (screenStream) {
         screenStream.getTracks().forEach(t => t.stop());
         screenStream = null;
         screenVideo.srcObject = null;
         screenVideo.style.display = "none";
-        btnShareScreen.classList.remove("btn-active");
+        btnDockShareDaw.classList.remove("active");
         updateViewports();
         return;
       }
@@ -1102,13 +1220,13 @@
         });
         screenVideo.srcObject = screenStream;
         screenVideo.style.display = "block";
-        btnShareScreen.classList.add("btn-active");
+        btnDockShareDaw.classList.add("active");
 
         screenStream.getVideoTracks()[0].onended = () => {
           screenStream = null;
           screenVideo.srcObject = null;
           screenVideo.style.display = "none";
-          btnShareScreen.classList.remove("btn-active");
+          btnDockShareDaw.classList.remove("active");
           updateViewports();
         };
 
@@ -1116,15 +1234,18 @@
       } catch (err) {
         console.log("Screen share cancelled:", err);
       }
-    });
+    }
 
-    // Camera Video
-    const btnCamera = document.getElementById("btnCamera");
+    btnDockShareDaw.addEventListener("click", toggleScreenShare);
+    btnShareCenter.addEventListener("click", toggleScreenShare);
+
+    // Studio Webcam Video
+    const btnDockCamera = document.getElementById("btnDockCamera");
     const cameraVideo = document.getElementById("cameraVideo");
     const pipContainer = document.getElementById("pipContainer");
     const pipVideo = document.getElementById("pipVideo");
 
-    btnCamera.addEventListener("click", async () => {
+    btnDockCamera.addEventListener("click", async () => {
       if (cameraStream) {
         cameraStream.getTracks().forEach(t => t.stop());
         cameraStream = null;
@@ -1132,7 +1253,7 @@
         pipVideo.srcObject = null;
         cameraVideo.style.display = "none";
         pipContainer.style.display = "none";
-        btnCamera.classList.remove("btn-active");
+        btnDockCamera.classList.remove("active");
         updateViewports();
         return;
       }
@@ -1142,7 +1263,7 @@
           video: { width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false
         });
-        btnCamera.classList.add("btn-active");
+        btnDockCamera.classList.add("active");
         updateViewports();
       } catch (err) {
         console.log("Camera access error:", err);
@@ -1151,100 +1272,116 @@
 
     function updateViewports() {
       if (screenStream && cameraStream) {
-        // Both active: Screen is main, Camera is PiP
         screenVideo.srcObject = screenStream;
         screenVideo.style.display = "block";
         pipVideo.srcObject = cameraStream;
         pipContainer.style.display = "block";
         cameraVideo.style.display = "none";
-        centerOverlay.classList.add("hidden");
+        centerStandby.style.display = "none";
       } else if (screenStream) {
         screenVideo.srcObject = screenStream;
         screenVideo.style.display = "block";
         pipContainer.style.display = "none";
         cameraVideo.style.display = "none";
-        centerOverlay.classList.add("hidden");
+        centerStandby.style.display = "none";
       } else if (cameraStream) {
         cameraVideo.srcObject = cameraStream;
         cameraVideo.style.display = "block";
         screenVideo.style.display = "none";
         pipContainer.style.display = "none";
-        centerOverlay.classList.add("hidden");
+        centerStandby.style.display = "none";
       } else {
         screenVideo.style.display = "none";
         cameraVideo.style.display = "none";
         pipContainer.style.display = "none";
-        centerOverlay.classList.remove("hidden");
+        centerStandby.style.display = "flex";
       }
     }
 
-    // Guest Invite Link
-    document.getElementById("btnInvite").addEventListener("click", () => {
-      const inviteUrl = "https://s2dio.app/guest/studio";
-      navigator.clipboard.writeText(inviteUrl);
-      const btnText = document.getElementById("inviteBtnText");
-      btnText.textContent = "Link Copied!";
-      setTimeout(() => {
-        btnText.textContent = "Copy Guest Link";
-      }, 2000);
+    // Mixer Popover
+    const btnDockMixer = document.getElementById("btnDockMixer");
+    const mixerPopover = document.getElementById("mixerPopover");
+
+    btnDockMixer.addEventListener("click", () => {
+      mixerPopover.classList.toggle("open");
     });
 
-    // User Account
-    function loadSavedUser() {
-      const savedName = localStorage.getItem("s2dio_username") || "Producer";
-      document.getElementById("userBadgeText").textContent = savedName;
-      document.getElementById("authDisplayName").value = savedName;
-      document.getElementById("authEmail").value = localStorage.getItem("s2dio_auth_email") || "";
-    }
-    loadSavedUser();
-
-    document.getElementById("btnUserBadge").addEventListener("click", () => {
-      document.getElementById("authModal").classList.add("open");
+    document.getElementById("faderDaw").addEventListener("input", (e) => {
+      const db = parseFloat(e.target.value);
+      document.getElementById("lblDawGain").textContent = `${db > 0 ? "+" : ""}${db} dB`;
+      if (dawGain && audioCtx) {
+        const linear = Math.pow(10, db / 20);
+        dawGain.gain.setValueAtTime(linear, audioCtx.currentTime);
+      }
     });
 
-    function closeAuthModal() {
-      document.getElementById("authModal").classList.remove("open");
-    }
+    document.getElementById("faderMic").addEventListener("input", (e) => {
+      const db = parseFloat(e.target.value);
+      document.getElementById("lblMicGain").textContent = `${db > 0 ? "+" : ""}${db} dB`;
+    });
 
-    function saveUser() {
-      const name = document.getElementById("authDisplayName").value.trim() || "Producer";
-      const email = document.getElementById("authEmail").value.trim();
-      localStorage.setItem("s2dio_username", name);
+    document.getElementById("faderGuest").addEventListener("input", (e) => {
+      const db = parseFloat(e.target.value);
+      document.getElementById("lblGuestGain").textContent = `${db > 0 ? "+" : ""}${db} dB`;
+      if (masterGain && audioCtx) {
+        const linear = Math.pow(10, db / 20);
+        masterGain.gain.setValueAtTime(linear, audioCtx.currentTime);
+      }
+    });
+
+    // Notes & Stems Drawer Stub
+    document.getElementById("btnDockFiles").addEventListener("click", () => {
+      alert("Notes & Stems drawer ready for collaborator file drag-and-drop.");
+    });
+
+    // Copy Invite Link
+    document.getElementById("btnCopyInvite").addEventListener("click", () => {
+      const url = "https://s2dio.app/guest/studio";
+      navigator.clipboard.writeText(url);
+      const text = document.getElementById("copyInviteText");
+      text.textContent = "✓ Copied";
+      setTimeout(() => { text.textContent = "Copy Invite Link"; }, 2000);
+    });
+
+    // Auth Modal
+    function toggleAuthModal(show) {
+      document.getElementById("authModal").classList.toggle("open", show);
+    }
+    document.getElementById("btnUserPill").addEventListener("click", () => toggleAuthModal(true));
+    document.getElementById("btnAddGuest").addEventListener("click", () => toggleAuthModal(true));
+
+    document.getElementById("btnAuthSubmit").addEventListener("click", () => {
+      const email = document.getElementById("inputEmail").value.trim() || "producer@s2dio.app";
+      const name = email.split("@")[0] || "Producer";
       localStorage.setItem("s2dio_auth_email", email);
-      document.getElementById("userBadgeText").textContent = name;
-      closeAuthModal();
-    }
-
-    function signOut() {
-      localStorage.removeItem("s2dio_username");
-      localStorage.removeItem("s2dio_auth_email");
-      document.getElementById("userBadgeText").textContent = "Producer";
-      document.getElementById("authDisplayName").value = "";
-      document.getElementById("authEmail").value = "";
-      closeAuthModal();
-    }
-
-    // Settings Modal
-    document.getElementById("btnSettings").addEventListener("click", () => {
-      document.getElementById("settingsModal").classList.add("open");
+      localStorage.setItem("s2dio_username", name);
+      document.getElementById("userPillName").textContent = name;
+      document.getElementById("authStatusBanner").style.display = "block";
+      setTimeout(() => toggleAuthModal(false), 500);
     });
 
-    function closeSettingsModal() {
-      document.getElementById("settingsModal").classList.remove("open");
+    // Engine Settings Modal
+    function toggleEngineModal(show) {
+      document.getElementById("engineModal").classList.toggle("open", show);
     }
+    document.getElementById("btnDockEngine").addEventListener("click", () => toggleEngineModal(true));
 
     document.getElementById("cfgDucking").addEventListener("input", (e) => {
       duckingDb = -parseInt(e.target.value);
-      document.getElementById("duckingValText").textContent = `${duckingDb} dB`;
+      document.getElementById("duckingDbText").textContent = `${duckingDb} dB`;
     });
 
-    function saveSettings() {
-      const port = document.getElementById("cfgPort").value;
-      localStorage.setItem("s2dio_vst_port", port);
-      closeSettingsModal();
+    function saveEngineSettings() {
+      const p = document.getElementById("cfgPort").value;
+      localStorage.setItem("s2dio_vst_port", p);
+      toggleEngineModal(false);
       if (vstWs) vstWs.close();
       connectVstBridge();
     }
+
+    // Load persisted username
+    const savedName = localStorage.getItem("s2dio_username");
+    if (savedName) document.getElementById("userPillName").textContent = savedName;
 
     // Start Bridge Connection
     connectVstBridge();
