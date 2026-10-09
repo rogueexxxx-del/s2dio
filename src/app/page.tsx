@@ -8,6 +8,7 @@ import { supabase, isSupabaseClientConfigured } from "@/lib/supabase-client";
 import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
 import { Accordion } from "@/components/reactbits/Accordion";
 import { StudioGridBackground } from "@/components/reactbits/StudioGridBackground";
+import { ScheduleModal } from "@/components/ScheduleModal";
 
 const faqs = [
   {
@@ -67,6 +68,7 @@ export default function DashboardPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
 
   useEffect(() => {
     // Initial load from storage for immediate fast render
@@ -276,9 +278,18 @@ export default function DashboardPage() {
 
             <button
               onClick={() => setActiveTab(activeTab === "join" ? "create" : "join")}
-              className="btn-secondary h-11 px-5 text-sm"
+              className="btn-secondary h-11 px-5 text-sm cursor-pointer"
             >
               Join Room via Code
+            </button>
+
+            <button
+              onClick={() => setIsScheduleOpen(true)}
+              className="btn-secondary h-11 px-5 text-sm inline-flex items-center gap-1.5 cursor-pointer"
+              title="Schedule session with calendar invite & .ics export"
+            >
+              <span>📅</span>
+              <span>Schedule Session</span>
             </button>
           </div>
 
@@ -521,6 +532,14 @@ export default function DashboardPage() {
           <span>Float32 PCM • WebRTC Talkback</span>
         </div>
       </footer>
+
+      {/* Schedule Studio Session Modal */}
+      <ScheduleModal
+        isOpen={isScheduleOpen}
+        onClose={() => setIsScheduleOpen(false)}
+        roomSlug="studio-collab"
+        defaultTitle="S2DIO Studio Tracking Session"
+      />
 
       {/* Sign In & Sign Up Modal */}
       <AuthModal

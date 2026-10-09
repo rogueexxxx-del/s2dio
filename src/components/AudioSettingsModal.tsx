@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AudioEngineConfig } from "@/lib/types";
 
 interface AudioSettingsProps {
@@ -18,6 +18,45 @@ export function AudioSettingsModal({
   onConfigChange,
   onReconnectVst,
 }: AudioSettingsProps) {
+  const [midiDevices, setMidiDevices] = useState<string[]>([]);
+  const [selectedDevice, setSelectedDevice] = useState<string>("");
+  const [midiStatus, setMidiStatus] = useState<string>("Standby");
+
+  const scanMidiDevices = useCallback(async () => {
+    if (typeof window === "undefined" || !("requestMIDIAccess" in navigator)) {
+      setMidiStatus("Web MIDI not supported in this browser");
+      return;
+    }
+    try {
+      setMidiStatus("Scanning for MIDI devices...");
+      const access = await (navigator as any).requestMIDIAccess({ sysex: false });
+      const devs: string[] = [];
+      for (const input of access.inputs.values()) {
+        if (input.name) devs.push(input.name);
+      }
+      setMidiDevices(devs);
+      if (devs.length > 0) {
+        setSelectedDevice((prev) => prev || devs[0]);
+        setMidiStatus(`Connected (${devs.length} device${devs.length > 1 ? "s" : ""})`);
+      } else {
+        setMidiStatus("No hardware MIDI controllers detected");
+      }
+    } catch (err: any) {
+      setMidiStatus(err?.message || "MIDI permission required");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      scanMidiDevices();
+    }
+  }, [isOpen, scanMidiDevices]);
+
+  const handleDeviceChange = (dev: string) => {
+    setSelectedDevice(dev);
+    onConfigChange({ selectedMidiDevice: dev, midiEnabled: true });
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -157,6 +196,52 @@ export function AudioSettingsModal({
               onChange={(e) => onConfigChange({ loopbackProtection: e.target.checked })}
               className="w-4 h-4 cursor-pointer accent-white"
             />
+          </div>
+
+          {/* Web MIDI Hardware & Network Passthrough */}
+          <div className="p-3.5 bg-surface-elevated border border-hairline rounded-md space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-ink font-medium flex items-center gap-2">
+                  <span>Web MIDI Controller Passthrough</span>
+                  <span className={`w-2 h-2 rounded-full ${midiDevices.length > 0 ? "bg-accent-green" : "bg-stone"}`} />
+                </div>
+                <div className="text-[11px] text-mute mt-0.5">
+                  Stream USB MIDI keyboard/pad events directly to VST3 (:4949)
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={scanMidiDevices}
+                className="btn-tertiary text-xs h-7 px-2.5"
+              >
+                Scan
+              </button>
+            </div>
+
+            {midiDevices.length > 0 ? (
+              <div className="space-y-2">
+                <select
+                  value={selectedDevice}
+                  onChange={(e) => handleDeviceChange(e.target.value)}
+                  className="w-full bg-surface border border-hairline rounded-md px-2.5 py-1.5 text-xs text-ink focus:outline-none focus:border-accent-green/50"
+                >
+                  {midiDevices.map((dev) => (
+                    <option key={dev} value={dev} className="bg-surface text-ink">
+                      {dev}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex items-center justify-between text-[11px] text-stone">
+                  <span>Routing: Omni Channel &rarr; VST3 Loopback</span>
+                  <span className="font-mono text-accent-green">Active</span>
+                </div>
+              </div>
+            ) : (
+              <div className="text-[11px] text-stone p-2 rounded bg-surface border border-hairline/60">
+                {midiStatus || "Connect a USB MIDI keyboard or launch browser with MIDI access."}
+              </div>
+            )}
           </div>
         </div>
 

@@ -1225,6 +1225,10 @@
           <span id="guestPillLabel">Collaborator</span>
         </button>
 
+        <button class="pill-btn subtle" id="btnSchedulePill" title="Schedule studio session with calendar invite (.ics)">
+          <span>📅 Schedule</span>
+        </button>
+
         <button class="pill-btn subtle" id="btnInvitePill">
           <span>+ Invite</span>
         </button>
@@ -1369,6 +1373,15 @@
     <button class="dock-btn" id="btnDockCamera" title="Studio Webcam">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       <span>Camera</span>
+    </button>
+
+    <button class="dock-btn" id="btnDockRecord" title="Record Multi-Track Stems (Master DAW & Vocals)">
+      <span style="width:7px; height:7px; border-radius:50%; background:var(--accent-red);" id="recDot"></span>
+      <span id="recBtnLabel">Record</span>
+    </button>
+
+    <button class="dock-btn" id="btnDockTakes" style="display:none; color:var(--accent-green);" title="View recorded takes & stems">
+      <span id="takesCountLabel">Takes (0)</span>
     </button>
 
     <button class="dock-btn" id="btnDockDemo" title="Test audio tone & meters">
@@ -1581,7 +1594,86 @@
         <input type="range" min="6" max="24" value="12" step="1" style="width:100%; accent-color:var(--white);" id="cfgDuckingRange">
       </div>
 
+      <!-- Web MIDI Device Passthrough Section -->
+      <div style="padding:12px; border-radius:6px; background:var(--surface-elevated); border:1px solid var(--hairline); display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="width:7px; height:7px; border-radius:50%; background:var(--ash);" id="midiStatusDot"></span>
+            <span style="font-weight:600; color:var(--white); font-size:12px;">Web MIDI Controller Passthrough</span>
+          </div>
+          <button class="dock-btn" style="height:26px; font-size:11px; padding:0 8px;" id="btnScanMidi">Scan</button>
+        </div>
+        <div style="font-size:11px; color:var(--mute);">Stream USB MIDI keyboard/pad events directly to VST3 (:4949)</div>
+        <select class="profile-input" style="height:32px; font-size:11px; margin-top:2px;" id="midiDeviceSelect">
+          <option value="">No hardware controllers detected</option>
+        </select>
+        <div style="font-size:10px; color:var(--ash); border-top:1px solid var(--hairline); padding-top:6px; display:flex; justify-content:space-between;">
+          <span>Routing:</span>
+          <span style="color:var(--accent-green); font-family:monospace;" id="midiRouteLabel">Omni Channel &rarr; VST3 Loopback</span>
+        </div>
+      </div>
+
       <button class="btn-submit" id="btnSaveEngine">Apply Settings</button>
+    </div>
+  </div>
+
+  <!-- Schedule Session Modal with .ICS Export & Google Calendar -->
+  <div class="modal-overlay" id="scheduleModal">
+    <div class="modal-card" style="width:420px;">
+      <div class="modal-header-row">
+        <div class="modal-title-group">
+          <span>📅 Schedule Studio Session</span>
+        </div>
+        <button class="modal-close-btn" id="btnCloseSchedule">&times;</button>
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Session Title</label>
+        <input type="text" class="profile-input" id="schedTitle" value="Mixdown & Vocal Tracking">
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-field">
+          <label class="field-label">Date</label>
+          <input type="date" class="profile-input" id="schedDate">
+        </div>
+        <div class="form-field">
+          <label class="field-label">Time</label>
+          <input type="time" class="profile-input" id="schedTime" value="14:00">
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Duration</label>
+        <div class="options-grid">
+          <div class="opt-btn" data-dur="30">30m</div>
+          <div class="opt-btn active" data-dur="60">60m</div>
+          <div class="opt-btn" data-dur="120">2h</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;">
+        <button class="btn-submit" id="btnExportIcs" style="margin-top:0;">📅 Export .ICS</button>
+        <button class="btn-submit" id="btnGoogleCal" style="margin-top:0; background:var(--surface-elevated); color:var(--white); border:1px solid var(--hairline);">Google Cal ↗</button>
+      </div>
+      <button class="dock-btn" id="btnCopySchedInvite" style="width:100%; height:32px; margin-top:6px; justify-content:center;">Copy Invite Message</button>
+    </div>
+  </div>
+
+  <!-- Recorded Multi-Track Takes Modal -->
+  <div class="modal-overlay" id="takesModal">
+    <div class="modal-card" style="width:460px;">
+      <div class="modal-header-row">
+        <div class="modal-title-group">
+          <span style="color:var(--accent-red); font-size:14px;">●</span>
+          <span>Recorded Session Takes & Stems</span>
+        </div>
+        <button class="modal-close-btn" id="btnCloseTakes">&times;</button>
+      </div>
+
+      <div id="takesListContainer" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+        <div style="text-align:center; padding:20px; font-size:12px; color:var(--mute);">No takes recorded yet. Click Record in the dock to capture.</div>
+      </div>
     </div>
   </div>
 
@@ -2597,6 +2689,316 @@
     }
     document.getElementById("btnCopyInvite").addEventListener("click", copyInvite);
     document.getElementById("btnInvitePill").addEventListener("click", copyInvite);
+
+    // ==========================================
+    // 1. Session Scheduling & .ICS Calendar Export
+    // ==========================================
+    const scheduleModal = document.getElementById("scheduleModal");
+    const btnSchedulePill = document.getElementById("btnSchedulePill");
+    const btnCloseSchedule = document.getElementById("btnCloseSchedule");
+    const schedDateInput = document.getElementById("schedDate");
+
+    const tmrw = new Date();
+    tmrw.setDate(tmrw.getDate() + 1);
+    schedDateInput.value = tmrw.toISOString().split("T")[0];
+
+    btnSchedulePill.addEventListener("click", () => scheduleModal.classList.add("open"));
+    btnCloseSchedule.addEventListener("click", () => scheduleModal.classList.remove("open"));
+
+    let selectedDuration = 60;
+    scheduleModal.querySelectorAll(".opt-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        selectedDuration = parseInt(e.target.dataset.dur) || 60;
+      });
+    });
+
+    function getSchedEvent() {
+      const title = document.getElementById("schedTitle").value.trim() || "Studio Session";
+      const date = schedDateInput.value;
+      const time = document.getElementById("schedTime").value || "14:00";
+      const start = new Date(`${date}T${time}:00`);
+      const end = new Date(start.getTime() + selectedDuration * 60 * 1000);
+      const roomUrl = "https://s2dio.app/guest/studio";
+      return { title, date, time, start, end, roomUrl, duration: selectedDuration };
+    }
+
+    document.getElementById("btnExportIcs").addEventListener("click", () => {
+      const ev = getSchedEvent();
+      const fmt = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+      const ics = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//S2DIO//Studio Session Calendar//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "BEGIN:VEVENT",
+        `UID:s2dio-${Date.now()}@s2dio.app`,
+        `DTSTAMP:${fmt(new Date())}`,
+        `DTSTART:${fmt(ev.start)}`,
+        `DTEND:${fmt(ev.end)}`,
+        `SUMMARY:${ev.title}`,
+        `DESCRIPTION:S2DIO Lossless Audio Collaboration Session\\n\\nJoin Room: ${ev.roomUrl} (Lossless stereo audio)`,
+        `LOCATION:${ev.roomUrl}`,
+        "STATUS:CONFIRMED",
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].join("\r\n");
+
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${ev.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.ics`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("btnGoogleCal").addEventListener("click", () => {
+      const ev = getSchedEvent();
+      const fmt = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+      const params = new URLSearchParams({
+        action: "TEMPLATE",
+        text: ev.title,
+        dates: `${fmt(ev.start)}/${fmt(ev.end)}`,
+        details: `S2DIO Audio Collaboration Session\nJoin Room: ${ev.roomUrl}`,
+        location: ev.roomUrl
+      });
+      window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, "_blank");
+    });
+
+    document.getElementById("btnCopySchedInvite").addEventListener("click", (e) => {
+      const ev = getSchedEvent();
+      const msg = `🎵 S2DIO Studio Session: ${ev.title}\n📅 Date: ${ev.date} at ${ev.time} (${ev.duration} min)\n🔗 Join Room: ${ev.roomUrl}\n(Lossless 48kHz stereo master stream • Zero install required)`;
+      navigator.clipboard.writeText(msg);
+      e.target.textContent = "✓ Copied to Clipboard";
+      setTimeout(() => { e.target.textContent = "Copy Invite Message"; }, 2000);
+    });
+
+    // ==========================================
+    // 2. Multi-Track Local Stem Recording
+    // ==========================================
+    let isRecordingSession = false;
+    let recElapsed = 0;
+    let recTimer = null;
+    let masterRecorder = null;
+    let vocalRecorder = null;
+    let masterChunks = [];
+    let vocalChunks = [];
+    const recordedTakes = [];
+
+    const btnDockRecord = document.getElementById("btnDockRecord");
+    const recDot = document.getElementById("recDot");
+    const recBtnLabel = document.getElementById("recBtnLabel");
+    const btnDockTakes = document.getElementById("btnDockTakes");
+    const takesCountLabel = document.getElementById("takesCountLabel");
+    const takesModal = document.getElementById("takesModal");
+    const btnCloseTakes = document.getElementById("btnCloseTakes");
+    const takesListContainer = document.getElementById("takesListContainer");
+
+    btnDockTakes.addEventListener("click", () => takesModal.classList.add("open"));
+    btnCloseTakes.addEventListener("click", () => takesModal.classList.remove("open"));
+
+    btnDockRecord.addEventListener("click", () => {
+      if (!isRecordingSession) {
+        // Start Recording
+        masterChunks = [];
+        vocalChunks = [];
+        recElapsed = 0;
+
+        let started = false;
+        if (audioCtx && dawGain) {
+          try {
+            const dest = audioCtx.createMediaStreamDestination();
+            dawGain.connect(dest);
+            masterRecorder = new MediaRecorder(dest.stream);
+            masterRecorder.ondataavailable = (e) => { if (e.data.size > 0) masterChunks.push(e.data); };
+            masterRecorder.start(100);
+            started = true;
+          } catch (err) {
+            console.warn("Could not start master recorder:", err);
+          }
+        }
+
+        if (micStream) {
+          try {
+            vocalRecorder = new MediaRecorder(micStream);
+            vocalRecorder.ondataavailable = (e) => { if (e.data.size > 0) vocalChunks.push(e.data); };
+            vocalRecorder.start(100);
+            started = true;
+          } catch (err) {
+            console.warn("Could not start vocal recorder:", err);
+          }
+        }
+
+        isRecordingSession = true;
+        btnDockRecord.style.background = "var(--accent-red)";
+        btnDockRecord.style.color = "#fff";
+        recDot.style.background = "#fff";
+        recDot.classList.add("animate-pulse");
+
+        recTimer = setInterval(() => {
+          recElapsed++;
+          const m = Math.floor(recElapsed / 60);
+          const s = (recElapsed % 60).toString().padStart(2, "0");
+          recBtnLabel.textContent = `REC ${m}:${s}`;
+        }, 1000);
+      } else {
+        // Stop Recording
+        clearInterval(recTimer);
+        const finalSecs = recElapsed;
+        isRecordingSession = false;
+        btnDockRecord.style.background = "";
+        btnDockRecord.style.color = "";
+        recDot.style.background = "var(--accent-red)";
+        recDot.classList.remove("animate-pulse");
+        recBtnLabel.textContent = "Record";
+
+        const onStopFinalize = () => {
+          const masterBlob = new Blob(masterChunks, { type: "audio/webm" });
+          const vocalBlob = vocalChunks.length > 0 ? new Blob(vocalChunks, { type: "audio/webm" }) : null;
+          const takeNum = recordedTakes.length + 1;
+          const takeName = `Take ${takeNum}`;
+          const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          const take = {
+            id: `take-${Date.now()}`,
+            name: `${takeName} (${timeStr})`,
+            durationSecs: finalSecs,
+            masterBlob,
+            vocalBlob
+          };
+          recordedTakes.unshift(take);
+
+          // Update Takes button
+          btnDockTakes.style.display = "inline-flex";
+          takesCountLabel.textContent = `Takes (${recordedTakes.length})`;
+
+          // Add card to stems drawer
+          const stemsView = document.getElementById("stemsView");
+          const card = document.createElement("div");
+          card.className = "stem-card";
+          card.innerHTML = `
+            <div class="stem-icon">WAV</div>
+            <div class="stem-meta">
+              <div class="stem-name">${takeName}_Master.webm</div>
+              <div class="stem-sub">${(masterBlob.size / 1024).toFixed(0)} KB • Recorded Take</div>
+            </div>
+            <button class="stem-drag-handle" style="cursor:pointer;" onclick="downloadBlobTake('${take.id}', 'master')">Download</button>
+          `;
+          stemsView.prepend(card);
+          document.getElementById("tabStemsBtn").textContent = `Stems (${recordedTakes.length})`;
+
+          // Render in takes modal
+          renderTakesList();
+          takesModal.classList.add("open");
+        };
+
+        let pending = 0;
+        if (masterRecorder && masterRecorder.state !== "inactive") {
+          pending++;
+          masterRecorder.onstop = () => { pending--; if (pending <= 0) onStopFinalize(); };
+          masterRecorder.stop();
+        }
+        if (vocalRecorder && vocalRecorder.state !== "inactive") {
+          pending++;
+          vocalRecorder.onstop = () => { pending--; if (pending <= 0) onStopFinalize(); };
+          vocalRecorder.stop();
+        }
+        if (pending === 0) onStopFinalize();
+      }
+    });
+
+    window.downloadBlobTake = (takeId, type) => {
+      const take = recordedTakes.find(t => t.id === takeId);
+      if (!take) return;
+      const blob = type === "master" ? take.masterBlob : take.vocalBlob;
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${take.name.replace(/\s+/g, "_")}_${type === "master" ? "Master" : "Vocal"}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    function renderTakesList() {
+      takesListContainer.innerHTML = recordedTakes.map(t => `
+        <div style="padding:10px; background:var(--surface-elevated); border:1px solid var(--hairline); border-radius:6px; display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-weight:600; font-size:12px; color:var(--white);">${t.name}</div>
+            <span style="font-size:10px; color:var(--mute); font-family:monospace;">${Math.floor(t.durationSecs / 60)}:${(t.durationSecs % 60).toString().padStart(2, "0")}</span>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:2px;">
+            <button class="dock-btn" style="justify-content:center; font-size:11px;" onclick="downloadBlobTake('${t.id}', 'master')">Master Stem ↓</button>
+            ${t.vocalBlob ? `<button class="dock-btn" style="justify-content:center; font-size:11px;" onclick="downloadBlobTake('${t.id}', 'vocal')">Vocal Stem ↓</button>` : `<div style="font-size:10px; color:var(--ash); align-self:center; text-align:center;">No Vocal Audio</div>`}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // ==========================================
+    // 3. Web MIDI Hardware Controller Passthrough
+    // ==========================================
+    let midiAccess = null;
+    let activeMidiIn = null;
+    const midiDeviceSelect = document.getElementById("midiDeviceSelect");
+    const midiStatusDot = document.getElementById("midiStatusDot");
+    const btnScanMidi = document.getElementById("btnScanMidi");
+
+    async function scanWebMidi() {
+      if (!("requestMIDIAccess" in navigator)) {
+        midiDeviceSelect.innerHTML = `<option value="">Web MIDI not supported in this environment</option>`;
+        return;
+      }
+      try {
+        midiAccess = await navigator.requestMIDIAccess({ sysex: false });
+        const devs = [];
+        for (const input of midiAccess.inputs.values()) {
+          if (input.name) devs.push(input);
+        }
+        if (devs.length > 0) {
+          midiDeviceSelect.innerHTML = devs.map(d => `<option value="${d.id}">${d.name}</option>`).join("");
+          midiStatusDot.style.background = "var(--accent-green)";
+          bindMidiInput(devs[0]);
+        } else {
+          midiDeviceSelect.innerHTML = `<option value="">No hardware controllers detected</option>`;
+          midiStatusDot.style.background = "var(--ash)";
+        }
+      } catch (err) {
+        midiDeviceSelect.innerHTML = `<option value="">MIDI access denied or unavailable</option>`;
+        midiStatusDot.style.background = "var(--ash)";
+      }
+    }
+
+    function bindMidiInput(input) {
+      if (activeMidiIn) activeMidiIn.onmidimessage = null;
+      activeMidiIn = input;
+      activeMidiIn.onmidimessage = (e) => {
+        const [status, note, velocity] = e.data;
+        const isNoteOn = (status & 0xf0) === 0x90 && velocity > 0;
+        if (isNoteOn) {
+          midiStatusDot.style.background = "#fff";
+          setTimeout(() => { midiStatusDot.style.background = "var(--accent-green)"; }, 120);
+        }
+        // Forward binary MIDI frame to VST3 on 4949 if connected
+        if (vstWs && vstWs.readyState === WebSocket.OPEN) {
+          try { vstWs.send(e.data); } catch { /* ignore */ }
+        }
+      };
+    }
+
+    midiDeviceSelect.addEventListener("change", (e) => {
+      if (!midiAccess) return;
+      const input = midiAccess.inputs.get(e.target.value);
+      if (input) bindMidiInput(input);
+    });
+
+    btnScanMidi.addEventListener("click", scanWebMidi);
+    scanWebMidi();
 
     // Initial storage check
     const savedName = localStorage.getItem("s2dio_username");

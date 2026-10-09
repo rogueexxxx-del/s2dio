@@ -12,6 +12,9 @@ import { AudioSettingsModal } from "@/components/AudioSettingsModal";
 import { S2DioLogo } from "@/components/S2DioLogo";
 import { AuthModal } from "@/components/AuthModal";
 import { supabase, isSupabaseClientConfigured } from "@/lib/supabase-client";
+import { useMultiTrackRecorder, RecordedTake } from "@/lib/useMultiTrackRecorder";
+import { TakesModal } from "@/components/TakesModal";
+import { ScheduleModal } from "@/components/ScheduleModal";
 
 export default function StudioRoomPage() {
   const params = useParams();
@@ -32,6 +35,18 @@ export default function StudioRoomPage() {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  // Multi-track Local Stem Recording & Session Scheduling
+  const {
+    isRecording,
+    recordingSeconds,
+    takes,
+    startRecording,
+    stopRecording,
+    downloadTakeStem,
+  } = useMultiTrackRecorder();
+  const [isTakesModalOpen, setIsTakesModalOpen] = useState(false);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   const [hostName, setHostName] = useState("Producer");
 
@@ -426,6 +441,38 @@ export default function StudioRoomPage() {
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
+  const handleToggleRecording = async () => {
+    if (!isRecording) {
+      if (engine) {
+        await engine.resume();
+        const daw = engine.getDawStream();
+        const mic = engine.getMicStream();
+        startRecording(daw, mic);
+      } else {
+        startRecording(null, null);
+      }
+    } else {
+      const take = await stopRecording();
+      if (take) {
+        setIsTakesModalOpen(true);
+      }
+    }
+  };
+
+  const handleAddTakeToStems = (take: RecordedTake) => {
+    const newFile: SessionFile = {
+      id: `file-${Date.now()}`,
+      name: `${take.name.replace(/\s+/g, "_")}_Master.webm`,
+      sizeBytes: take.masterBlob.size,
+      uploaderName: hostName,
+      type: "wav",
+      durationSeconds: take.durationSeconds,
+      uploadedAt: take.recordedAt,
+    };
+    setFiles((prev) => [newFile, ...prev]);
+    setIsDrawerOpen(true);
+  };
+
   const dawChannel = channels.find((c) => c.type === "daw");
 
   return (
@@ -485,6 +532,16 @@ export default function StudioRoomPage() {
               Sign In
             </button>
           )}
+
+          {/* Schedule Session Modal */}
+          <button
+            onClick={() => setIsScheduleModalOpen(true)}
+            className="btn-secondary text-xs h-8 px-3 whitespace-nowrap cursor-pointer flex items-center gap-1.5"
+            title="Schedule session with calendar invite & .ics export"
+          >
+            <span>📅</span>
+            <span>Schedule</span>
+          </button>
 
           {/* Copy Invite Link */}
           <button
@@ -570,6 +627,30 @@ export default function StudioRoomPage() {
           <span>{isCameraActive ? "Stop Cam" : "Camera"}</span>
         </button>
 
+        {/* Multi-track Stem Recording Button */}
+        <button
+          onClick={handleToggleRecording}
+          className={`h-9 px-3.5 text-xs rounded-md border transition-colors inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+            isRecording
+              ? "bg-accent-red text-white border-accent-red font-semibold animate-pulse"
+              : "btn-tertiary"
+          }`}
+          title="Record session takes with isolated Master and Vocal stems"
+        >
+          <span className={`w-2 h-2 rounded-full ${isRecording ? "bg-white" : "bg-accent-red"}`} />
+          <span>{isRecording ? `REC ${Math.floor(recordingSeconds / 60)}:${(recordingSeconds % 60).toString().padStart(2, "0")}` : "Record"}</span>
+        </button>
+
+        {takes.length > 0 && (
+          <button
+            onClick={() => setIsTakesModalOpen(true)}
+            className="btn-tertiary h-9 px-2.5 text-xs text-accent-green"
+            title="View recorded takes & stems"
+          >
+            Takes ({takes.length})
+          </button>
+        )}
+
         {/* Play/Stop Audio Test */}
         <button
           onClick={handleToggleTestAudio}
@@ -633,6 +714,23 @@ export default function StudioRoomPage() {
           onReconnectVst={() => engine.connectVstBridge()}
         />
       )}
+
+      {/* Schedule Studio Session Modal */}
+      <ScheduleModal
+        isOpen={isScheduleModalOpen}
+        onClose={() => setIsScheduleModalOpen(false)}
+        roomSlug={slug}
+        defaultTitle={`Studio Session: ${slug}`}
+      />
+
+      {/* Recorded Multi-track Takes Modal */}
+      <TakesModal
+        isOpen={isTakesModalOpen}
+        onClose={() => setIsTakesModalOpen(false)}
+        takes={takes}
+        onDownloadStem={downloadTakeStem}
+        onAddToStems={handleAddTakeToStems}
+      />
 
       {/* Sign In & Sign Up Modal */}
       <AuthModal

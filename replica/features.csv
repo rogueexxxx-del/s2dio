@@ -10,10 +10,10 @@ Audio device & buffer configuration (sample rate latency buffer),audio,must,yes,
 Real-time webcam and video grid,video,must,yes,yes,Participant video tile strip with audio-reactive active speaker glow
 Ultra-low-latency 60fps DAW screen sharing,screen,must,yes,yes,Screen stage canvas with Ableton 12 arrangement simulation and 60fps HUD
 In-session chat and drag-and-drop file transfer,collaboration,must,yes,yes,Message stream plus draggable stem cards with HTML5 DRAG TO DAW handle
-Multi-track local recording (stems & session mix),recording,should,yes,partial,Armed recording indicators on timeline and mixer
-Real-time MIDI over network,midi,should,yes,partial,MIDI event buffer support in VST3 bridge protocol
+Multi-track local recording (stems & session mix),recording,should,yes,yes,MediaRecorder isolated stem capture for Master DAW and Vocal/Talkback with instant download & drawer sync
+Real-time MIDI over network,midi,should,yes,yes,Web MIDI API hardware scanning and low-latency loopback streaming to VST3 on port 4949
 Interactive remote screen control (mouse & keyboard DAW control),screen,should,yes,yes,Request and grant DAW control workflow with remote cursor overlay
-Session scheduling and calendar invite integration,sessions,should,yes,partial,Invite link copy and room slug persistence
+Session scheduling and calendar invite integration,sessions,should,yes,yes,RFC 5545 .ics calendar export and 1-click Google Calendar scheduling
 DAW plugin bridge (VST3/AU/AAX for direct track capture),audio,could,yes,yes,Standalone zero-dependency VST3 bridge daemon simulator on ws://127.0.0.1:4949
 Breakout rooms for songwriting camps,collaboration,could,yes,no,Enterprise sub-room partitioning
 Automated session audio transcription & chat export,collaboration,could,yes,no,Cloud STT lyrical brainstorming

@@ -58,4 +58,6 @@ export interface AudioEngineConfig {
   vstPort: number;
   loopbackProtection: boolean;
   talkbackDuckingDb: number;
+  midiEnabled?: boolean;
+  selectedMidiDevice?: string;
 }
