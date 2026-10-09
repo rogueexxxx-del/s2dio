@@ -1,47 +1,91 @@
-:root {
-  /* StudioCollab Design System: Precision Audio Slate */
+/* S2DIO Design Tokens (Obsidian Console Aesthetic) */
+/* Generated & Locked via /replica-design */
 
+:root {
   /* Color Roles */
-  --color-bg: #0b0e14;
-  --color-surface: #141822;
-  --color-surface-raised: #1c2230;
-  --color-border: #252d3d;
-  --color-border-input: #596b88;
-  --color-text: #f0f4fc;
-  --color-text-muted: #94a3b8;
-  --color-accent: #38bdf8;
-  --color-on-accent: #04111d;
-  --color-danger: #f43f5e;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
+  --s2dio-bg: #07080a;
+  --s2dio-surface: #0d0d0d;
+  --s2dio-surface-elevated: #121316;
+  --s2dio-surface-card: #18191a;
+  
+  --s2dio-border: #22242a;
+  --s2dio-border-strong: rgba(255, 255, 255, 0.16);
+  --s2dio-border-input: #666870;
+
+  --s2dio-text: #f4f4f6;
+  --s2dio-text-body: #cdcdcd;
+  --s2dio-text-muted: #9c9c9d;
+  --s2dio-text-ash: #6a6b6c;
+
+  --s2dio-accent: #59d499;
+  --s2dio-accent-soft: rgba(89, 212, 153, 0.15);
+  --s2dio-on-accent: #07080a;
+
+  --s2dio-danger: #ff6161;
+  --s2dio-danger-soft: rgba(255, 97, 97, 0.15);
+  --s2dio-on-danger: #ffffff;
+
+  --s2dio-warning: #ffd60a;
+  --s2dio-warning-soft: rgba(255, 214, 10, 0.15);
+  --s2dio-on-warning: #07080a;
+
+  --s2dio-primary: #ffffff;
+  --s2dio-on-primary: #000000;
 
   /* Typography */
-  --font-sans: Geist, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", "Geist Mono", "SF Mono", Menlo, Consolas, monospace;
+  --s2dio-font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --s2dio-font-display: var(--font-lemon), 'Lemon/Milk', 'Lemon Milk', sans-serif;
+  --s2dio-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-pill: 999px;
+  /* Type Scale */
+  --s2dio-text-2xs: 9px;
+  --s2dio-text-xs: 11px;
+  --s2dio-text-sm: 13px;
+  --s2dio-text-base: 15px;
+  --s2dio-text-lg: 18px;
+  --s2dio-text-xl: 24px;
+  --s2dio-text-2xl: 32px;
+  --s2dio-text-display: 48px;
 
-  /* Shadows & Hardware Insets */
-  --shadow-rack: 0 1px 1px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  --shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-glow-signal: 0 0 12px rgba(56, 189, 248, 0.35);
-  --shadow-glow-peak: 0 0 12px rgba(244, 63, 94, 0.4);
+  /* Spacing Scale */
+  --s2dio-space-1: 4px;
+  --s2dio-space-2: 8px;
+  --s2dio-space-3: 12px;
+  --s2dio-space-4: 16px;
+  --s2dio-space-5: 20px;
+  --s2dio-space-6: 24px;
+  --s2dio-space-8: 32px;
+  --s2dio-space-10: 40px;
+  --s2dio-space-12: 48px;
+  --s2dio-space-16: 64px;
+  --s2dio-space-20: 80px;
 
-  /* Transitions */
-  --motion-instant: 50ms;
-  --motion-meter: 80ms linear;
-  --motion-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
-  --motion-base: 250ms cubic-bezier(0.16, 1, 0.3, 1);
-}
+  /* Radii */
+  --s2dio-radius-xs: 4px;
+  --s2dio-radius-sm: 6px;
+  --s2dio-radius-md: 8px;
+  --s2dio-radius-lg: 10px;
+  --s2dio-radius-xl: 14px;
+  --s2dio-radius-pill: 9999px;
 
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Shadows */
+  --s2dio-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --s2dio-shadow-dock: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --s2dio-shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --s2dio-glow-green: 0 0 16px rgba(89, 212, 153, 0.25);
+  --s2dio-glow-red: 0 0 16px rgba(255, 97, 97, 0.25);
+
+  /* Motion */
+  --s2dio-ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  --s2dio-duration-fast: 120ms;
+  --s2dio-duration-base: 150ms;
+  --s2dio-duration-smooth: 200ms;
+
+  /* Hardware Studio Layout Constants */
+  --s2dio-header-height: 64px;
+  --s2dio-dock-height: 48px;
+  --s2dio-drawer-width: 340px;
+  --s2dio-strip-width: 110px;
+  --s2dio-fader-height: 150px;
+  --s2dio-max-width: 1152px;
 }

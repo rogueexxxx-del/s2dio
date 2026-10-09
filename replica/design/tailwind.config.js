@@ -1,56 +1,69 @@
 /** @type {import('tailwindcss').Config} */
+// S2DIO Locked Design System Tailwind Theme Mapping
 module.exports = {
   darkMode: ["class"],
   content: [
     "./src/**/*.{ts,tsx,js,jsx}",
     "./app/**/*.{ts,tsx,js,jsx}",
-    "./components/**/*.{ts,tsx,js,jsx}"
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "400px",
+      },
       colors: {
-        bg: "var(--color-bg)",
+        canvas: "var(--s2dio-bg, #07080a)",
         surface: {
-          DEFAULT: "var(--color-surface)",
-          raised: "var(--color-surface-raised)",
+          DEFAULT: "var(--s2dio-surface, #0d0d0d)",
+          elevated: "var(--s2dio-surface-elevated, #121316)",
+          card: "var(--s2dio-surface-card, #18191a)",
         },
-        border: {
-          DEFAULT: "var(--color-border)",
-          input: "var(--color-border-input)",
+        hairline: {
+          DEFAULT: "var(--s2dio-border, #22242a)",
+          strong: "var(--s2dio-border-strong, rgba(255, 255, 255, 0.16))",
+          input: "var(--s2dio-border-input, #666870)",
         },
-        text: {
-          DEFAULT: "var(--color-text)",
-          muted: "var(--color-text-muted)",
+        primary: {
+          DEFAULT: "var(--s2dio-primary, #ffffff)",
+          pressed: "#e8e8e8",
+          foreground: "var(--s2dio-on-primary, #000000)",
         },
+        ink: "var(--s2dio-text, #f4f4f6)",
+        body: "var(--s2dio-text-body, #cdcdcd)",
+        mute: "var(--s2dio-text-muted, #9c9c9d)",
+        ash: "var(--s2dio-text-ash, #6a6b6c)",
         accent: {
-          DEFAULT: "var(--color-accent)",
-          foreground: "var(--color-on-accent)",
+          green: "var(--s2dio-accent, #59d499)",
+          "green-soft": "var(--s2dio-accent-soft, rgba(89, 212, 153, 0.15))",
+          red: "var(--s2dio-danger, #ff6161)",
+          "red-soft": "var(--s2dio-danger-soft, rgba(255, 97, 97, 0.15))",
+          yellow: "var(--s2dio-warning, #ffd60a)",
+          "yellow-soft": "var(--s2dio-warning-soft, rgba(255, 214, 10, 0.15))",
         },
-        danger: "var(--color-danger)",
-        success: "var(--color-success)",
-        warning: "var(--color-warning)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
-        mono: ["var(--font-mono)"],
+        sans: ["var(--font-inter)", "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        lemon: ["var(--font-lemon)", "Lemon/Milk", "Lemon Milk", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
       },
       borderRadius: {
-        sm: "var(--radius-sm)",
-        md: "var(--radius-md)",
-        lg: "var(--radius-lg)",
-        pill: "var(--radius-pill)",
+        none: "0px",
+        xs: "4px",
+        sm: "6px",
+        md: "8px",
+        lg: "10px",
+        xl: "14px",
+        pill: "9999px",
       },
       boxShadow: {
-        rack: "var(--shadow-rack)",
-        panel: "var(--shadow-panel)",
-        "glow-signal": "var(--shadow-glow-signal)",
-        "glow-peak": "var(--shadow-glow-peak)",
+        card: "0 1px 3px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04)",
+        dock: "0 16px 40px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.06)",
+        modal: "0 24px 60px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.06)",
+        "glow-green": "0 0 16px rgba(89, 212, 153, 0.25)",
+        "glow-red": "0 0 16px rgba(255, 97, 97, 0.25)",
       },
-      transitionDuration: {
-        instant: "var(--motion-instant)",
-        meter: "var(--motion-meter)",
-        fast: "var(--motion-fast)",
-        base: "var(--motion-base)",
+      transitionTimingFunction: {
+        studio: "cubic-bezier(0.16, 1, 0.3, 1)",
       },
     },
   },
