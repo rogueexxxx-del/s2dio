@@ -2,10 +2,63 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { GlideSelect } from "@/components/micro/GlideSelect";
 import { S2DioLogo } from "@/components/S2DioLogo";
 import { AuthModal } from "@/components/AuthModal";
 import { supabase, isSupabaseClientConfigured } from "@/lib/supabase-client";
+import { SpotlightCard } from "@/components/reactbits/SpotlightCard";
+import { Accordion } from "@/components/reactbits/Accordion";
+import { StudioGridBackground } from "@/components/reactbits/StudioGridBackground";
+
+const faqs = [
+  {
+    id: "faq-1",
+    question: "How does S2DIO achieve pristine DAW audio with low latency?",
+    answer:
+      "Standard communication software filters sound through voice speech codecs that strip bass frequencies and stereo imaging. S2DIO runs a native 64-bit C++ VST3 plugin directly on your master bus, capturing 48kHz 32-bit floating point audio straight from the ASIO output buffer and streaming it over low-overhead WebRTC with sub-5ms local ingest latency.",
+  },
+  {
+    id: "faq-2",
+    question: "Do artists or clients need to install any software or plugins?",
+    answer:
+      "No. S2DIO features a zero-install browser portal. Anyone you send your guest invite link to can listen in full stereo fidelity, watch your DAW screen at 60fps, talk back through their microphone, and exchange stems right inside Google Chrome, Apple Safari, Microsoft Edge, or Firefox without installing plugins or creating an account.",
+  },
+  {
+    id: "faq-3",
+    question: "Which DAWs and operating systems are supported?",
+    answer:
+      "The S2DIO Master Bridge is a universal 64-bit VST3 plugin tested across FL Studio (20/21/24), Ableton Live (11/12), Steinberg Cubase (12/13/14), PreSonus Studio One (6+), Cockos Reaper (7+), and Bitwig Studio. The host app runs on Windows 10 and 11. Remote collaborators can join from any operating system including Windows, macOS, Linux, iOS, and Android.",
+  },
+  {
+    id: "faq-4",
+    question: "How does remote DAW screen control work, and is it secure?",
+    answer:
+      "Remote control lets your co-producer adjust plugin knobs, scrub timeline markers, or edit arrangement regions directly on your screen. Remote input is disabled by default and requires explicit host authorization per session. While active, the collaborator actions are rendered with a distinct co-pilot cursor, and the host can instantly revoke control at any millisecond by hitting the ESC key.",
+  },
+  {
+    id: "faq-5",
+    question: "How does smart talkback ducking prevent feedback and echo?",
+    answer:
+      "S2DIO includes an automated hardware-calibrated ducking circuit. When you or your collaborator speak into the talkback microphone, the DAW master playback stream is instantaneously attenuated by -12dB so conversation remains crystal clear over loud tracks. The moment you stop talking, DAW playback smoothly returns to unity gain without clicks or pops.",
+  },
+  {
+    id: "faq-6",
+    question: "Can I transfer large multi-gigabyte stem files during sessions?",
+    answer:
+      "Yes. S2DIO includes a drag-to-DAW stem exchange zone. You can drag and drop uncompressed 24-bit or 32-bit WAV, AIFF, and MIDI stems directly into the side drawer. Collaborators can download them immediately or drag them straight onto their local DAW timeline without leaving the live session.",
+  },
+  {
+    id: "faq-7",
+    question: "Do I need to configure firewall or router port forwarding?",
+    answer:
+      "No router port forwarding is required. The VST3 plugin communicates with the S2DIO desktop application over local loopback (127.0.0.1:4949), which never exposes raw audio outside your physical machine. Outbound session streaming uses standard WebRTC STUN/TURN traversal over secure HTTPS/WSS (ports 443/80), working transparently behind standard home and studio firewalls.",
+  },
+  {
+    id: "faq-8",
+    question: "What is included in the installer download?",
+    answer:
+      "The Windows setup package (S2DIO-Windows-Setup.exe) installs both the native S2DIO Control Room desktop application and the S2DIO Master Bridge VST3 plugin into your system standard Common Files\\VST3 folder. A standalone ZIP archive with manual installation scripts is also provided for custom studio workstation setups.",
+  },
+];
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -31,10 +84,14 @@ export default function DashboardPage() {
     const onAuthEvent = (e: Event) => {
       const custom = e as CustomEvent<{ email?: string; name?: string }>;
       if (custom.detail) {
-        setUser({
-          email: custom.detail.email,
-          name: custom.detail.name,
-        });
+        if (!custom.detail.email && !custom.detail.name) {
+          setUser(null);
+        } else {
+          setUser({
+            email: custom.detail.email,
+            name: custom.detail.name,
+          });
+        }
       }
     };
     window.addEventListener("s2dio-auth-change", onAuthEvent);
@@ -111,37 +168,21 @@ export default function DashboardPage() {
     }
   };
 
-  const handleLaunchQuick = async (name: string) => {
-    try {
-      const res = await fetch("/api/sessions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: name }),
-      });
-      const data = await res.json();
-      if (data?.slug) {
-        router.push(`/session/${data.slug}`);
-        return;
-      }
-    } catch {
-      // fallback
-    }
-    const slug = `${name.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
-    router.push(`/session/${slug}`);
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-studio-canvas text-body font-sans selection:bg-surface-elevated selection:text-ink relative">
-      {/* Top Studio Header (Transparent, Borderless) */}
+    <div className="min-h-screen flex flex-col bg-studio-canvas text-body font-sans selection:bg-surface-elevated selection:text-ink relative overflow-x-hidden">
+      {/* ReactBits Technical Studio Grid Background */}
+      <StudioGridBackground />
+
+      {/* Top Studio Header (Clean, Polished Spacing) */}
       <header className="h-16 px-6 md:px-12 flex items-center justify-between bg-transparent z-30">
         <div className="flex items-center gap-3">
           <S2DioLogo variant="full" height={22} className="text-ink hover:text-white transition-colors" />
         </div>
 
-        {/* Right Edge: Connection symbol with port + User status + Question mark symbol (No borders) */}
-        <div className="flex items-center gap-5 text-xs text-mute">
+        {/* Right Edge: Local port badge + VST3 download pill + User auth status pill + FAQ Help button */}
+        <div className="flex items-center gap-4 text-xs text-mute">
           <div
-            className="flex items-center gap-1.5 hover:text-ink transition-colors cursor-default"
+            className="hidden sm:flex items-center gap-1.5 hover:text-ink transition-colors cursor-default"
             title="Local VST3 Bridge running on port 4949"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
@@ -151,16 +192,18 @@ export default function DashboardPage() {
           <a
             href="/downloads/S2DIO-Windows-VST3.zip"
             download="S2DIO-Windows-VST3.zip"
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-elevated hover:bg-surface-card border border-hairline text-ink hover:text-white transition-colors text-[11px] font-medium"
-            title="Download S2DIO Master Bridge VST3 and 1-click installer for FL Studio, Ableton, Cubase"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-elevated hover:bg-surface-card border border-hairline text-ink hover:text-white transition-colors text-[11px] font-medium"
+            title="Download S2DIO Master Bridge VST3 and 1-click installer"
           >
             <span>Download VST3</span>
             <span className="text-[10px] text-mute">↓</span>
           </a>
 
           {user ? (
-            <div className="flex items-center gap-2">
-              <span className="text-ink font-medium text-xs">{user.name || user.email}</span>
+            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-surface-elevated border border-hairline text-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
+              <span className="text-ink font-semibold tracking-tight">{user.name || user.email?.split("@")[0] || "Producer"}</span>
+              <span className="w-px h-3 bg-hairline" />
               <button
                 onClick={async () => {
                   if (isSupabaseClientConfigured) {
@@ -168,10 +211,14 @@ export default function DashboardPage() {
                   }
                   if (typeof window !== "undefined") {
                     localStorage.removeItem("s2dio_auth_email");
+                    localStorage.removeItem("s2dio_username");
+                    window.dispatchEvent(
+                      new CustomEvent("s2dio-auth-change", { detail: { email: null, name: null } })
+                    );
                   }
                   setUser(null);
                 }}
-                className="text-[11px] text-mute hover:text-ink transition-colors cursor-pointer"
+                className="text-[11px] text-mute hover:text-white transition-colors cursor-pointer"
                 title="Sign Out"
               >
                 Sign Out
@@ -180,17 +227,17 @@ export default function DashboardPage() {
           ) : (
             <button
               onClick={() => setIsAuthModalOpen(true)}
-              className="text-xs text-mute hover:text-ink transition-colors font-medium cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-surface-elevated hover:bg-surface-card border border-hairline text-xs text-ink hover:text-white transition-colors font-medium cursor-pointer"
             >
               Sign In
             </button>
           )}
 
           <a
-            href="#features"
-            className="w-7 h-7 flex items-center justify-center text-sm font-medium text-mute hover:text-ink transition-colors"
-            title="How it works / Help"
-            aria-label="How it works"
+            href="#faqs"
+            className="w-7 h-7 rounded-full bg-surface-elevated hover:bg-surface-card border border-hairline flex items-center justify-center text-xs font-mono font-medium text-mute hover:text-ink transition-colors"
+            title="Frequently Asked Questions & Help"
+            aria-label="FAQ & Help"
           >
             ?
           </a>
@@ -198,7 +245,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Hero Section */}
-      <main className="max-w-5xl w-full mx-auto px-6 pt-16 pb-24 flex-1 flex flex-col items-center justify-center space-y-16 z-10">
+      <main className="max-w-5xl w-full mx-auto px-6 pt-14 pb-24 flex-1 flex flex-col items-center justify-center space-y-16 z-10">
         {/* Pitch Headline & Download Primary Action */}
         <div className="text-center space-y-5 max-w-3xl mx-auto w-full">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
@@ -262,7 +309,7 @@ export default function DashboardPage() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Paste room code or guest URL..."
-                className="flex-1 bg-surface-elevated border border-hairline rounded-md px-3 py-2 text-xs text-ink placeholder:text-mute focus:outline-none focus:border-accent-blue/50"
+                className="flex-1 bg-surface-elevated border border-hairline rounded-md px-3 py-2 text-xs text-ink placeholder:text-mute focus:outline-none focus:border-accent-green/50"
                 autoFocus
               />
               <button type="submit" className="btn-primary text-xs h-9 px-4">
@@ -272,7 +319,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Comprehensive How S2DIO Works Section */}
+        {/* Comprehensive How S2DIO Works Section with ReactBits Spotlight */}
         <section className="w-full max-w-4xl space-y-8 pt-8">
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
@@ -286,7 +333,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="bg-surface border border-hairline rounded-lg p-6 space-y-3 relative overflow-hidden">
+            <SpotlightCard className="p-6 space-y-3" spotlightColor="rgba(89, 212, 153, 0.08)">
               <div className="flex items-center justify-between">
                 <div className="w-7 h-7 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
                   01
@@ -302,9 +349,9 @@ export default function DashboardPage() {
                 <div>• Sub-5ms internal buffer latency</div>
                 <div>• Real-time peak telemetry & clip guard</div>
               </div>
-            </div>
+            </SpotlightCard>
 
-            <div className="bg-surface border border-hairline rounded-lg p-6 space-y-3 relative overflow-hidden">
+            <SpotlightCard className="p-6 space-y-3" spotlightColor="rgba(89, 212, 153, 0.08)">
               <div className="flex items-center justify-between">
                 <div className="w-7 h-7 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
                   02
@@ -320,9 +367,9 @@ export default function DashboardPage() {
                 <div>• Auto-ducking talkback microphone (-12dB)</div>
                 <div>• Producer profile & online friends drawer</div>
               </div>
-            </div>
+            </SpotlightCard>
 
-            <div className="bg-surface border border-hairline rounded-lg p-6 space-y-3 relative overflow-hidden">
+            <SpotlightCard className="p-6 space-y-3" spotlightColor="rgba(89, 212, 153, 0.08)">
               <div className="flex items-center justify-between">
                 <div className="w-7 h-7 rounded bg-surface-elevated border border-hairline flex items-center justify-center text-xs font-mono font-semibold text-ink">
                   03
@@ -338,11 +385,11 @@ export default function DashboardPage() {
                 <div>• Drag-to-DAW WAV stem exchange</div>
                 <div>• Remote co-pilot control with ESC revoke</div>
               </div>
-            </div>
+            </SpotlightCard>
           </div>
         </section>
 
-        {/* Feature Grid */}
+        {/* Feature Grid: ReactBits Spotlight Cards, Clean Headings, NO Emojis/Icons */}
         <section id="features" className="w-full max-w-4xl space-y-6 pt-10">
           <div className="text-center space-y-1.5">
             <h2 className="text-xl font-semibold text-ink tracking-tight">Built Specifically for Producers</h2>
@@ -350,69 +397,51 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
-                🎛
-              </div>
-              <h3 className="text-sm font-semibold text-ink">Lossless Float32 PCM</h3>
+            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+              <h3 className="text-sm font-semibold text-white tracking-tight">Lossless Float32 PCM</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Direct master bus ingestion with 48kHz 32-bit floating point precision. Zero lossy compression during mixdown evaluation.
               </p>
-            </div>
+            </SpotlightCard>
 
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
-                🖥
-              </div>
-              <h3 className="text-sm font-semibold text-ink">60fps DAW Screen Share</h3>
+            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+              <h3 className="text-sm font-semibold text-white tracking-tight">60fps DAW Screen Share</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Stream your arrangement timeline, piano roll, or plugin GUI in high-definition 60fps video with full-screen playback.
               </p>
-            </div>
+            </SpotlightCard>
 
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
-                🎙
-              </div>
-              <h3 className="text-sm font-semibold text-ink">Smart Talkback Ducking</h3>
+            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+              <h3 className="text-sm font-semibold text-white tracking-tight">Smart Talkback Ducking</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Speak naturally while the track plays. DAW playback automatically ducks by -12dB when talkback triggers, then snaps right back.
               </p>
-            </div>
+            </SpotlightCard>
 
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
-                📁
-              </div>
-              <h3 className="text-sm font-semibold text-ink">Drag-to-DAW Stem Exchange</h3>
+            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+              <h3 className="text-sm font-semibold text-white tracking-tight">Drag-to-DAW Stem Exchange</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Drop full mixes or vocal takes into the room. Collaborators can drag stems straight from the browser into their DAW timeline.
               </p>
-            </div>
+            </SpotlightCard>
 
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
-                ⚡
-              </div>
-              <h3 className="text-sm font-semibold text-ink">Ultra-Low Ingest Latency</h3>
+            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+              <h3 className="text-sm font-semibold text-white tracking-tight">Ultra-Low Ingest Latency</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Sub-5ms local buffer design gives instant feedback as you hit play, scrub markers, or tweak EQ in your DAW.
               </p>
-            </div>
+            </SpotlightCard>
 
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <div className="w-8 h-8 rounded-md bg-surface-elevated border border-hairline flex items-center justify-center text-xs text-ink">
-                🌐
-              </div>
-              <h3 className="text-sm font-semibold text-ink">Zero-Install Guest Portal</h3>
+            <SpotlightCard className="p-6 space-y-2.5" spotlightColor="rgba(89, 212, 153, 0.08)">
+              <h3 className="text-sm font-semibold text-white tracking-tight">Zero-Install Guest Portal</h3>
               <p className="text-xs text-mute leading-relaxed">
                 Remote artists and clients join via Chrome, Safari, or Edge without downloading any software or creating an account.
               </p>
-            </div>
+            </SpotlightCard>
           </div>
         </section>
 
-        {/* Comprehensive FAQs Section */}
+        {/* Comprehensive FAQs Section with ReactBits Accordion */}
         <section id="faqs" className="w-full max-w-4xl space-y-6 pt-12">
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-xs text-mute">
@@ -424,86 +453,8 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
-                <span className="text-accent-green">Q:</span>
-                How does S2DIO achieve pristine DAW audio with low latency?
-              </h3>
-              <p className="text-xs text-mute leading-relaxed">
-                Standard communication software filters sound through voice speech codecs that strip bass frequencies and stereo imaging. S2DIO runs a native 64-bit C++ VST3 plugin directly on your master bus, capturing 48kHz 32-bit floating point audio straight from the ASIO output buffer and streaming it over low-overhead WebRTC with sub-5ms local ingest latency.
-              </p>
-            </div>
-
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
-                <span className="text-accent-green">Q:</span>
-                Do artists or clients need to install any software or plugins?
-              </h3>
-              <p className="text-xs text-mute leading-relaxed">
-                No. S2DIO features a zero-install browser portal. Anyone you send your guest invite link to can listen in full stereo fidelity, watch your DAW screen at 60fps, talk back through their microphone, and exchange stems right inside Google Chrome, Apple Safari, Microsoft Edge, or Firefox without installing plugins or creating an account.
-              </p>
-            </div>
-
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
-                <span className="text-accent-green">Q:</span>
-                Which DAWs and operating systems are supported?
-              </h3>
-              <p className="text-xs text-mute leading-relaxed">
-                The S2DIO Master Bridge is a universal 64-bit VST3 plugin tested across FL Studio (20/21/24), Ableton Live (11/12), Steinberg Cubase (12/13/14), PreSonus Studio One (6+), Cockos Reaper (7+), and Bitwig Studio. The host app runs on Windows 10 and 11. Remote collaborators can join from any operating system including Windows, macOS, Linux, iOS, and Android.
-              </p>
-            </div>
-
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
-                <span className="text-accent-green">Q:</span>
-                How does remote DAW screen control work, and is it secure?
-              </h3>
-              <p className="text-xs text-mute leading-relaxed">
-                Remote control lets your co-producer adjust plugin knobs, scrub timeline markers, or edit arrangement regions directly on your screen. Remote input is disabled by default and requires explicit host authorization per session. While active, the collaborator actions are rendered with a distinct co-pilot cursor, and the host can instantly revoke control at any millisecond by hitting the ESC key.
-              </p>
-            </div>
-
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
-                <span className="text-accent-green">Q:</span>
-                How does smart talkback ducking prevent feedback and echo?
-              </h3>
-              <p className="text-xs text-mute leading-relaxed">
-                S2DIO includes an automated hardware-calibrated ducking circuit. When you or your collaborator speak into the talkback microphone, the DAW master playback stream is instantaneously attenuated by -12dB so conversation remains crystal clear over loud tracks. The moment you stop talking, DAW playback smoothly returns to unity gain without clicks or pops.
-              </p>
-            </div>
-
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
-                <span className="text-accent-green">Q:</span>
-                Can I transfer large multi-gigabyte stem files during sessions?
-              </h3>
-              <p className="text-xs text-mute leading-relaxed">
-                Yes. S2DIO includes a drag-to-DAW stem exchange zone. You can drag and drop uncompressed 24-bit or 32-bit WAV, AIFF, and MIDI stems directly into the side drawer. Collaborators can download them immediately or drag them straight onto their local DAW timeline without leaving the live session.
-              </p>
-            </div>
-
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
-                <span className="text-accent-green">Q:</span>
-                Do I need to configure firewall or router port forwarding?
-              </h3>
-              <p className="text-xs text-mute leading-relaxed">
-                No router port forwarding is required. The VST3 plugin communicates with the S2DIO desktop application over local loopback (127.0.0.1:4949), which never exposes raw audio outside your physical machine. Outbound session streaming uses standard WebRTC STUN/TURN traversal over secure HTTPS/WSS (ports 443/80), working transparently behind standard home and studio firewalls.
-              </p>
-            </div>
-
-            <div className="bg-surface border border-hairline rounded-lg p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
-                <span className="text-accent-green">Q:</span>
-                What is included in the installer download?
-              </h3>
-              <p className="text-xs text-mute leading-relaxed">
-                The Windows setup package (S2DIO-Windows-Setup.exe) installs both the native S2DIO Control Room desktop application and the S2DIO Master Bridge VST3 plugin into your system standard Common Files\VST3 folder. A standalone ZIP archive with manual installation scripts is also provided for custom studio workstation setups.
-              </p>
-            </div>
+          <div className="pt-2">
+            <Accordion items={faqs} defaultOpenId="faq-1" />
           </div>
         </section>
 

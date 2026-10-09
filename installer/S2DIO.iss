@@ -18,8 +18,9 @@ CloseApplications=yes
 SetupIconFile=app.ico
 
 [InstallDelete]
-; Delete any previous flat file so Windows can create the VST3 bundle directory cleanly
-Type: files; Name: "{commoncf}\VST3\S2DIO Master Bridge.vst3"
+; Clean slate wipe: wipe old app files and any old VST3 directory/files completely before unpacking
+Type: filesandordirs; Name: "{app}\*"
+Type: filesandordirs; Name: "{commoncf}\VST3\S2DIO Master Bridge.vst3"
 
 [Files]
 ; 1. Native Windows Desktop Control Room App
